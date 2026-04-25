@@ -86,14 +86,6 @@
     font-size: 11px;
   }
 
-  .topbar-meta {
-    display: flex;
-    gap: 20px;
-    color: var(--muted);
-  }
-
-  .topbar-meta strong { color: var(--ink); font-weight: 600; }
-
   /* ── CONTAINER ───────────────────────────────────────── */
   .wrap {
     max-width: 1080px;
@@ -103,10 +95,6 @@
 
   /* ── HERO ─────────────────────────────────────────────── */
   .hero {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 56px;
-    align-items: end;
     padding-bottom: 40px;
     border-bottom: 1px solid var(--line);
     margin-bottom: 48px;
@@ -128,6 +116,7 @@
     line-height: 1.1;
     letter-spacing: -0.5px;
     margin-bottom: 16px;
+    max-width: 760px;
   }
 
   .hero h1 em {
@@ -140,18 +129,8 @@
     font-size: 16px;
     color: var(--ink-soft);
     line-height: 1.55;
-    max-width: 540px;
+    max-width: 640px;
   }
-
-  .hero-side {
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--ink-soft);
-    border-left: 2px solid var(--accent);
-    padding-left: 18px;
-  }
-
-  .hero-side p + p { margin-top: 10px; }
 
   /* ── INFO GRID ────────────────────────────────────────── */
   .info-grid {
@@ -411,7 +390,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-bottom: 28px;
+    margin-bottom: 22px;
   }
 
   .topic {
@@ -423,40 +402,9 @@
     line-height: 1.4;
   }
 
-  .nav-arrows {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
+  .session-aside .practice {
+    margin-bottom: 0;
   }
-
-  .arrow {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    padding: 10px 14px;
-    font-family: inherit;
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-align: left;
-  }
-
-  .arrow:hover:not(:disabled) {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .arrow:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  .arrow.next { justify-content: flex-end; text-align: right; }
-  .arrow .glyph { font-size: 14px; opacity: 0.7; }
 
   /* fade transition for session content */
   .session.swapping .session-header,
@@ -531,6 +479,52 @@
     line-height: 1.55;
   }
 
+  /* ── FACILITATOR ──────────────────────────────────────── */
+  .facilitator {
+    margin-top: 56px;
+    border: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+  }
+
+  .facilitator-cell {
+    padding: 24px 26px;
+    border-right: 1px solid var(--line);
+  }
+
+  .facilitator-cell:last-child { border-right: none; }
+
+  .facilitator .label {
+    font-size: 10.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .facilitator-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .facilitator-cell p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .facilitator-cell p + p { margin-top: 8px; }
+
+  .facilitator-contact {
+    font-size: 14px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
   /* ── FOOTER ───────────────────────────────────────────── */
   .pagefoot {
     margin-top: 56px;
@@ -549,8 +543,6 @@
 
   /* ── RESPONSIVE ───────────────────────────────────────── */
   @media (max-width: 880px) {
-    .topbar-meta { display: none; }
-    .hero { grid-template-columns: 1fr; gap: 28px; }
     .info-grid { grid-template-columns: 1fr; }
     .info-cell { border-right: none; border-bottom: 1px solid var(--line); }
     .info-cell:last-child { border-bottom: none; }
@@ -559,6 +551,9 @@
     .principle { border-bottom: 1px solid var(--line); }
     .principle:nth-child(2) { border-right: none; }
     .principle:nth-child(3), .principle:nth-child(4) { border-bottom: none; }
+    .facilitator { grid-template-columns: 1fr; }
+    .facilitator-cell { border-right: none; border-bottom: 1px solid var(--line); }
+    .facilitator-cell:last-child { border-bottom: none; }
     .node-label { font-size: 0; }
     .node-dot { width: 32px; height: 32px; }
     .timeline-track, .timeline-progress { top: 16px; }
@@ -581,11 +576,6 @@
       <span class="dot"></span>
       <span class="label">ÚSKVBL · Vzdělávací program</span>
     </div>
-    <div class="topbar-meta">
-      <span><strong>7</strong> setkání</span>
-      <span><strong>90</strong> min</span>
-      <span>Start <strong>11. 5. 2026</strong></span>
-    </div>
   </div>
 </div>
 
@@ -593,15 +583,9 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div>
-      <div class="hero-eyebrow">Série seminářů · 2026</div>
-      <h1>Umělá inteligence <em>pro odbornou praxi</em> ÚSKVBL</h1>
-      <p class="hero-subtitle">Sedm devadesátiminutových setkání pro zaměstnance Ústavu pro státní kontrolu veterinárních biopreparátů a léčiv. Postupná cesta od porozumění k praktickému využití AI v každodenní práci.</p>
-    </div>
-    <aside class="hero-side">
-      <p>Klíčový princip: účastníci přinášejí vlastní pracovní situace. Obsah seminářů se přizpůsobuje reálným potřebám týmu.</p>
-      <p>Mezi setkáními dostanete malý úkol k vyzkoušení; na začátku dalšího setkání krátce sdílíme zkušenost.</p>
-    </aside>
+    <div class="hero-eyebrow">Série seminářů · 2026</div>
+    <h1>Umělá inteligence <em>pro odbornou praxi</em> ÚSKVBL</h1>
+    <p class="hero-subtitle">Postupná cesta od porozumění k praktickému využití AI v každodenní práci. Pro zaměstnance Ústavu pro státní kontrolu veterinárních biopreparátů a léčiv.</p>
   </section>
 
   <!-- INFO PANELS -->
@@ -610,7 +594,10 @@
       <div class="label">Příprava</div>
       <div class="heading">Co si přinést na první setkání</div>
       <p>2–3 konkrétní pracovní úkoly, kde trávíte hodně času, opakuje se rutina, nebo to jde dělat efektivněji. Nemusí mít s AI nic společného — jde o materiál z vaší praxe.</p>
-      <div class="meta">11. 5. 2026 od 13:00</div>
+      <div class="meta">
+        11. 5. 2026 od 13:00 · prezenčně<br>
+        Sídlo ÚSKVBL, Brno · místnost bude upřesněna
+      </div>
     </div>
     <div class="info-cell">
       <div class="label">Co série je</div>
@@ -619,16 +606,16 @@
       <p><strong>Není:</strong> kurz programování ani technický výcvik. Žádné předchozí znalosti nejsou potřeba.</p>
     </div>
     <div class="info-cell">
-      <div class="label">Vede</div>
-      <div class="heading">[Vaše jméno]</div>
-      <p>[Krátké představení, 1–2 věty o vaší zkušenosti s AI a vzděláváním.]</p>
-      <div class="meta">Dotazy předem: <a href="mailto:[email]">[váš email]</a></div>
+      <div class="label">Princip</div>
+      <div class="heading">Učíme se z vaší praxe</div>
+      <p>Účastníci přinášejí vlastní pracovní situace; obsah se přizpůsobuje reálným potřebám týmu.</p>
+      <p>Mezi setkáními malý úkol k vyzkoušení, na začátku dalšího setkání krátce sdílíme zkušenost.</p>
     </div>
   </section>
 
   <!-- SEMINARS -->
   <div class="section-head">
-    <h2>Sedm setkání</h2>
+    <h2>Program</h2>
     <div class="hint">Procházejte šipkami <kbd>←</kbd> <kbd>→</kbd> nebo klikněte na číslo</div>
   </div>
 
@@ -669,6 +656,20 @@
         <h4>Učíme se společně</h4>
         <p>Účastníci přinášejí vlastní zkušenosti. Obsah se přizpůsobuje tomu, co tým reálně potřebuje.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- FACILITATOR -->
+  <section class="facilitator">
+    <div class="facilitator-cell">
+      <div class="label">Vede</div>
+      <div class="facilitator-name">Vojtěch Velísek</div>
+      <p>Akademický knihovník, AI konzultant pro Přírodovědeckou fakultu MU.</p>
+    </div>
+    <div class="facilitator-cell">
+      <div class="label">Kontakt</div>
+      <p>Dotazy předem nebo zpětná vazba:</p>
+      <p class="facilitator-contact"><a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a></p>
     </div>
   </section>
 
@@ -775,7 +776,7 @@ function render(i) {
   sessionEl.innerHTML = `
     <div>
       <div class="session-header">
-        <div class="number">Seminář ${s.n} z 7</div>
+        <div class="number">Seminář ${s.n}</div>
         <h3>${s.title}</h3>
         <div class="session-timing">${s.timing}</div>
       </div>
@@ -784,25 +785,15 @@ function render(i) {
         <div class="why-label">Proč je to důležité</div>
         <p>${s.why}</p>
       </div>
-      <p class="practice"><strong>Společná práce:</strong> ${s.practice}</p>
     </div>
     <aside class="session-aside">
       <div class="label">Klíčová témata</div>
       <div class="topics">
         ${s.topics.map(t => `<div class="topic">${t}</div>`).join('')}
       </div>
-      <div class="nav-arrows">
-        <button class="arrow prev" ${i === 0 ? 'disabled' : ''} aria-label="Předchozí seminář">
-          <span class="glyph">←</span><span>Předchozí</span>
-        </button>
-        <button class="arrow next" ${i === sessions.length - 1 ? 'disabled' : ''} aria-label="Další seminář">
-          <span>Další</span><span class="glyph">→</span>
-        </button>
-      </div>
+      <p class="practice"><strong>Společná práce:</strong> ${s.practice}</p>
     </aside>
   `;
-  sessionEl.querySelector('.arrow.prev')?.addEventListener('click', () => select(i - 1));
-  sessionEl.querySelector('.arrow.next')?.addEventListener('click', () => select(i + 1));
 }
 
 function select(i) {
