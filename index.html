@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI pro ÚSKVBL – Série seminářů</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #1d3557;
+    --accent-hover: #2a4a73;
+    --accent-soft: #eaeef5;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  /* ── TOP BAR ─────────────────────────────────────────── */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: saturate(180%) blur(8px);
+    background: rgba(255,255,255,0.92);
+  }
+
+  .topbar-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    font-size: 12.5px;
+  }
+
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--ink);
+  }
+
+  .topbar-brand .dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .topbar-brand .label {
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+
+  .topbar-meta {
+    display: flex;
+    gap: 20px;
+    color: var(--muted);
+  }
+
+  .topbar-meta strong { color: var(--ink); font-weight: 600; }
+
+  /* ── CONTAINER ───────────────────────────────────────── */
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 56px;
+    align-items: end;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 48px;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 540px;
+  }
+
+  .hero-side {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    border-left: 2px solid var(--accent);
+    padding-left: 18px;
+  }
+
+  .hero-side p + p { margin-top: 10px; }
+
+  /* ── INFO GRID ────────────────────────────────────────── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--line);
+    margin-bottom: 64px;
+  }
+
+  .info-cell {
+    padding: 24px 26px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .info-cell:last-child { border-right: none; }
+
+  .info-cell .label {
+    font-size: 10.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .info-cell .heading {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .info-cell p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  .info-cell .meta {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  /* ── SECTION HEADER ───────────────────────────────────── */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-head h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .section-head .hint {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+
+  .section-head .hint kbd {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11px;
+    color: var(--ink);
+    margin: 0 1px;
+  }
+
+  /* ── TIMELINE ─────────────────────────────────────────── */
+  .timeline {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .timeline-track {
+    position: absolute;
+    left: 0; right: 0;
+    top: 19px;
+    height: 1px;
+    background: var(--line);
+    z-index: 0;
+  }
+
+  .timeline-progress {
+    position: absolute;
+    left: 0;
+    top: 19px;
+    height: 1px;
+    background: var(--accent);
+    z-index: 1;
+    transition: width 0.35s ease;
+  }
+
+  .timeline-nodes {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    position: relative;
+    z-index: 2;
+  }
+
+  .node {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .node-dot {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s ease;
+  }
+
+  .node:hover .node-dot {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .node[aria-selected="true"] .node-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  .node-label {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.3;
+    max-width: 110px;
+    transition: color 0.2s ease;
+  }
+
+  .node:hover .node-label,
+  .node[aria-selected="true"] .node-label {
+    color: var(--ink);
+  }
+
+  /* ── SESSION DETAIL ───────────────────────────────────── */
+  .session {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 48px;
+    min-height: 360px;
+  }
+
+  .session-header .number {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .session-header h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+
+  .session-timing {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+
+  .session-desc {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+  }
+
+  .why {
+    background: var(--warm-soft);
+    border-left: 2px solid var(--warm);
+    padding: 14px 18px;
+    margin-bottom: 22px;
+  }
+
+  .why-label {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--warm);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .why p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #4a3f2e;
+  }
+
+  .practice {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line-strong);
+  }
+
+  .practice strong { color: var(--ink); font-weight: 600; }
+
+  .session-aside .label {
+    font-size: 10.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .topics {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+
+  .topic {
+    font-size: 13px;
+    color: var(--ink);
+    padding: 7px 12px;
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    line-height: 1.4;
+  }
+
+  .nav-arrows {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .arrow {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .arrow:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .arrow.next { justify-content: flex-end; text-align: right; }
+  .arrow .glyph { font-size: 14px; opacity: 0.7; }
+
+  /* fade transition for session content */
+  .session.swapping .session-header,
+  .session.swapping .session-desc,
+  .session.swapping .why,
+  .session.swapping .practice,
+  .session.swapping .topics {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  .session-header, .session-desc, .why, .practice, .topics {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  /* ── PRINCIPLES ───────────────────────────────────────── */
+  .principles-section {
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .principles-section h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .principles-section .lead {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .principle {
+    padding: 22px 22px 22px 22px;
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+
+  .principle:last-child { border-right: none; }
+
+  .principle .num {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .principle h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  .principle p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .pagefoot {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .pagefoot a { color: var(--ink-soft); }
+
+  /* ── RESPONSIVE ───────────────────────────────────────── */
+  @media (max-width: 880px) {
+    .topbar-meta { display: none; }
+    .hero { grid-template-columns: 1fr; gap: 28px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .info-cell { border-right: none; border-bottom: 1px solid var(--line); }
+    .info-cell:last-child { border-bottom: none; }
+    .session { grid-template-columns: 1fr; gap: 28px; padding: 28px 24px; }
+    .principles { grid-template-columns: 1fr 1fr; }
+    .principle { border-bottom: 1px solid var(--line); }
+    .principle:nth-child(2) { border-right: none; }
+    .principle:nth-child(3), .principle:nth-child(4) { border-bottom: none; }
+    .node-label { font-size: 0; }
+    .node-dot { width: 32px; height: 32px; }
+    .timeline-track, .timeline-progress { top: 16px; }
+  }
+
+  @media (max-width: 540px) {
+    .wrap { padding: 32px 18px 56px; }
+    .topbar-inner { padding: 10px 18px; }
+    .principles { grid-template-columns: 1fr; }
+    .principle { border-right: none !important; border-bottom: 1px solid var(--line); }
+    .principle:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-brand">
+      <span class="dot"></span>
+      <span class="label">ÚSKVBL · Vzdělávací program</span>
+    </div>
+    <div class="topbar-meta">
+      <span><strong>7</strong> setkání</span>
+      <span><strong>90</strong> min</span>
+      <span>Start <strong>11. 5. 2026</strong></span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow">Série seminářů · 2026</div>
+      <h1>Umělá inteligence <em>pro odbornou praxi</em> ÚSKVBL</h1>
+      <p class="hero-subtitle">Sedm devadesátiminutových setkání pro zaměstnance Ústavu pro státní kontrolu veterinárních biopreparátů a léčiv. Postupná cesta od porozumění k praktickému využití AI v každodenní práci.</p>
+    </div>
+    <aside class="hero-side">
+      <p>Klíčový princip: účastníci přinášejí vlastní pracovní situace. Obsah seminářů se přizpůsobuje reálným potřebám týmu.</p>
+      <p>Mezi setkáními dostanete malý úkol k vyzkoušení; na začátku dalšího setkání krátce sdílíme zkušenost.</p>
+    </aside>
+  </section>
+
+  <!-- INFO PANELS -->
+  <section class="info-grid">
+    <div class="info-cell">
+      <div class="label">Příprava</div>
+      <div class="heading">Co si přinést na první setkání</div>
+      <p>2–3 konkrétní pracovní úkoly, kde trávíte hodně času, opakuje se rutina, nebo to jde dělat efektivněji. Nemusí mít s AI nic společného — jde o materiál z vaší praxe.</p>
+      <div class="meta">11. 5. 2026 od 13:00</div>
+    </div>
+    <div class="info-cell">
+      <div class="label">Co série je</div>
+      <div class="heading">…a co není</div>
+      <p><strong>Je:</strong> praktický přehled, co AI umí a neumí, a jak ji odpovědně využívat. Pracujeme s reálnými úkoly z vaší praxe.</p>
+      <p><strong>Není:</strong> kurz programování ani technický výcvik. Žádné předchozí znalosti nejsou potřeba.</p>
+    </div>
+    <div class="info-cell">
+      <div class="label">Vede</div>
+      <div class="heading">[Vaše jméno]</div>
+      <p>[Krátké představení, 1–2 věty o vaší zkušenosti s AI a vzděláváním.]</p>
+      <div class="meta">Dotazy předem: <a href="mailto:[email]">[váš email]</a></div>
+    </div>
+  </section>
+
+  <!-- SEMINARS -->
+  <div class="section-head">
+    <h2>Sedm setkání</h2>
+    <div class="hint">Procházejte šipkami <kbd>←</kbd> <kbd>→</kbd> nebo klikněte na číslo</div>
+  </div>
+
+  <div class="timeline" role="tablist" aria-label="Seznam seminářů">
+    <div class="timeline-track"></div>
+    <div class="timeline-progress" id="progress" style="width: 0%"></div>
+    <div class="timeline-nodes" id="nodes">
+      <!-- generated by JS -->
+    </div>
+  </div>
+
+  <article class="session" id="session" aria-live="polite">
+    <!-- generated by JS -->
+  </article>
+
+  <!-- PRINCIPLES -->
+  <section class="principles-section">
+    <h2>Průřezové principy</h2>
+    <p class="lead">Prostupují všemi semináři a tvoří společný rámec.</p>
+    <div class="principles">
+      <div class="principle">
+        <div class="num">01</div>
+        <h4>Člověk vždy rozhoduje</h4>
+        <p>AI je asistent, nikdy ne autorita. Konečná odpovědnost je vždy na kvalifikovaném pracovníkovi.</p>
+      </div>
+      <div class="principle">
+        <div class="num">02</div>
+        <h4>Ověřuj, pak používej</h4>
+        <p>Žádný AI výstup by neměl být použit bez ověření, zvláště pokud má odborné, právní nebo zdravotní důsledky.</p>
+      </div>
+      <div class="principle">
+        <div class="num">03</div>
+        <h4>Bezpečnost dat</h4>
+        <p>Citlivé dokumenty a neveřejné údaje vyžadují rozvahu v tom, jakým nástrojům je svěřujeme.</p>
+      </div>
+      <div class="principle">
+        <div class="num">04</div>
+        <h4>Učíme se společně</h4>
+        <p>Účastníci přinášejí vlastní zkušenosti. Obsah se přizpůsobuje tomu, co tým reálně potřebuje.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div>Vzdělávací program ÚSKVBL · 2026</div>
+    <div><a href="https://www.uskvbl.cz/cs/" target="_blank" rel="noopener">uskvbl.cz</a></div>
+  </footer>
+
+</div>
+
+<script>
+const sessions = [
+  {
+    n: 1,
+    short: "Orientace",
+    title: "Orientace v AI krajině a nastavení přístupu",
+    timing: "11. května 2026, 13:00 · 90 minut",
+    desc: "Co AI je a co není. Zasazení do kontextu: jak se AI začíná využívat v regulatorním prostředí v EU a co to znamená pro práci úřadu. Nastavení realistických očekávání a společná formulace toho, co od série účastníci potřebují.",
+    why: "Bez realistického nastavení očekávání hrozí dvě pasti: buď přehnaná důvěra v AI, nebo zbytečný strach a odmítání. Cílem je najít rovnováhu a zároveň zmapovat, kde účastníci vnímají největší potenciál ve své práci.",
+    topics: ["Co AI je a co není", "Kontext v EU regulaci", "Přístup k AI v odborné praxi", "Mapování potřeb účastníků"],
+    practice: "Účastníci formulují, kde ve svých pracovních procesech vidí příležitosti nebo trápení. Tento vstup formuje obsah dalších seminářů."
+  },
+  {
+    n: 2,
+    short: "Principy",
+    title: "Jak AI funguje: principy srozumitelně",
+    timing: "Termín bude upřesněn · 90 minut",
+    desc: "Srozumitelný výklad toho, jak jazykové modely pracují, proč někdy selhávají a co z toho plyne pro jejich používání v odborné praxi. Bez matematiky, s důrazem na praktické důsledky.",
+    why: "Kdo rozumí principům fungování nástroje, dokáže předvídat jeho selhání. V prostředí, kde se pracuje s přesnými daty a odbornými texty, je porozumění limitům AI podmínkou bezpečného použití.",
+    topics: ["Jak jazykové modely generují text", "Proč AI halucinuje", "Rozdíly mezi typy AI", "Limity a silné stránky"],
+    practice: "Živé ukázky, kde AI uspěje a kde selže na příkladech z praxe účastníků."
+  },
+  {
+    n: 3,
+    short: "Vyhledávání",
+    title: "AI-asistované vyhledávání a práce s informacemi",
+    timing: "Termín bude upřesněn · 90 minut",
+    desc: "Jak AI mění způsob vyhledávání a zpracování odborných informací. Přehled dostupných nástrojů, porovnání s klasickým vyhledáváním a klíčová otázka: jak ověřovat to, co AI najde.",
+    why: "Významná část odborné práce zahrnuje vyhledávání, čtení a vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud uživatel umí ověřit, že nalezené informace a zdroje jsou skutečné a relevantní.",
+    topics: ["Nástroje pro AI rešerše", "Práce s odbornou literaturou", "Ověřování zdrojů a citací", "Klasická vs. AI rešerše"],
+    practice: "Účastníci zkouší vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe."
+  },
+  {
+    n: 4,
+    short: "Kritika",
+    title: "Kritické myšlení při práci s AI",
+    timing: "Termín bude upřesněn · 90 minut",
+    desc: "Jak systematicky hodnotit důvěryhodnost toho, co AI vygeneruje. Rozpoznávání typických chyb, zkreslení a slepých míst. Praktický rámec pro ověřování výstupů v odborném kontextu.",
+    why: "AI výstupy vypadají přesvědčivě, i když obsahují chyby. V odborném prostředí, kde mají výstupy reálné důsledky, je schopnost kriticky posoudit AI odpověď stejně důležitá jako schopnost ji získat. Tento seminář buduje návyk, ne jen znalost.",
+    topics: ["Halucinace a chyby v praxi", "Jak ověřovat výstupy", "Zkreslení a slepá místa AI", "Kdy AI (ne)důvěřovat"],
+    practice: "Účastníci dostávají AI-generované výstupy a hledají v nich chyby. Následně sdílí strategie, které jim fungují v jejich konkrétní práci."
+  },
+  {
+    n: 5,
+    short: "Nástroje",
+    title: "Efektivní práce s AI nástroji",
+    timing: "Termín bude upřesněn · 90 minut",
+    desc: "Jak formulovat zadání, aby AI dávala užitečné výstupy. Práce s dokumenty, sumarizace, extrakce informací, překlady. Porovnání dostupných nástrojů a jejich vhodnosti pro různé typy úkolů.",
+    why: "Kvalita výstupu AI závisí z velké části na kvalitě zadání. Rozdíl mezi vágním a dobře strukturovaným zadáním může být rozdíl mezi nepoužitelným a vysoce užitečným výstupem.",
+    topics: ["Jak formulovat zadání (prompty)", "Práce s dokumenty a texty", "Přehled dostupných nástrojů", "Opakované úlohy a šablony"],
+    practice: "Účastníci přinesou konkrétní úkol ze své práce a společně hledáme nejlepší způsob, jak ho s AI řešit."
+  },
+  {
+    n: 6,
+    short: "Praxe",
+    title: "AI v pracovních procesech: od teorie k praxi",
+    timing: "Termín bude upřesněn · 90 minut",
+    desc: "Přenesení všeho dosavadního do konkrétních pracovních situací účastníků. Společná práce nad reálnými úkoly, sdílení zkušeností z mezidobí a hledání postupů, které fungují v praxi.",
+    why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o tom, aby každý účastník odešel s alespoň jedním konkrétním postupem, který reálně použije ve své práci.",
+    topics: ["Řešení reálných úkolů účastníků", "Sdílení zkušeností", "Co funguje a co ne", "Postupy pro opakované úlohy"],
+    practice: "Účastníci přinesou konkrétní pracovní situaci. Společně procházíme celý postup od zadání po ověření výstupu."
+  },
+  {
+    n: 7,
+    short: "Instituce",
+    title: "Jak AI zakotvit v instituci: pravidla, nástroje, kompetence",
+    timing: "Termín bude upřesněn · 90 minut",
+    desc: "Závěrečný seminář propojující dvě roviny: (1) co regulace AI (EU AI Act) znamená pro úřad a regulované subjekty, a (2) praktické kroky k tomu, aby AI v instituci fungovala odpovědně. Od výběru nástrojů přes bezpečnost dat po interní pravidla a budování kompetencí.",
+    why: "Bez institucionálního ukotvení zůstane AI individuálním experimentem jednotlivců. Jako regulatorní úřad navíc ÚSKVBL potřebuje rozumět regulaci AI, protože ovlivní i regulované subjekty.",
+    topics: ["Regulace AI v EU", "Bezpečnost dat při práci s AI", "Výběr nástrojů a licencí", "Interní pravidla a odpovědnosti", "Budování kompetencí do budoucna"],
+    practice: "Návrat k potřebám z prvního semináře. Co se za dobu série změnilo? Společná formulace prvních doporučení pro další kroky instituce."
+  }
+];
+
+const nodesEl = document.getElementById('nodes');
+const sessionEl = document.getElementById('session');
+const progressEl = document.getElementById('progress');
+let active = 0;
+
+// Build timeline nodes
+sessions.forEach((s, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'node';
+  btn.setAttribute('role', 'tab');
+  btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+  btn.setAttribute('aria-controls', 'session');
+  btn.innerHTML = `<span class="node-dot">${s.n}</span><span class="node-label">${s.short}</span>`;
+  btn.addEventListener('click', () => select(i));
+  nodesEl.appendChild(btn);
+});
+
+function render(i) {
+  const s = sessions[i];
+  sessionEl.innerHTML = `
+    <div>
+      <div class="session-header">
+        <div class="number">Seminář ${s.n} z 7</div>
+        <h3>${s.title}</h3>
+        <div class="session-timing">${s.timing}</div>
+      </div>
+      <p class="session-desc">${s.desc}</p>
+      <div class="why">
+        <div class="why-label">Proč je to důležité</div>
+        <p>${s.why}</p>
+      </div>
+      <p class="practice"><strong>Společná práce:</strong> ${s.practice}</p>
+    </div>
+    <aside class="session-aside">
+      <div class="label">Klíčová témata</div>
+      <div class="topics">
+        ${s.topics.map(t => `<div class="topic">${t}</div>`).join('')}
+      </div>
+      <div class="nav-arrows">
+        <button class="arrow prev" ${i === 0 ? 'disabled' : ''} aria-label="Předchozí seminář">
+          <span class="glyph">←</span><span>Předchozí</span>
+        </button>
+        <button class="arrow next" ${i === sessions.length - 1 ? 'disabled' : ''} aria-label="Další seminář">
+          <span>Další</span><span class="glyph">→</span>
+        </button>
+      </div>
+    </aside>
+  `;
+  sessionEl.querySelector('.arrow.prev')?.addEventListener('click', () => select(i - 1));
+  sessionEl.querySelector('.arrow.next')?.addEventListener('click', () => select(i + 1));
+}
+
+function select(i) {
+  if (i < 0 || i >= sessions.length || i === active) return;
+  active = i;
+  // update nodes
+  [...nodesEl.children].forEach((n, idx) => {
+    n.setAttribute('aria-selected', idx === i ? 'true' : 'false');
+  });
+  // update progress bar (center of dot at index i)
+  const pct = sessions.length === 1 ? 0 : (i / (sessions.length - 1)) * 100;
+  progressEl.style.width = pct + '%';
+  // swap content with subtle fade
+  sessionEl.classList.add('swapping');
+  setTimeout(() => {
+    render(i);
+    sessionEl.classList.remove('swapping');
+  }, 180);
+}
+
+// Initial render
+render(0);
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); select(active + 1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); select(active - 1); }
+});
+</script>
+</body>
+</html>
