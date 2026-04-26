@@ -135,7 +135,7 @@
   /* ── INFO GRID ────────────────────────────────────────── */
   .info-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 0;
     border: 1px solid var(--line);
     margin-bottom: 64px;
@@ -214,6 +214,14 @@
     font-size: 11px;
     color: var(--ink);
     margin: 0 1px;
+  }
+
+  .program-lead {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: -8px 0 28px;
+    max-width: 760px;
   }
 
   /* ── TIMELINE ─────────────────────────────────────────── */
@@ -367,56 +375,62 @@
     color: #4a3f2e;
   }
 
-  .practice {
-    font-size: 13px;
-    color: var(--ink-soft);
-    line-height: 1.6;
-    padding-top: 14px;
-    border-top: 1px dashed var(--line-strong);
+  .session-aside .aside-block + .aside-block {
+    margin-top: 24px;
   }
 
-  .practice strong { color: var(--ink); font-weight: 600; }
-
-  .session-aside .label {
+  .session-aside .aside-label {
     font-size: 10.5px;
     letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--muted);
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+  }
+
+  .session-aside .aside-block p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
   }
 
   .topics {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-bottom: 22px;
   }
 
-  .topic {
-    font-size: 13px;
+  .topics li {
+    font-size: 13.5px;
     color: var(--ink);
-    padding: 7px 12px;
-    background: var(--paper);
-    border-left: 2px solid var(--accent);
-    line-height: 1.4;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.55;
   }
 
-  .session-aside .practice {
-    margin-bottom: 0;
+  .topics li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 8px;
+    height: 1px;
+    background: var(--accent);
   }
 
   /* fade transition for session content */
   .session.swapping .session-header,
   .session.swapping .session-desc,
   .session.swapping .why,
-  .session.swapping .practice,
-  .session.swapping .topics {
+  .session.swapping .aside-block {
     opacity: 0;
     transform: translateY(4px);
   }
 
-  .session-header, .session-desc, .why, .practice, .topics {
+  .session-header, .session-desc, .why, .aside-block {
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
@@ -585,31 +599,23 @@
   <section class="hero">
     <div class="hero-eyebrow">Série seminářů · 2026</div>
     <h1>Umělá inteligence <em>pro odbornou praxi</em> ÚSKVBL</h1>
-    <p class="hero-subtitle">Postupná cesta od porozumění k praktickému využití AI v každodenní práci. Pro zaměstnance Ústavu pro státní kontrolu veterinárních biopreparátů a léčiv.</p>
+    <p class="hero-subtitle">Postupná cesta od porozumění k praktickému využití AI v každodenní práci.<br>Pro zaměstnance Ústavu pro státní kontrolu veterinárních biopreparátů a léčiv.</p>
   </section>
 
   <!-- INFO PANELS -->
   <section class="info-grid">
     <div class="info-cell">
-      <div class="label">Příprava</div>
-      <div class="heading">Co si přinést na první setkání</div>
-      <p>2–3 konkrétní pracovní úkoly, kde trávíte hodně času, opakuje se rutina, nebo to jde dělat efektivněji. Nemusí mít s AI nic společného — jde o materiál z vaší praxe.</p>
-      <div class="meta">
-        11. 5. 2026 od 13:00 · prezenčně<br>
-        Sídlo ÚSKVBL, Brno · místnost bude upřesněna
-      </div>
-    </div>
-    <div class="info-cell">
       <div class="label">Co série je</div>
       <div class="heading">…a co není</div>
       <p><strong>Je:</strong> praktický přehled, co AI umí a neumí, a jak ji odpovědně využívat. Pracujeme s reálnými úkoly z vaší praxe.</p>
-      <p><strong>Není:</strong> kurz programování ani technický výcvik. Žádné předchozí znalosti nejsou potřeba.</p>
+      <p><strong>Není:</strong> kurz programování ani technický výcvik.</p>
+      <p><strong>Pro koho:</strong> nejsou potřeba předchozí znalosti. Série je užitečná stejně pro někoho, kdo s AI začíná, jako pro toho, kdo ji už denně používá a chce ji v práci cíleně využít.</p>
     </div>
     <div class="info-cell">
       <div class="label">Princip</div>
       <div class="heading">Učíme se z vaší praxe</div>
       <p>Účastníci přinášejí vlastní pracovní situace; obsah se přizpůsobuje reálným potřebám týmu.</p>
-      <p>Mezi setkáními malý úkol k vyzkoušení, na začátku dalšího setkání krátce sdílíme zkušenost.</p>
+      <p>Před každým setkáním je drobný podnět k vyzkoušení nebo zamyšlení; jeho zadání najdete v detailu jednotlivých seminářů.</p>
     </div>
   </section>
 
@@ -618,6 +624,8 @@
     <h2>Program</h2>
     <div class="hint">Procházejte šipkami <kbd>←</kbd> <kbd>→</kbd> nebo klikněte na číslo</div>
   </div>
+
+  <p class="program-lead">Konkrétní zaměření programu odráží dubnovou anketu mezi účastníky. Promítají se do něj nejčastěji uváděné potřeby: vyhledávání v legislativě, sumarizace dlouhých textů, hodnocení dokumentace a šablonovitá agenda.</p>
 
   <div class="timeline" role="tablist" aria-label="Seznam seminářů">
     <div class="timeline-track"></div>
@@ -649,7 +657,7 @@
       <div class="principle">
         <div class="num">03</div>
         <h4>Bezpečnost dat</h4>
-        <p>Citlivé dokumenty a neveřejné údaje vyžadují rozvahu v tom, jakým nástrojům je svěřujeme.</p>
+        <p>Citlivé dokumenty a neveřejné údaje vyžadují rozvahu v tom, jakým nástrojům je svěřujeme. Téma rozvádí 7. seminář.</p>
       </div>
       <div class="principle">
         <div class="num">04</div>
@@ -688,9 +696,10 @@ const sessions = [
     title: "Orientace v AI krajině a nastavení přístupu",
     timing: "11. května 2026, 13:00 · 90 minut",
     desc: "Co AI je a co není. Zasazení do kontextu: jak se AI začíná využívat v regulatorním prostředí v EU a co to znamená pro práci úřadu. Nastavení realistických očekávání a společná formulace toho, co od série účastníci potřebují.",
-    why: "Bez realistického nastavení očekávání hrozí dvě pasti: buď přehnaná důvěra v AI, nebo zbytečný strach a odmítání. Cílem je najít rovnováhu a zároveň zmapovat, kde účastníci vnímají největší potenciál ve své práci.",
+    why: "Bez realistického nastavení očekávání hrozí dvě krajnosti: přehnaná důvěra v AI, nebo naopak neopodstatněná skepse. Cílem je najít rovnováhu a zároveň zmapovat, kde účastníci vnímají největší potenciál ve své práci.",
     topics: ["Co AI je a co není", "Kontext v EU regulaci", "Přístup k AI v odborné praxi", "Mapování potřeb účastníků"],
-    practice: "Účastníci formulují, kde ve svých pracovních procesech vidí příležitosti nebo trápení. Tento vstup formuje obsah dalších seminářů."
+    prep: "2–3 konkrétní pracovní úkoly z vaší praxe, kde trávíte hodně času, něco se opakuje, nebo byste rádi pracovali efektivněji. Nemusí se přímo týkat AI; jde o materiál, se kterým budeme společně pracovat.",
+    practice: "Účastníci formulují, kde ve svých pracovních procesech vidí příležitosti nebo úskalí. Tento vstup formuje obsah dalších seminářů."
   },
   {
     n: 2,
@@ -700,6 +709,7 @@ const sessions = [
     desc: "Srozumitelný výklad toho, jak jazykové modely pracují, proč někdy selhávají a co z toho plyne pro jejich používání v odborné praxi. Bez matematiky, s důrazem na praktické důsledky.",
     why: "Kdo rozumí principům fungování nástroje, dokáže předvídat jeho selhání. V prostředí, kde se pracuje s přesnými daty a odbornými texty, je porozumění limitům AI podmínkou bezpečného použití.",
     topics: ["Jak jazykové modely generují text", "Proč AI halucinuje", "Rozdíly mezi typy AI", "Limity a silné stránky"],
+    prep: "Bude upřesněno před setkáním.",
     practice: "Živé ukázky, kde AI uspěje a kde selže na příkladech z praxe účastníků."
   },
   {
@@ -709,7 +719,8 @@ const sessions = [
     timing: "Termín bude upřesněn · 90 minut",
     desc: "Jak AI mění způsob vyhledávání a zpracování odborných informací. Přehled dostupných nástrojů, porovnání s klasickým vyhledáváním a klíčová otázka: jak ověřovat to, co AI najde.",
     why: "Významná část odborné práce zahrnuje vyhledávání, čtení a vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud uživatel umí ověřit, že nalezené informace a zdroje jsou skutečné a relevantní.",
-    topics: ["Nástroje pro AI rešerše", "Práce s odbornou literaturou", "Ověřování zdrojů a citací", "Klasická vs. AI rešerše"],
+    topics: ["Nástroje pro AI rešerše", "Vyhledávání v legislativě a odborné literatuře", "Ověřování zdrojů a citací", "Klasická vs. AI rešerše"],
+    prep: "Bude upřesněno před setkáním.",
     practice: "Účastníci zkouší vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe."
   },
   {
@@ -720,7 +731,8 @@ const sessions = [
     desc: "Jak systematicky hodnotit důvěryhodnost toho, co AI vygeneruje. Rozpoznávání typických chyb, zkreslení a slepých míst. Praktický rámec pro ověřování výstupů v odborném kontextu.",
     why: "AI výstupy vypadají přesvědčivě, i když obsahují chyby. V odborném prostředí, kde mají výstupy reálné důsledky, je schopnost kriticky posoudit AI odpověď stejně důležitá jako schopnost ji získat. Tento seminář buduje návyk, ne jen znalost.",
     topics: ["Halucinace a chyby v praxi", "Jak ověřovat výstupy", "Zkreslení a slepá místa AI", "Kdy AI (ne)důvěřovat"],
-    practice: "Účastníci dostávají AI-generované výstupy a hledají v nich chyby. Následně sdílí strategie, které jim fungují v jejich konkrétní práci."
+    prep: "Bude upřesněno před setkáním.",
+    practice: "Účastníci dostávají AI-generované výstupy a hledají v nich chyby. Následně sdílejí strategie, které jim fungují v jejich konkrétní práci."
   },
   {
     n: 5,
@@ -729,7 +741,8 @@ const sessions = [
     timing: "Termín bude upřesněn · 90 minut",
     desc: "Jak formulovat zadání, aby AI dávala užitečné výstupy. Práce s dokumenty, sumarizace, extrakce informací, překlady. Porovnání dostupných nástrojů a jejich vhodnosti pro různé typy úkolů.",
     why: "Kvalita výstupu AI závisí z velké části na kvalitě zadání. Rozdíl mezi vágním a dobře strukturovaným zadáním může být rozdíl mezi nepoužitelným a vysoce užitečným výstupem.",
-    topics: ["Jak formulovat zadání (prompty)", "Práce s dokumenty a texty", "Přehled dostupných nástrojů", "Opakované úlohy a šablony"],
+    topics: ["Jak formulovat zadání (prompty)", "Práce s dokumenty a texty", "Porovnání nástrojů (ChatGPT, Claude, Gemini, Copilot)", "Opakované úlohy a šablony"],
+    prep: "Bude upřesněno před setkáním.",
     practice: "Účastníci přinesou konkrétní úkol ze své práce a společně hledáme nejlepší způsob, jak ho s AI řešit."
   },
   {
@@ -740,6 +753,7 @@ const sessions = [
     desc: "Přenesení všeho dosavadního do konkrétních pracovních situací účastníků. Společná práce nad reálnými úkoly, sdílení zkušeností z mezidobí a hledání postupů, které fungují v praxi.",
     why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o tom, aby každý účastník odešel s alespoň jedním konkrétním postupem, který reálně použije ve své práci.",
     topics: ["Řešení reálných úkolů účastníků", "Sdílení zkušeností", "Co funguje a co ne", "Postupy pro opakované úlohy"],
+    prep: "Bude upřesněno před setkáním.",
     practice: "Účastníci přinesou konkrétní pracovní situaci. Společně procházíme celý postup od zadání po ověření výstupu."
   },
   {
@@ -749,7 +763,8 @@ const sessions = [
     timing: "Termín bude upřesněn · 90 minut",
     desc: "Závěrečný seminář propojující dvě roviny: (1) co regulace AI (EU AI Act) znamená pro úřad a regulované subjekty, a (2) praktické kroky k tomu, aby AI v instituci fungovala odpovědně. Od výběru nástrojů přes bezpečnost dat po interní pravidla a budování kompetencí.",
     why: "Bez institucionálního ukotvení zůstane AI individuálním experimentem jednotlivců. Jako regulatorní úřad navíc ÚSKVBL potřebuje rozumět regulaci AI, protože ovlivní i regulované subjekty.",
-    topics: ["Regulace AI v EU", "Bezpečnost dat při práci s AI", "Výběr nástrojů a licencí", "Interní pravidla a odpovědnosti", "Budování kompetencí do budoucna"],
+    topics: ["Regulace AI v EU", "Bezpečnost dat při práci s AI", "Uzavřené vs. veřejné nástroje, licence", "Interní pravidla a odpovědnosti", "Budování kompetencí do budoucna"],
+    prep: "Bude upřesněno před setkáním.",
     practice: "Návrat k potřebám z prvního semináře. Co se za dobu série změnilo? Společná formulace prvních doporučení pro další kroky instituce."
   }
 ];
@@ -778,7 +793,7 @@ function render(i) {
       <div class="session-header">
         <div class="number">Seminář ${s.n}</div>
         <h3>${s.title}</h3>
-        <div class="session-timing">${s.timing}</div>
+        <div class="session-timing">${s.timing}<br>Sídlo ÚSKVBL, Brno · místnost bude upřesněna</div>
       </div>
       <p class="session-desc">${s.desc}</p>
       <div class="why">
@@ -787,11 +802,21 @@ function render(i) {
       </div>
     </div>
     <aside class="session-aside">
-      <div class="label">Klíčová témata</div>
-      <div class="topics">
-        ${s.topics.map(t => `<div class="topic">${t}</div>`).join('')}
+      <div class="aside-block">
+        <div class="aside-label">Klíčová témata</div>
+        <ul class="topics">
+          ${s.topics.map(t => `<li>${t}</li>`).join('')}
+        </ul>
       </div>
-      <p class="practice"><strong>Společná práce:</strong> ${s.practice}</p>
+      ${s.prep ? `
+      <div class="aside-block">
+        <div class="aside-label">Příprava na setkání</div>
+        <p>${s.prep}</p>
+      </div>` : ''}
+      <div class="aside-block">
+        <div class="aside-label">Společná práce</div>
+        <p>${s.practice}</p>
+      </div>
     </aside>
   `;
 }
