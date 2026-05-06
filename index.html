@@ -41,51 +41,6 @@
   a { color: var(--accent); text-decoration: none; }
   a:hover { color: var(--accent-hover); text-decoration: underline; }
 
-  /* ── TOP BAR ─────────────────────────────────────────── */
-  .topbar {
-    border-bottom: 1px solid var(--line);
-    background: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    backdrop-filter: saturate(180%) blur(8px);
-    background: rgba(255,255,255,0.92);
-  }
-
-  .topbar-inner {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 12px 32px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
-    font-size: 12.5px;
-  }
-
-  .topbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    color: var(--ink);
-  }
-
-  .topbar-brand .dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-  }
-
-  .topbar-brand .label {
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-size: 11px;
-  }
-
   /* ── CONTAINER ───────────────────────────────────────── */
   .wrap {
     max-width: 1080px;
@@ -96,7 +51,6 @@
   /* ── HERO ─────────────────────────────────────────────── */
   .hero {
     padding-bottom: 40px;
-    border-bottom: 1px solid var(--line);
     margin-bottom: 48px;
   }
 
@@ -132,12 +86,84 @@
     max-width: 640px;
   }
 
+  .next-session {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 28px;
+    padding: 14px 20px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .next-session:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .next-session-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .next-session-date {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+
+  .next-session-title {
+    color: var(--muted);
+    font-size: 14px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .next-session-arrow {
+    color: var(--accent);
+    font-size: 18px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .next-session:hover .next-session-arrow {
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 640px) {
+    .next-session {
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      padding: 12px 16px;
+    }
+    .next-session-title {
+      flex-basis: 100%;
+      order: 3;
+    }
+    .next-session-arrow {
+      order: 2;
+      margin-left: auto;
+    }
+  }
+
   /* ── INFO GRID ────────────────────────────────────────── */
   .info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0;
-    border: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     margin-bottom: 64px;
   }
 
@@ -187,8 +213,6 @@
     justify-content: space-between;
     gap: 24px;
     margin-bottom: 28px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--line);
   }
 
   .section-head h2 {
@@ -198,22 +222,37 @@
     letter-spacing: -0.3px;
   }
 
-  .section-head .hint {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.3px;
+  .nav-buttons {
+    display: flex;
+    gap: 8px;
   }
 
-  .section-head .hint kbd {
-    font-family: 'Inter', sans-serif;
-    background: var(--paper);
+  .nav-btn {
+    width: 34px;
+    height: 34px;
     border: 1px solid var(--line-strong);
-    border-bottom-width: 2px;
-    border-radius: 3px;
-    padding: 1px 5px;
-    font-size: 11px;
+    background: var(--paper);
+    border-radius: 50%;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 1;
     color: var(--ink);
-    margin: 0 1px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .nav-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 
   .program-lead {
@@ -436,9 +475,7 @@
 
   /* ── PRINCIPLES ───────────────────────────────────────── */
   .principles-section {
-    margin-top: 80px;
-    padding-top: 40px;
-    border-top: 1px solid var(--line);
+    margin-top: 56px;
   }
 
   .principles-section h2 {
@@ -496,17 +533,14 @@
   /* ── FACILITATOR ──────────────────────────────────────── */
   .facilitator {
     margin-top: 56px;
-    border: 1px solid var(--line);
     display: grid;
     grid-template-columns: 1.6fr 1fr;
+    gap: 32px;
   }
 
   .facilitator-cell {
-    padding: 24px 26px;
-    border-right: 1px solid var(--line);
+    padding: 0;
   }
-
-  .facilitator-cell:last-child { border-right: none; }
 
   .facilitator .label {
     font-size: 10.5px;
@@ -539,22 +573,6 @@
     word-break: break-word;
   }
 
-  /* ── FOOTER ───────────────────────────────────────────── */
-  .pagefoot {
-    margin-top: 56px;
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12.5px;
-    color: var(--muted);
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .pagefoot a { color: var(--ink-soft); }
-
   /* ── RESPONSIVE ───────────────────────────────────────── */
   @media (max-width: 880px) {
     .info-grid { grid-template-columns: 1fr; }
@@ -566,8 +584,6 @@
     .principle:nth-child(2) { border-right: none; }
     .principle:nth-child(3), .principle:nth-child(4) { border-bottom: none; }
     .facilitator { grid-template-columns: 1fr; }
-    .facilitator-cell { border-right: none; border-bottom: 1px solid var(--line); }
-    .facilitator-cell:last-child { border-bottom: none; }
     .node-label { font-size: 0; }
     .node-dot { width: 32px; height: 32px; }
     .timeline-track, .timeline-progress { top: 16px; }
@@ -575,7 +591,6 @@
 
   @media (max-width: 540px) {
     .wrap { padding: 32px 18px 56px; }
-    .topbar-inner { padding: 10px 18px; }
     .principles { grid-template-columns: 1fr; }
     .principle { border-right: none !important; border-bottom: 1px solid var(--line); }
     .principle:last-child { border-bottom: none; }
@@ -584,15 +599,6 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="topbar-brand">
-      <span class="dot"></span>
-      <span class="label">ÚSKVBL · Vzdělávací program</span>
-    </div>
-  </div>
-</div>
-
 <div class="wrap">
 
   <!-- HERO -->
@@ -600,6 +606,12 @@
     <div class="hero-eyebrow">Série seminářů · 2026</div>
     <h1>Umělá inteligence <em>pro odbornou praxi</em> ÚSKVBL</h1>
     <p class="hero-subtitle">Postupná cesta od porozumění k&nbsp;praktickému využití AI v&nbsp;každodenní práci.<br>Pro zaměstnance Ústavu pro státní kontrolu veterinárních biopreparátů a&nbsp;léčiv.</p>
+    <a class="next-session" id="next-session" href="#program" hidden>
+      <span class="next-session-label">Nejbližší setkání</span>
+      <span class="next-session-date" id="next-session-date"></span>
+      <span class="next-session-title" id="next-session-title"></span>
+      <span class="next-session-arrow" aria-hidden="true">→</span>
+    </a>
   </section>
 
   <!-- INFO PANELS -->
@@ -609,23 +621,26 @@
       <div class="heading">…a&nbsp;co není</div>
       <p><strong>Je:</strong> praktický přehled, co AI umí a&nbsp;neumí, a&nbsp;jak ji odpovědně využívat. Pracujeme s&nbsp;reálnými úkoly z&nbsp;vaší praxe.</p>
       <p><strong>Není:</strong> kurz programování ani technický výcvik.</p>
-      <p><strong>Pro koho:</strong> nejsou potřeba předchozí znalosti. Série je užitečná stejně pro někoho, kdo s&nbsp;AI začíná, jako pro toho, kdo ji už denně používá a&nbsp;chce ji v&nbsp;práci cíleně využít.</p>
+      <p><strong>Pro koho:</strong> nejsou potřeba předchozí znalosti. Série je užitečná stejně, ať s&nbsp;AI začínáte, nebo ji už denně používáte a&nbsp;chcete ji v&nbsp;práci cíleně využít.</p>
     </div>
     <div class="info-cell">
       <div class="label">Princip</div>
       <div class="heading">Učíme se z&nbsp;vaší praxe</div>
-      <p>Účastníci přinášejí vlastní pracovní situace; obsah se přizpůsobuje reálným potřebám týmu.</p>
+      <p>Přinášíte vlastní pracovní situace; obsah se přizpůsobuje reálným potřebám vašeho týmu.</p>
       <p>Před každým setkáním je drobný podnět k&nbsp;vyzkoušení nebo zamyšlení; jeho zadání najdete v&nbsp;detailu jednotlivých seminářů.</p>
     </div>
   </section>
 
   <!-- SEMINARS -->
-  <div class="section-head">
+  <div class="section-head" id="program">
     <h2>Program</h2>
-    <div class="hint">Procházejte šipkami <kbd>←</kbd> <kbd>→</kbd> nebo klikněte na číslo</div>
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prev-btn" type="button" aria-label="Předchozí seminář">‹</button>
+      <button class="nav-btn" id="next-btn" type="button" aria-label="Následující seminář">›</button>
+    </div>
   </div>
 
-  <p class="program-lead">Konkrétní zaměření programu odráží dubnovou anketu mezi účastníky. Promítají se do něj nejčastěji uváděné potřeby: vyhledávání v&nbsp;legislativě, sumarizace dlouhých textů, hodnocení dokumentace a&nbsp;šablonovitá agenda.</p>
+  <p class="program-lead">Konkrétní zaměření programu odráží dubnovou anketu mezi vámi. Promítají se do něj nejčastěji uváděné potřeby: vyhledávání v&nbsp;legislativě, sumarizace dlouhých textů, hodnocení dokumentace a&nbsp;šablonovitá agenda.</p>
 
   <div class="timeline" role="tablist" aria-label="Seznam seminářů">
     <div class="timeline-track"></div>
@@ -662,7 +677,7 @@
       <div class="principle">
         <div class="num">04</div>
         <h4>Učíme se společně</h4>
-        <p>Účastníci přinášejí vlastní zkušenosti. Obsah se přizpůsobuje tomu, co tým reálně potřebuje.</p>
+        <p>Přinášíte vlastní zkušenosti. Obsah se přizpůsobuje tomu, co váš tým reálně potřebuje.</p>
       </div>
     </div>
   </section>
@@ -681,11 +696,6 @@
     </div>
   </section>
 
-  <footer class="pagefoot">
-    <div>Vzdělávací program ÚSKVBL · 2026</div>
-    <div><a href="https://www.uskvbl.cz/cs/" target="_blank" rel="noopener">uskvbl.cz</a></div>
-  </footer>
-
 </div>
 
 <script>
@@ -694,72 +704,79 @@ const sessions = [
     n: 1,
     short: "Orientace",
     title: "Orientace v&nbsp;AI krajině a&nbsp;nastavení přístupu",
+    date: "2026-05-11",
     timing: "11.&nbsp;května 2026, 13:00 · 90&nbsp;minut",
-    desc: "Co AI je a&nbsp;co není. Zasazení do kontextu: jak se AI začíná využívat v&nbsp;regulatorním prostředí v&nbsp;EU a&nbsp;co to znamená pro práci úřadu. Nastavení realistických očekávání a&nbsp;společná formulace toho, co od série účastníci potřebují.",
-    why: "Bez realistického nastavení očekávání hrozí dvě krajnosti: přehnaná důvěra v&nbsp;AI, nebo naopak neopodstatněná skepse. Cílem je najít rovnováhu a&nbsp;zároveň zmapovat, kde účastníci vnímají největší potenciál ve své práci.",
-    topics: ["Co AI je a&nbsp;co není", "Kontext v&nbsp;EU regulaci", "Přístup k&nbsp;AI v&nbsp;odborné praxi", "Mapování potřeb účastníků"],
+    desc: "Co AI je a&nbsp;co není. Zasazení do kontextu: jak se AI začíná využívat v&nbsp;regulatorním prostředí v&nbsp;EU a&nbsp;co to znamená pro práci úřadu. Nastavení realistických očekávání a&nbsp;společná formulace toho, co od série potřebujete.",
+    why: "Bez realistického nastavení očekávání hrozí dvě krajnosti: přehnaná důvěra v&nbsp;AI, nebo naopak neopodstatněná skepse. Cílem je najít rovnováhu a&nbsp;zároveň zmapovat, kde vnímáte největší potenciál ve své práci.",
+    topics: ["Co AI je a&nbsp;co není", "Kontext v&nbsp;EU regulaci", "Přístup k&nbsp;AI v&nbsp;odborné praxi", "Mapování vašich potřeb"],
     prep: "2–3 konkrétní pracovní úkoly z&nbsp;vaší praxe, kde trávíte hodně času, něco se opakuje, nebo byste rádi pracovali efektivněji. Nemusí se přímo týkat AI; jde o&nbsp;materiál, se kterým budeme společně pracovat.",
-    practice: "Účastníci formulují, kde ve svých pracovních procesech vidí příležitosti nebo úskalí. Tento vstup formuje obsah dalších seminářů."
+    practice: "Formulujete, kde ve svých pracovních procesech vidíte příležitosti nebo úskalí. Tento vstup formuje obsah dalších seminářů."
   },
   {
     n: 2,
     short: "Principy",
     title: "Jak AI funguje: principy srozumitelně",
-    timing: "Termín bude upřesněn · 90&nbsp;minut",
+    date: "2026-05-25",
+    timing: "25.&nbsp;května 2026, 13:00 · 90&nbsp;minut",
     desc: "Srozumitelný výklad toho, jak jazykové modely pracují, proč někdy selhávají a&nbsp;co z&nbsp;toho plyne pro jejich používání v&nbsp;odborné praxi. Bez matematiky, s&nbsp;důrazem na praktické důsledky.",
     why: "Kdo rozumí principům fungování nástroje, dokáže předvídat jeho selhání. V&nbsp;prostředí, kde se pracuje s&nbsp;přesnými daty a&nbsp;odbornými texty, je porozumění limitům AI podmínkou bezpečného použití.",
     topics: ["Jak jazykové modely generují text", "Proč AI halucinuje", "Rozdíly mezi typy AI", "Limity a&nbsp;silné stránky"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Živé ukázky, kde AI uspěje a&nbsp;kde selže na příkladech z&nbsp;praxe účastníků."
+    practice: "Živé ukázky, kde AI uspěje a&nbsp;kde selže na příkladech z&nbsp;vaší praxe."
   },
   {
     n: 3,
     short: "Vyhledávání",
     title: "AI-asistované vyhledávání a&nbsp;práce s&nbsp;informacemi",
-    timing: "Termín bude upřesněn · 90&nbsp;minut",
+    date: "2026-06-01",
+    timing: "1.&nbsp;června 2026, 13:00 · 90&nbsp;minut",
     desc: "Jak AI mění způsob vyhledávání a&nbsp;zpracování odborných informací. Přehled dostupných nástrojů, porovnání s&nbsp;klasickým vyhledáváním a&nbsp;klíčová otázka: jak ověřovat to, co AI najde.",
-    why: "Významná část odborné práce zahrnuje vyhledávání, čtení a&nbsp;vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud uživatel umí ověřit, že nalezené informace a&nbsp;zdroje jsou skutečné a&nbsp;relevantní.",
+    why: "Významná část odborné práce zahrnuje vyhledávání, čtení a&nbsp;vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud umíte ověřit, že nalezené informace a&nbsp;zdroje jsou skutečné a&nbsp;relevantní.",
     topics: ["Nástroje pro AI rešerše", "Vyhledávání v&nbsp;legislativě a&nbsp;odborné literatuře", "Ověřování zdrojů a&nbsp;citací", "Klasická vs. AI rešerše"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Účastníci zkouší vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe."
+    practice: "Zkoušíte vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe."
   },
   {
     n: 4,
     short: "Kritika",
     title: "Kritické myšlení při práci s&nbsp;AI",
+    date: null,
     timing: "Termín bude upřesněn · 90&nbsp;minut",
     desc: "Jak systematicky hodnotit důvěryhodnost toho, co AI vygeneruje. Rozpoznávání typických chyb, zkreslení a&nbsp;slepých míst. Praktický rámec pro ověřování výstupů v&nbsp;odborném kontextu.",
     why: "AI výstupy vypadají přesvědčivě, i&nbsp;když obsahují chyby. V&nbsp;odborném prostředí, kde mají výstupy reálné důsledky, je schopnost kriticky posoudit AI odpověď stejně důležitá jako schopnost ji získat. Tento seminář buduje návyk, ne jen znalost.",
     topics: ["Halucinace a&nbsp;chyby v&nbsp;praxi", "Jak ověřovat výstupy", "Zkreslení a&nbsp;slepá místa AI", "Kdy AI (ne)důvěřovat"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Účastníci dostávají AI-generované výstupy a&nbsp;hledají v&nbsp;nich chyby. Následně sdílejí strategie, které jim fungují v&nbsp;jejich konkrétní práci."
+    practice: "Dostáváte AI-generované výstupy a&nbsp;hledáte v&nbsp;nich chyby. Následně sdílíte strategie, které vám fungují ve vaší konkrétní práci."
   },
   {
     n: 5,
     short: "Nástroje",
     title: "Efektivní práce s&nbsp;AI nástroji",
+    date: null,
     timing: "Termín bude upřesněn · 90&nbsp;minut",
     desc: "Jak formulovat zadání, aby AI dávala užitečné výstupy. Práce s&nbsp;dokumenty, sumarizace, extrakce informací, překlady. Porovnání dostupných nástrojů a&nbsp;jejich vhodnosti pro různé typy úkolů.",
     why: "Kvalita výstupu AI závisí z&nbsp;velké části na kvalitě zadání. Rozdíl mezi vágním a&nbsp;dobře strukturovaným zadáním může být rozdíl mezi nepoužitelným a&nbsp;vysoce užitečným výstupem.",
     topics: ["Jak formulovat zadání (prompty)", "Práce s&nbsp;dokumenty a&nbsp;texty", "Porovnání nástrojů (ChatGPT, Claude, Gemini, Copilot)", "Opakované úlohy a&nbsp;šablony"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Účastníci přinesou konkrétní úkol ze své práce a&nbsp;společně hledáme nejlepší způsob, jak ho s&nbsp;AI řešit."
+    practice: "Přinesete konkrétní úkol ze své práce a&nbsp;společně hledáme nejlepší způsob, jak ho s&nbsp;AI řešit."
   },
   {
     n: 6,
     short: "Praxe",
     title: "AI v&nbsp;pracovních procesech: od teorie k&nbsp;praxi",
+    date: null,
     timing: "Termín bude upřesněn · 90&nbsp;minut",
-    desc: "Přenesení všeho dosavadního do konkrétních pracovních situací účastníků. Společná práce nad reálnými úkoly, sdílení zkušeností z&nbsp;mezidobí a&nbsp;hledání postupů, které fungují v&nbsp;praxi.",
-    why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o&nbsp;tom, aby každý účastník odešel s&nbsp;alespoň jedním konkrétním postupem, který reálně použije ve své práci.",
-    topics: ["Řešení reálných úkolů účastníků", "Sdílení zkušeností", "Co funguje a&nbsp;co ne", "Postupy pro opakované úlohy"],
+    desc: "Přenesení všeho dosavadního do vašich konkrétních pracovních situací. Společná práce nad reálnými úkoly, sdílení zkušeností z&nbsp;mezidobí a&nbsp;hledání postupů, které fungují v&nbsp;praxi.",
+    why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o&nbsp;tom, abyste odešli s&nbsp;alespoň jedním konkrétním postupem, který reálně použijete ve své práci.",
+    topics: ["Řešení vašich reálných úkolů", "Sdílení zkušeností", "Co funguje a&nbsp;co ne", "Postupy pro opakované úlohy"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Účastníci přinesou konkrétní pracovní situaci. Společně procházíme celý postup od zadání po ověření výstupu."
+    practice: "Přinesete konkrétní pracovní situaci. Společně procházíme celý postup od zadání po ověření výstupu."
   },
   {
     n: 7,
     short: "Instituce",
     title: "Jak AI zakotvit v&nbsp;instituci: pravidla, nástroje, kompetence",
+    date: null,
     timing: "Termín bude upřesněn · 90&nbsp;minut",
     desc: "Závěrečný seminář propojující dvě roviny: (1) co regulace AI (EU AI Act) znamená pro úřad a&nbsp;regulované subjekty, a&nbsp;(2) praktické kroky k&nbsp;tomu, aby AI v&nbsp;instituci fungovala odpovědně. Od výběru nástrojů přes bezpečnost dat po interní pravidla a&nbsp;budování kompetencí.",
     why: "Bez institucionálního ukotvení zůstane AI individuálním experimentem jednotlivců. Jako regulatorní úřad navíc ÚSKVBL potřebuje rozumět regulaci AI, protože ovlivní i&nbsp;regulované subjekty.",
@@ -772,7 +789,17 @@ const sessions = [
 const nodesEl = document.getElementById('nodes');
 const sessionEl = document.getElementById('session');
 const progressEl = document.getElementById('progress');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
 let active = 0;
+
+prevBtn.addEventListener('click', () => select(active - 1));
+nextBtn.addEventListener('click', () => select(active + 1));
+
+function updateNavButtons() {
+  prevBtn.disabled = active === 0;
+  nextBtn.disabled = active === sessions.length - 1;
+}
 
 // Build timeline nodes
 sessions.forEach((s, i) => {
@@ -793,7 +820,7 @@ function render(i) {
       <div class="session-header">
         <div class="number">Seminář ${s.n}</div>
         <h3>${s.title}</h3>
-        <div class="session-timing">${s.timing}<br>Sídlo ÚSKVBL, Brno · místnost bude upřesněna</div>
+        <div class="session-timing">${s.timing}<br>Sídlo ÚSKVBL, Brno · zasedací místnost ústavu</div>
       </div>
       <p class="session-desc">${s.desc}</p>
       <div class="why">
@@ -831,6 +858,7 @@ function select(i) {
   // update progress bar (center of dot at index i)
   const pct = sessions.length === 1 ? 0 : (i / (sessions.length - 1)) * 100;
   progressEl.style.width = pct + '%';
+  updateNavButtons();
   // swap content with subtle fade
   sessionEl.classList.add('swapping');
   setTimeout(() => {
@@ -841,6 +869,24 @@ function select(i) {
 
 // Initial render
 render(0);
+updateNavButtons();
+
+// Highlight nejbližšího setkání v hero
+(function highlightNextSession() {
+  const nextEl = document.getElementById('next-session');
+  if (!nextEl) return;
+  const months = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
+  const today = new Date();
+  const todayIso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  const idx = sessions.findIndex(s => s.date && s.date >= todayIso);
+  if (idx === -1) return;
+  const s = sessions[idx];
+  const [y, m, d] = s.date.split('-').map(Number);
+  document.getElementById('next-session-date').innerHTML = `${d}. ${months[m - 1]} ${y}`;
+  document.getElementById('next-session-title').innerHTML = `Seminář ${s.n} · ${s.title}`;
+  nextEl.hidden = false;
+  nextEl.addEventListener('click', () => select(idx));
+})();
 
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
