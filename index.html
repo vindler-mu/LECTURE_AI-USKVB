@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
 <title>AI pro ÚSKVBL – Série seminářů</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,9 +17,9 @@
     --line: #e3e0d8;
     --line-strong: #c8c3b6;
     --muted: #6b6f76;
-    --accent: #1d3557;
-    --accent-hover: #2a4a73;
-    --accent-soft: #eaeef5;
+    --accent: #3d4451;
+    --accent-hover: #2c3038;
+    --accent-soft: #ecedef;
     --warm: #b5651d;
     --warm-soft: #fbf3e7;
     --radius: 4px;
@@ -355,9 +356,9 @@
     border: 1px solid var(--line);
     background: var(--bg);
     padding: 36px 40px;
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
     min-height: 360px;
   }
 
@@ -382,28 +383,78 @@
   .session-timing {
     font-size: 13px;
     color: var(--muted);
-    margin-bottom: 22px;
+  }
+
+  /* Topics bar (one line, before annotation) */
+  .topics-bar {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .topics-bar-label {
+    font-size: 10.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .topics-bar-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .topics-bar-items li:not(:last-child)::after {
+    content: "·";
+    color: var(--accent);
+    margin: 0 10px;
+    font-weight: 700;
   }
 
   .session-desc {
     font-size: 14.5px;
     line-height: 1.65;
     color: var(--ink-soft);
-    margin-bottom: 22px;
   }
 
   .why {
-    background: var(--warm-soft);
-    border-left: 2px solid var(--warm);
+    background: var(--accent-soft);
+    border-left: 2px solid var(--accent);
     padding: 14px 18px;
-    margin-bottom: 22px;
+  }
+
+  /* Bottom: 3-column grid */
+  .session-bottom {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .aside-placeholder {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
   }
 
   .why-label {
     font-size: 10.5px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--warm);
+    color: var(--accent);
     font-weight: 600;
     margin-bottom: 4px;
   }
@@ -411,14 +462,10 @@
   .why p {
     font-size: 13.5px;
     line-height: 1.6;
-    color: #4a3f2e;
+    color: var(--ink);
   }
 
-  .session-aside .aside-block + .aside-block {
-    margin-top: 24px;
-  }
-
-  .session-aside .aside-label {
+  .aside-label {
     font-size: 10.5px;
     letter-spacing: 1.8px;
     text-transform: uppercase;
@@ -427,7 +474,7 @@
     margin-bottom: 10px;
   }
 
-  .session-aside .aside-block p {
+  .aside-block p {
     font-size: 13px;
     color: var(--ink-soft);
     line-height: 1.6;
@@ -460,16 +507,145 @@
     background: var(--accent);
   }
 
+  /* materials buttons — 2-column grid */
+  .session-materials {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* materials row spans full width below 3-col bottom */
+  .session-materials-row {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .material-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    border-radius: var(--radius);
+    color: var(--ink);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    font-weight: 500;
+  }
+
+  .material-btn::after {
+    content: "↗";
+    color: var(--muted);
+    font-size: 11px;
+    margin-left: auto;
+  }
+
+  .material-btn:hover {
+    border-color: var(--accent);
+    background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .material-btn:hover::after {
+    color: var(--accent);
+  }
+
+  /* toolkit (full-width, neutral) */
+  .toolkit {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .toolkit li {
+    display: block;
+  }
+
+  .toolkit a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    border-radius: var(--radius);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .toolkit a::after {
+    content: "↗";
+    color: var(--muted);
+    font-size: 11px;
+    margin-left: auto;
+  }
+
+  .toolkit a:hover {
+    border-color: var(--accent);
+    background: var(--paper);
+    text-decoration: none;
+  }
+
+  .toolkit a:hover::after {
+    color: var(--accent);
+  }
+
+  /* second label inside same aside-block */
+  .aside-label-secondary {
+    margin-top: 18px;
+  }
+
+  /* series-wide resources (slides) */
+  .series-resources {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    margin: -8px 0 28px;
+    font-size: 13.5px;
+  }
+
+  .resources-label {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .resources-link {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .resources-placeholder {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 13px;
+  }
+
   /* fade transition for session content */
-  .session.swapping .session-header,
-  .session.swapping .session-desc,
-  .session.swapping .why,
-  .session.swapping .aside-block {
+  .session.swapping > * {
     opacity: 0;
     transform: translateY(4px);
   }
 
-  .session-header, .session-desc, .why, .aside-block {
+  .session > * {
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
@@ -567,6 +743,13 @@
 
   .facilitator-cell p + p { margin-top: 8px; }
 
+  .facilitator-note {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.55;
+  }
+
   .facilitator-contact {
     font-size: 14px;
     color: var(--ink);
@@ -578,7 +761,9 @@
     .info-grid { grid-template-columns: 1fr; }
     .info-cell { border-right: none; border-bottom: 1px solid var(--line); }
     .info-cell:last-child { border-bottom: none; }
-    .session { grid-template-columns: 1fr; gap: 28px; padding: 28px 24px; }
+    .session { padding: 28px 24px; }
+    .session-bottom { grid-template-columns: 1fr; gap: 24px; }
+    .session-materials { grid-template-columns: 1fr; }
     .principles { grid-template-columns: 1fr 1fr; }
     .principle { border-bottom: 1px solid var(--line); }
     .principle:nth-child(2) { border-right: none; }
@@ -640,7 +825,12 @@
     </div>
   </div>
 
-  <p class="program-lead">Konkrétní zaměření programu odráží dubnovou anketu mezi vámi. Promítají se do něj nejčastěji uváděné potřeby: vyhledávání v&nbsp;legislativě, sumarizace dlouhých textů, hodnocení dokumentace a&nbsp;šablonovitá agenda.</p>
+  <p class="program-lead">Osnova jednotlivých setkání se může v&nbsp;průběhu série drobně upravovat podle vaší zpětné vazby.</p>
+
+  <div class="series-resources">
+    <span class="resources-label">Pro celou sérii</span>
+    <span id="series-slides-link"></span>
+  </div>
 
   <div class="timeline" role="tablist" aria-label="Seznam seminářů">
     <div class="timeline-track"></div>
@@ -699,6 +889,37 @@
 </div>
 
 <script>
+// Sdílená prezentace pro celou sérii. Vyplňte URL, jakmile budete mít odkaz.
+// Příklad: const seriesSlidesUrl = "https://docs.google.com/presentation/d/...";
+const seriesSlidesUrl = "";
+
+// Materiály k jednotlivým setkáním se zobrazí až den po datu daného setkání,
+// aby se neproflákly před přednáškou. Neovlivňuje to přístup k samotným
+// stránkám handson/* — ty jsou na svých URL dostupné pořád, jen se na ně
+// neobjeví odkaz z této přehledové stránky.
+//
+// PREVIEW_MATERIALS = true → materiály se zobrazí vždy (pro náhled / testování).
+// Po kontrole nastavte na false, aby se vrátila datem řízená logika.
+const PREVIEW_MATERIALS = false;
+
+function materialsAvailable(session) {
+  if (PREVIEW_MATERIALS) return true;
+  if (!session.date) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const sessionDate = new Date(session.date);
+  sessionDate.setHours(0, 0, 0, 0);
+  return today >= sessionDate;
+}
+
+(function () {
+  const el = document.getElementById('series-slides-link');
+  if (!el) return;
+  el.innerHTML = seriesSlidesUrl
+    ? `<a href="${seriesSlidesUrl}" target="_blank" rel="noopener" class="resources-link">Prezentace série ↗</a>`
+    : `<span class="resources-placeholder">Prezentace série · bude doplněno</span>`;
+})();
+
 const sessions = [
   {
     n: 1,
@@ -706,11 +927,20 @@ const sessions = [
     title: "Orientace v&nbsp;AI krajině a&nbsp;nastavení přístupu",
     date: "2026-05-11",
     timing: "11.&nbsp;května 2026, 13:00 · 90&nbsp;minut",
-    desc: "Co AI je a&nbsp;co není. Zasazení do kontextu: jak se AI začíná využívat v&nbsp;regulatorním prostředí v&nbsp;EU a&nbsp;co to znamená pro práci úřadu. Nastavení realistických očekávání a&nbsp;společná formulace toho, co od série potřebujete.",
+    desc: "Co AI je a&nbsp;co není. Nastavení realistických očekávání: kde AI exceluje, kde selhává a&nbsp;proč na tom záleží. Jak o&nbsp;AI přemýšlet jako odborník a&nbsp;co definuje odbornost v&nbsp;době AI. Jaký mindset potřebujete pro práci s&nbsp;AI ve&nbsp;své profesi. Společná formulace toho, co od&nbsp;série potřebujete.",
     why: "Bez realistického nastavení očekávání hrozí dvě krajnosti: přehnaná důvěra v&nbsp;AI, nebo naopak neopodstatněná skepse. Cílem je najít rovnováhu a&nbsp;zároveň zmapovat, kde vnímáte největší potenciál ve své práci.",
-    topics: ["Co AI je a&nbsp;co není", "Kontext v&nbsp;EU regulaci", "Přístup k&nbsp;AI v&nbsp;odborné praxi", "Mapování vašich potřeb"],
+    topics: ["Co je a&nbsp;co není AI", "Demystifikace AI", "AI mindset", "Odborná práce", "Analýza potřeb"],
     prep: "2–3 konkrétní pracovní úkoly z&nbsp;vaší praxe, kde trávíte hodně času, něco se opakuje, nebo byste rádi pracovali efektivněji. Nemusí se přímo týkat AI; jde o&nbsp;materiál, se kterým budeme společně pracovat.",
-    practice: "Formulujete, kde ve svých pracovních procesech vidíte příležitosti nebo úskalí. Tento vstup formuje obsah dalších seminářů."
+    practice: "Formulujete, kde ve svých pracovních procesech vidíte příležitosti nebo úskalí. Tento vstup formuje obsah dalších seminářů.",
+    materials: [
+      { label: "Tradiční program, GOFAI a&nbsp;adaptivní AI", href: "handson/paradigmata-ai.html" },
+      { label: "Jak funguje strojové učení a&nbsp;neuronové sítě", href: "handson/strojove-uceni.html" },
+      { label: "Jagged intelligence: kde AI exceluje a&nbsp;kde selhává", href: "handson/jagged-inteligence.html" },
+      { label: "Tři vrstvy gramotnosti: informační, digitální, AI", href: "handson/gramotnosti.html" }
+    ],
+    toolkit: [
+      { label: "Claude", href: "https://claude.ai" }
+    ]
   },
   {
     n: 2,
@@ -801,6 +1031,26 @@ function updateNavButtons() {
   nextBtn.disabled = active === sessions.length - 1;
 }
 
+// Paleta: každé setkání má vlastní akcentovou barvu (sjednocenou
+// s hands-on artefakty daného setkání). Hlavní stránka je neutrální slate.
+const sessionPalette = {
+  1: { accent: '#3a6b4a', hover: '#2c5538', soft: '#e3eee6' },
+  2: { accent: '#2c5e6e', hover: '#1f4a58', soft: '#e0eaed' },
+  3: { accent: '#1d3557', hover: '#13243d', soft: '#eaeef5' },
+  4: { accent: '#5b3f7a', hover: '#46305f', soft: '#ede5f3' },
+  5: { accent: '#a04a4a', hover: '#823a3a', soft: '#f5e6e6' },
+  6: { accent: '#b5651d', hover: '#8e4a18', soft: '#fbf3e7' },
+  7: { accent: '#0d1b2a', hover: '#000000', soft: '#dde0e4' }
+};
+
+function applyPalette(el, n) {
+  const p = sessionPalette[n];
+  if (!el || !p) return;
+  el.style.setProperty('--accent', p.accent);
+  el.style.setProperty('--accent-hover', p.hover);
+  el.style.setProperty('--accent-soft', p.soft);
+}
+
 // Build timeline nodes
 sessions.forEach((s, i) => {
   const btn = document.createElement('button');
@@ -810,41 +1060,68 @@ sessions.forEach((s, i) => {
   btn.setAttribute('aria-controls', 'session');
   btn.innerHTML = `<span class="node-dot">${s.n}</span><span class="node-label">${s.short}</span>`;
   btn.addEventListener('click', () => select(i));
+  applyPalette(btn, s.n);
   nodesEl.appendChild(btn);
 });
 
 function render(i) {
   const s = sessions[i];
+  const hasToolkit = s.toolkit && s.toolkit.length;
+  const hasMaterials = s.materials && s.materials.length && materialsAvailable(s);
+  applyPalette(sessionEl, s.n);
   sessionEl.innerHTML = `
-    <div>
-      <div class="session-header">
-        <div class="number">Seminář ${s.n}</div>
-        <h3>${s.title}</h3>
-        <div class="session-timing">${s.timing}<br>Sídlo ÚSKVBL, Brno · zasedací místnost ústavu</div>
-      </div>
-      <p class="session-desc">${s.desc}</p>
-      <div class="why">
-        <div class="why-label">Proč je to důležité</div>
-        <p>${s.why}</p>
-      </div>
+    <div class="session-header">
+      <div class="number">Seminář ${s.n}</div>
+      <h3>${s.title}</h3>
+      <div class="session-timing">${s.timing}<br>Sídlo ÚSKVBL, Brno · zasedací místnost ústavu</div>
     </div>
-    <aside class="session-aside">
-      <div class="aside-block">
-        <div class="aside-label">Klíčová témata</div>
-        <ul class="topics">
-          ${s.topics.map(t => `<li>${t}</li>`).join('')}
-        </ul>
-      </div>
-      ${s.prep ? `
+
+    <div class="topics-bar">
+      <span class="topics-bar-label">Klíčová témata</span>
+      <ul class="topics-bar-items">
+        ${s.topics.map(t => `<li>${t}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div>
+      <div class="aside-label">Anotace</div>
+      <p class="session-desc">${s.desc}</p>
+    </div>
+
+    <div class="why">
+      <div class="why-label">Proč je to důležité</div>
+      <p>${s.why}</p>
+    </div>
+
+    <div class="session-bottom">
       <div class="aside-block">
         <div class="aside-label">Příprava na setkání</div>
-        <p>${s.prep}</p>
-      </div>` : ''}
+        <p>${s.prep || 'Bude doplněno před setkáním.'}</p>
+      </div>
       <div class="aside-block">
         <div class="aside-label">Společná práce</div>
         <p>${s.practice}</p>
       </div>
-    </aside>
+      <div class="aside-block">
+        <div class="aside-label">Toolkit</div>
+        ${hasToolkit ? `
+        <ul class="toolkit">
+          ${s.toolkit.map(t =>
+            t.href
+              ? `<li><a href="${t.href}" target="_blank" rel="noopener">${t.label}</a></li>`
+              : `<li>${t.label}</li>`
+          ).join('')}
+        </ul>` : `
+        <p class="aside-placeholder">Bude doplněno.</p>`}
+      </div>
+      ${hasMaterials ? `
+      <div class="aside-block session-materials-row">
+        <div class="aside-label">Doplňkové materiály</div>
+        <div class="session-materials">
+          ${s.materials.map(m => `<a class="material-btn" href="${m.href}">${m.label}</a>`).join('')}
+        </div>
+      </div>` : ''}
+    </div>
   `;
 }
 
@@ -884,6 +1161,7 @@ updateNavButtons();
   const [y, m, d] = s.date.split('-').map(Number);
   document.getElementById('next-session-date').innerHTML = `${d}. ${months[m - 1]} ${y}`;
   document.getElementById('next-session-title').innerHTML = `Seminář ${s.n} · ${s.title}`;
+  applyPalette(nextEl, s.n);
   nextEl.hidden = false;
   nextEl.addEventListener('click', () => select(idx));
 })();

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Paleta barev pro setkání 1-7 (náhled)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  .hero {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+  .hero p {
+    color: var(--muted);
+    max-width: 720px;
+    font-size: 15px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .card {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+  }
+  @media (max-width: 720px) {
+    .card { grid-template-columns: 1fr; }
+  }
+
+  /* ── LEFT: solid color block ───────────────────────────── */
+  .swatch {
+    background: var(--c);
+    color: #fff;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+  }
+  .swatch-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+  .swatch-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .swatch-theme {
+    font-size: 12.5px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+  .swatch-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    margin-top: 16px;
+    opacity: 0.85;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── RIGHT: previews ──────────────────────────────────── */
+  .previews {
+    padding: 22px 26px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  @media (max-width: 880px) {
+    .previews { grid-template-columns: 1fr; }
+  }
+
+  .preview-block {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    position: relative;
+  }
+  .preview-block.demo-soft {
+    background: var(--cs);
+    border-color: var(--c);
+    border-color: color-mix(in srgb, var(--c) 30%, var(--line));
+  }
+  .preview-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  /* Hero mock */
+  .mock-hero {
+    background: var(--bg);
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+  }
+  .mock-strip {
+    width: 32px;
+    height: 4px;
+    background: var(--c);
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+  .mock-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--c);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .mock-h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .mock-h1 em {
+    font-style: italic;
+    color: var(--c);
+    font-weight: 600;
+  }
+
+  /* Section number mock */
+  .mock-section {
+    background: var(--bg);
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+  }
+  .mock-section-num {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--c);
+    letter-spacing: 2.5px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .mock-section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* Button mock */
+  .mock-btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .mock-btn {
+    background: var(--c);
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .mock-btn.hover {
+    background: var(--ch);
+  }
+  .mock-btn.outline {
+    background: transparent;
+    border: 1px solid var(--c);
+    color: var(--c);
+  }
+
+  /* Soft callout mock */
+  .mock-callout {
+    background: var(--cs);
+    border-left: 3px solid var(--c);
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .mock-callout strong { color: var(--c); }
+
+  /* Progress bar mock */
+  .mock-progress {
+    background: var(--line);
+    height: 4px;
+    width: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .mock-progress-fill {
+    background: var(--c);
+    height: 100%;
+    width: 65%;
+  }
+
+  /* Hex chip row */
+  .hex-row {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .hex-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hex-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="hero">
+    <h1>Paleta barev: setkání 1 až 7</h1>
+    <p>Náhled navržené palety v kontextu prvků, kde se barvy reálně objevují (hero strip, eyebrow, čísla sekcí, tlačítka, callouty, progress bar). Každá karta ukazuje hlavní barvu, hover variantu a světlé pozadí.</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- ── 1. ZELENÁ ────────────────────────────────────── -->
+    <article class="card" style="--c:#3a6b4a; --ch:#2c5538; --cs:#e3eee6;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 01</div>
+          <div class="swatch-name">Orientace</div>
+          <div class="swatch-theme">foundation, růst</div>
+        </div>
+        <div class="swatch-hex">
+          #3a6b4a · #2c5538 · #e3eee6
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 1 · Hands-on</div>
+            <div class="mock-h1">Co je <em>adaptivní</em> AI</div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">01</span>
+            <div class="mock-section-title">Tři paradigmata</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Důležité:</strong> Tento profil přináší riziko nekritického přijetí AI výstupů.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 2. PETROL ────────────────────────────────────── -->
+    <article class="card" style="--c:#2c5e6e; --ch:#1f4a58; --cs:#e0eaed;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 02</div>
+          <div class="swatch-name">Principy</div>
+          <div class="swatch-theme">chladná analytika, technika</div>
+        </div>
+        <div class="swatch-hex">
+          #2c5e6e · #1f4a58 · #e0eaed
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 2 · Hands-on</div>
+            <div class="mock-h1">Jak <em>jazykové modely</em> generují text</div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">02</span>
+            <div class="mock-section-title">Pravděpodobnost a tokeny</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Princip:</strong> Model nepředpovídá pravdu, ale pravděpodobné pokračování textu.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 3. MODRÁ ─────────────────────────────────────── -->
+    <article class="card" style="--c:#1d3557; --ch:#13243d; --cs:#eaeef5;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 03</div>
+          <div class="swatch-name">Vyhledávání</div>
+          <div class="swatch-theme">hloubka, průzkum</div>
+        </div>
+        <div class="swatch-hex">
+          #1d3557 · #13243d · #eaeef5
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 3 · Hands-on</div>
+            <div class="mock-h1">AI-asistované <em>vyhledávání</em> v praxi</div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">03</span>
+            <div class="mock-section-title">Klasická vs. AI rešerše</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Pozor:</strong> AI nástroje pro vyhledávání se snadno dají oklamat dobře znějící halucinací.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 4. FIALOVÁ ───────────────────────────────────── -->
+    <article class="card" style="--c:#5b3f7a; --ch:#46305f; --cs:#ede5f3;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 04</div>
+          <div class="swatch-name">Kritika</div>
+          <div class="swatch-theme">úvaha, ostražitost</div>
+        </div>
+        <div class="swatch-hex">
+          #5b3f7a · #46305f · #ede5f3
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 4 · Hands-on</div>
+            <div class="mock-h1">Kritické <em>myšlení</em> při práci s AI</div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">04</span>
+            <div class="mock-section-title">Halucinace a slepá místa</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Pozor:</strong> AI mluví sebejistě i když halucinuje. Sebejistota není kalibrovaná na pravdu.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 5. RUDÁ ──────────────────────────────────────── -->
+    <article class="card" style="--c:#a04a4a; --ch:#823a3a; --cs:#f5e6e6;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 05</div>
+          <div class="swatch-name">Efektivita</div>
+          <div class="swatch-theme">energie, akce</div>
+        </div>
+        <div class="swatch-hex">
+          #a04a4a · #823a3a · #f5e6e6
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 5 · Hands-on</div>
+            <div class="mock-h1">Efektivní <em>práce</em> s AI nástroji</div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">05</span>
+            <div class="mock-section-title">Promptování s kontextem</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Tip:</strong> Pravidlo 80/20 platí i u AI. Investice do dobrého zadání se vrátí.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 6. ORANŽOVÁ ──────────────────────────────────── -->
+    <article class="card" style="--c:#b5651d; --ch:#8e4a18; --cs:#fbf3e7;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 06</div>
+          <div class="swatch-name">Procesy</div>
+          <div class="swatch-theme">teplo, plynulost</div>
+        </div>
+        <div class="swatch-hex">
+          #b5651d · #8e4a18 · #fbf3e7
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 6 · Hands-on</div>
+            <div class="mock-h1">AI v <em>pracovních procesech</em></div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">06</span>
+            <div class="mock-section-title">Od zadání po ověření</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Praxe:</strong> Dobrý workflow s AI rozdělí úlohu na malé ověřitelné kroky.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 7. NAVY ──────────────────────────────────────── -->
+    <article class="card" style="--c:#0d1b2a; --ch:#000000; --cs:#dde0e4;">
+      <div class="swatch">
+        <div>
+          <div class="swatch-num">SETKÁNÍ 07</div>
+          <div class="swatch-name">Instituce</div>
+          <div class="swatch-theme">formálnost, kotvení</div>
+        </div>
+        <div class="swatch-hex">
+          #0d1b2a · #000000 · #dde0e4
+        </div>
+      </div>
+      <div class="previews">
+        <div class="preview-block">
+          <div class="preview-label">Hero + sekce</div>
+          <div class="mock-hero">
+            <div class="mock-strip"></div>
+            <div class="mock-eyebrow">Setkání 7 · Hands-on</div>
+            <div class="mock-h1">Jak AI <em>zakotvit</em> v instituci</div>
+          </div>
+          <div class="mock-section" style="margin-top: 10px;">
+            <span class="mock-section-num">07</span>
+            <div class="mock-section-title">Pravidla, role, kompetence</div>
+          </div>
+        </div>
+        <div class="preview-block">
+          <div class="preview-label">Akce + callout</div>
+          <div class="mock-btn-row">
+            <button class="mock-btn">Hlavní</button>
+            <button class="mock-btn hover">Hover</button>
+            <button class="mock-btn outline">Outline</button>
+          </div>
+          <div class="mock-callout" style="margin-top: 12px;">
+            <strong>Cíl:</strong> Společně formulovat pravidla, která zachytí přínosy i rizika AI v praxi.
+          </div>
+          <div style="margin-top: 12px;">
+            <div class="preview-label">Reading progress</div>
+            <div class="mock-progress"><div class="mock-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <footer class="footer">
+    Náhledová stránka palety. Po finálním rozhodnutí ji můžu odstranit a aplikovat barvy do timeline a budoucích artefaktů.
+  </footer>
+
+</main>
+</body>
+</html>

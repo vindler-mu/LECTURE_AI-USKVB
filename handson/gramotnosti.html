@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Informační, digitální a AI gramotnost – tři vrstvy, jeden základ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #3a6b4a;
+    --accent-hover: #2c5538;
+    --accent-soft: #e3eee6;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e8f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+
+    --info: #1d3557;          /* informační */
+    --info-soft: #eaeef5;
+    --digi: #4a7c59;          /* digitální */
+    --digi-soft: #e8f0ea;
+    --ai:   #b5651d;          /* AI */
+    --ai-soft: #fbf3e7;
+
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* ── BACK LINK ───────────────────────────────────────── */
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.6px;
+    margin-bottom: 18px;
+    max-width: 880px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 760px;
+  }
+  .definition {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    font-size: 14.5px;
+    color: var(--ink);
+    max-width: 780px;
+  }
+  .definition strong { color: var(--accent); }
+
+  /* ── SECTIONS ─────────────────────────────────────────── */
+  section { margin-bottom: 56px; }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 800px;
+    margin-bottom: 24px;
+  }
+
+  /* ── VENN ─────────────────────────────────────────────── */
+  .venn-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 880px) {
+    .venn-wrap { grid-template-columns: 1fr; }
+  }
+
+  .venn-svg-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .venn-svg-wrap svg { width: 100%; height: auto; max-width: 520px; }
+
+  .venn-circle-info { fill: var(--info); fill-opacity: 0.16; stroke: var(--info); stroke-width: 1.5; }
+  .venn-circle-digi { fill: var(--digi); fill-opacity: 0.16; stroke: var(--digi); stroke-width: 1.5; }
+
+  .venn-label-big {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    pointer-events: none;
+  }
+  .venn-label-big.info { fill: var(--info); }
+  .venn-label-big.digi { fill: var(--digi); }
+
+  .venn-pin {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .venn-pin circle {
+    fill: var(--bg);
+    stroke: var(--ink-soft);
+    stroke-width: 1.5;
+    transition: all 0.2s ease;
+  }
+  .venn-pin text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    fill: var(--ink-soft);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+  }
+  .venn-pin:hover circle {
+    fill: var(--ink);
+    stroke: var(--ink);
+  }
+  .venn-pin:hover text { fill: #fff; }
+  .venn-pin.selected circle {
+    fill: var(--warm);
+    stroke: var(--warm);
+    r: 16;
+  }
+  .venn-pin.selected text { fill: #fff; }
+
+  /* AIG label box — sits in the lens, looks like a clickable card */
+  .aig-box {
+    cursor: pointer;
+  }
+  .aig-box rect {
+    fill: var(--bg);
+    stroke: var(--ink);
+    stroke-width: 2;
+    filter: drop-shadow(0 2px 3px rgba(13, 27, 42, 0.18));
+    transition: filter 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
+  }
+  .aig-box text {
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    fill: var(--ink);
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    transition: fill 0.2s ease;
+  }
+  .aig-box:hover rect {
+    fill: var(--accent-soft);
+    stroke: var(--accent);
+    filter: drop-shadow(0 4px 8px rgba(29, 53, 87, 0.28));
+  }
+  .aig-box:hover text { fill: var(--accent); }
+  .aig-box.selected rect {
+    fill: var(--warm);
+    stroke: var(--warm);
+    filter: drop-shadow(0 3px 6px rgba(181, 101, 29, 0.35));
+  }
+  .aig-box.selected text { fill: #fff; }
+
+  /* ── REGION DETAIL ──────────────────────────────────── */
+  .region-detail {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warm);
+    padding: 22px 26px;
+    min-height: 280px;
+  }
+  .region-detail.complete   { border-left-color: var(--green); }
+
+  .region-note {
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    padding: 12px 14px;
+    margin: 14px 0 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .region-detail.complete .region-note {
+    border-left-color: var(--green);
+    background: var(--green-soft);
+  }
+
+  .region-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent);
+    padding-bottom: 2px;
+  }
+  .region-link:hover {
+    text-decoration: none;
+    color: var(--accent-hover);
+    border-bottom-style: solid;
+  }
+  .region-link span { font-size: 12px; }
+
+  .region-tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .region-tag {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .region-tag.info { color: var(--info); border-color: var(--info); background: var(--info-soft); }
+  .region-tag.digi { color: var(--digi); border-color: var(--digi); background: var(--digi-soft); }
+  .region-tag.ai   { color: var(--ai);   border-color: var(--ai);   background: var(--ai-soft); }
+  .region-tag.no {
+    color: var(--muted);
+    border-color: var(--line);
+    background: var(--bg);
+    text-decoration: line-through;
+  }
+
+  .region-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .region-lead {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .region-block {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .region-block-label {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .region-block ul {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+  }
+  .region-block li {
+    padding: 3px 0 3px 14px;
+    position: relative;
+  }
+  .region-block li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    color: var(--accent);
+  }
+
+  .region-detail.impossible .region-block { background: var(--red-soft); border-color: #e6cccc; }
+  .region-detail.complete .region-block { background: var(--green-soft); border-color: #c8d8cc; }
+
+  /* ── DEEP-DIVE GRAMOTNOSTI ───────────────────────────── */
+  .literacy {
+    border: 1px solid var(--line);
+    border-top: 4px solid;
+    background: var(--bg);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .literacy.info { border-top-color: var(--info); }
+  .literacy.digi { border-top-color: var(--digi); }
+  .literacy.ai   { border-top-color: var(--ai); }
+
+  .literacy-tag {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .literacy.info .literacy-tag { color: var(--info); }
+  .literacy.digi .literacy-tag { color: var(--digi); }
+  .literacy.ai   .literacy-tag { color: var(--ai); }
+
+  .literacy h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .literacy h2 em {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 16px;
+    font-style: italic;
+    margin-left: 6px;
+    letter-spacing: 0;
+  }
+
+  .literacy .definition-block {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    max-width: 840px;
+  }
+  .literacy .definition-block strong { color: var(--ink); }
+
+  .literacy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 720px) {
+    .literacy-grid { grid-template-columns: 1fr; }
+  }
+
+  .lit-block {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+  }
+  .lit-block-label {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .lit-block h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .lit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .lit-list li {
+    padding: 6px 0 6px 18px;
+    position: relative;
+    border-bottom: 1px dashed var(--line);
+  }
+  .lit-list li:last-child { border-bottom: none; }
+  .lit-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 13px;
+    width: 10px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .lit-list strong { color: var(--ink); font-weight: 600; }
+
+  .lit-warn {
+    background: var(--red-soft);
+    border-left: 3px solid var(--red);
+    padding: 14px 16px;
+    margin-top: 14px;
+  }
+  .lit-warn-label {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--red);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .lit-warn p {
+    font-size: 13.5px;
+    color: #5a3838;
+    line-height: 1.6;
+  }
+  .lit-warn ul { list-style: none; padding: 0; margin: 4px 0 0; }
+  .lit-warn li {
+    padding: 3px 0 3px 14px;
+    position: relative;
+    color: #5a3838;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .lit-warn li::before {
+    content: "×";
+    position: absolute;
+    left: 0;
+    top: 1px;
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  /* ── HIERARCHY ────────────────────────────────────────── */
+  .hierarchy {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 26px 30px;
+  }
+  .hierarchy h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .hierarchy h3:first-child { margin-top: 0; }
+  .hierarchy p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 0;
+  }
+  .hierarchy strong { color: var(--ink); }
+
+  /* ── CALLOUT ─────────────────────────────────────────── */
+  .callout {
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    padding: 16px 22px;
+    margin: 18px 0;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .callout strong { color: var(--accent); }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  /* ── SMALL SCREENS ───────────────────────────────────── */
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 18px 60px; }
+    .venn-svg-wrap { padding: 12px; }
+    .region-detail { padding: 18px 20px; }
+    .literacy { padding: 22px 20px; }
+    .hierarchy { padding: 20px 22px; }
+  }
+
+  /* ── ENHANCED DESIGN: progress bar, section numbers, hero strip, reveal ── */
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 1000;
+    transition: width 0.1s ease;
+    pointer-events: none;
+  }
+
+  .wrap { counter-reset: section; }
+  .wrap > section:not(.hero):has(.section-title) { counter-increment: section; }
+  .wrap > section:not(.hero) .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .hero::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  // Set js-enabled early to avoid flash; only if observer is supported
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <!-- ────────── HERO ────────── -->
+  <section class="hero">
+    <div class="hero-eyebrow">Setkání 1 · Hands-on</div>
+    <h1>Tři vrstvy gramotnosti: <em>informační, digitální, AI</em></h1>
+    <p class="hero-subtitle">
+      AI gramotnost není nezávislá kompetence. Stojí v překryvu informační
+      gramotnosti (umět pracovat s informacemi) a digitální gramotnosti (umět
+      pracovat s nástroji). Zároveň ale přináší <em>nové otázky a kompetence</em>,
+      které předchozí dvě vrstvy neřešily: jak AI funguje, kdy ji použít a jak
+      kriticky posoudit její výstup.
+    </p>
+    <div class="definition">
+      <strong>Princip:</strong> Můžete být informačně i digitálně gramotní bez
+      toho, abyste byli AI gramotní. <strong>Nemůžete</strong> být AI gramotní
+      bez informační a digitální gramotnosti. AI nepřidává novou profesi.
+      Přidává aplikační vrstvu v překryvu kompetencí, které už máte nebo
+      budujete.
+    </div>
+  </section>
+
+  <!-- ────────── INTERAKTIVNÍ VENN ────────── -->
+  <section>
+    <h2 class="section-title">Mapa gramotností</h2>
+    <p class="section-lead">
+      Dvě kruhy, jeden překryv. Klikněte na číslovaný bod, který vás zajímá,
+      nebo přímo na rámeček AI GRAMOTNOST (AIG) ve středu. Uvidíte, co která
+      pozice znamená v praxi.
+    </p>
+
+    <div class="venn-wrap">
+      <div class="venn-svg-wrap">
+        <svg viewBox="0 0 540 340" aria-label="Vennův diagram informační a digitální gramotnosti s AI gramotností v překryvu">
+          <!-- 2 circles -->
+          <circle cx="200" cy="170" r="130" class="venn-circle-info"/>
+          <circle cx="340" cy="170" r="130" class="venn-circle-digi"/>
+
+          <!-- Big labels in bulges -->
+          <text x="145" y="125" class="venn-label-big info" text-anchor="middle">
+            <tspan x="145">INFORMAČNÍ</tspan>
+            <tspan x="145" dy="1.15em">GRAMOTNOST</tspan>
+          </text>
+          <text x="395" y="125" class="venn-label-big digi" text-anchor="middle">
+            <tspan x="395">DIGITÁLNÍ</tspan>
+            <tspan x="395" dy="1.15em">GRAMOTNOST</tspan>
+          </text>
+
+          <!-- Region pins (clickable) -->
+          <g class="venn-pin" data-region="info-only">
+            <circle cx="120" cy="240" r="14"/>
+            <text x="120" y="240">1</text>
+          </g>
+          <g class="venn-pin" data-region="digi-only">
+            <circle cx="420" cy="240" r="14"/>
+            <text x="420" y="240">2</text>
+          </g>
+          <g class="venn-pin" data-region="lens">
+            <circle cx="270" cy="245" r="14"/>
+            <text x="270" y="245">3</text>
+          </g>
+
+          <!-- AIG label box (clickable) -->
+          <g class="aig-box" data-region="aig">
+            <rect x="186" y="155" width="168" height="36" rx="3"/>
+            <text x="270" y="173" text-anchor="middle">AI GRAMOTNOST (AIG)</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="region-detail" id="region-detail" aria-live="polite">
+        <!-- vyplní se JS -->
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>AIG nestojí vedle</strong> informační a digitální gramotnosti. Stojí
+      <strong>v jejich překryvu</strong>. Není to čtvrtá schopnost ani třetí
+      samostatný okruh. Je to to, co se otevírá tehdy, když máte oba předchozí
+      základy a přidáte k nim porozumění AI.
+    </div>
+  </section>
+
+  <!-- ────────── DEEP DIVE: INFORMAČNÍ ────────── -->
+  <section class="literacy info" id="info-deep">
+    <div class="literacy-tag">První vrstva</div>
+    <h2>Informační gramotnost <em>epistemická složka</em></h2>
+    <div class="definition-block">
+      <strong>Schopnost rozpoznat, kdy potřebujete informaci, a umět ji najít,
+      ohodnotit, použít a sdělit.</strong> Klasická definice (American Library
+      Association, 1989) zachycuje to, co dělají odborníci dlouho před vznikem
+      internetu: kladou si otázky, vědí, kde hledat odpovědi, a umí poznat,
+      která odpověď stojí za to.
+    </div>
+
+    <div class="literacy-grid">
+      <div class="lit-block">
+        <div class="lit-block-label">Klíčové dovednosti</div>
+        <ul class="lit-list">
+          <li><strong>Formulace potřeby.</strong> Vědět, co přesně hledáte, dříve než začnete hledat.</li>
+          <li><strong>Volba zdroje.</strong> Rozhodnout, kde má smysl hledat (primární text, databáze, expert, internet).</li>
+          <li><strong>Vyhledávací strategie.</strong> Sestavit dotaz tak, abyste neminuli relevantní výsledky a netonuli v nerelevantních.</li>
+          <li><strong>Hodnocení.</strong> Posoudit přesnost, autoritu, aktuálnost a relevanci nalezené informace.</li>
+          <li><strong>Syntéza.</strong> Spojit poznatky napříč zdroji a poznat, kde si protiřečí.</li>
+          <li><strong>Etické sdělení.</strong> Citovat, neplagovat, transparentně přiznat, kde čerpáte.</li>
+        </ul>
+      </div>
+      <div class="lit-block">
+        <div class="lit-block-label">Příklady v praxi</div>
+        <ul class="lit-list">
+          <li>Najít oficiální dokument k tématu a ověřit, že máte aktuální verzi.</li>
+          <li>Posoudit, zda závěry článku skutečně vyplývají z toho, co popisuje.</li>
+          <li>Rozeznat, kde sekundární výklad interpretuje primární text mimo jeho rámec.</li>
+          <li>Ověřit, zda dva zdroje, které vypadají souhlasně, opravdu říkají totéž.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lit-warn">
+      <div class="lit-warn-label">Co znamená nemít informační gramotnost</div>
+      <ul>
+        <li>Přijmete první výsledek vyhledávače jako pravdu.</li>
+        <li>Necítíte rozdíl mezi primárním a sekundárním zdrojem.</li>
+        <li>Citujete, aniž byste si zdroj přečetli celý.</li>
+        <li>Nepoznáte, že dvě studie používají stejný termín pro různé věci.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ────────── DEEP DIVE: DIGITÁLNÍ ────────── -->
+  <section class="literacy digi" id="digi-deep">
+    <div class="literacy-tag">Druhá vrstva</div>
+    <h2>Digitální gramotnost <em>nástrojová složka</em></h2>
+    <div class="definition-block">
+      <strong>Schopnost efektivně, uvědoměle a bezpečně používat digitální
+      nástroje a pohybovat se v digitálním prostředí.</strong> Není to jen
+      &bdquo;umět zapnout počítač&ldquo;. Zahrnuje volbu vhodného nástroje pro
+      úlohu, ovládání rozhraní, ochranu dat a schopnost vyřešit běžné problémy
+      bez závislosti na cizí pomoci.
+    </div>
+
+    <div class="literacy-grid">
+      <div class="lit-block">
+        <div class="lit-block-label">Klíčové dovednosti</div>
+        <ul class="lit-list">
+          <li><strong>Ovládání aplikací.</strong> Text, tabulky, prezentace, e-mail, cloud, kolaborační nástroje.</li>
+          <li><strong>Pohyb v rozhraních.</strong> Rychle se zorientovat v novém nástroji, najít to, co potřebujete.</li>
+          <li><strong>Práce s formáty.</strong> Konvertovat, sloučit, rozdělit dokumenty bez ztráty kvality.</li>
+          <li><strong>Digitální bezpečnost.</strong> Hesla, dvoufaktorové ověření, rozeznání phishingu, ochrana citlivých dat.</li>
+          <li><strong>Komunikace v digitálním prostředí.</strong> Vědět, co kam patří, jak strukturovat sdělení v různých kanálech.</li>
+          <li><strong>Řešení problémů.</strong> Když něco nefunguje, vědět, kde hledat odpověď a co zkusit.</li>
+        </ul>
+      </div>
+      <div class="lit-block">
+        <div class="lit-block-label">Příklady v praxi</div>
+        <ul class="lit-list">
+          <li>Sdílet dokument s konkrétním člověkem tak, aby k němu měl přístup jen on.</li>
+          <li>Porovnat dvě verze textu pomocí sledování změn (track changes).</li>
+          <li>Přejít z e-mailu do strukturovaného nástroje, když práce vyžaduje verzování.</li>
+          <li>Bezpečně zacházet s citlivými daty (anonymizace, šifrování, přenos).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lit-warn">
+      <div class="lit-warn-label">Co znamená nemít digitální gramotnost</div>
+      <ul>
+        <li>Posíláte citlivá data nezašifrovaným e-mailem nebo přes veřejný cloud.</li>
+        <li>Padnete na phishing, protože nerozeznáte podvržený odkaz.</li>
+        <li>Trávíte hodiny rutinní prací, kterou by zkratka nebo šablona vyřešily za minuty.</li>
+        <li>Nedokážete se sami posunout v novém nástroji, vždy potřebujete někoho jiného.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ────────── DEEP DIVE: AI ────────── -->
+  <section class="literacy ai" id="ai-deep">
+    <div class="literacy-tag">Aplikační doména · vyrůstá v překryvu obou základů</div>
+    <h2>AI gramotnost (AIG) <em>aplikační složka</em></h2>
+    <div class="definition-block">
+      <strong>Schopnost smysluplně používat AI nástroje k řešení informačních
+      úloh, znát principy jejich fungování, limity a rizika, a kriticky hodnotit
+      jejich výstupy.</strong> AI gramotnost není o tom umět napsat dobrý prompt
+      (to je jen technika). Je o tom vědět, kdy AI použít, kdy ne, a jak posoudit
+      to, co dostanete.
+    </div>
+
+    <div class="literacy-grid">
+      <div class="lit-block">
+        <div class="lit-block-label">Klíčové dovednosti</div>
+        <ul class="lit-list">
+          <li><strong>Pochopení principů.</strong> Vědět, že AI generuje pravděpodobnostní výstup, ne pravdivý.</li>
+          <li><strong>Volba mezi AI a non-AI.</strong> Rozpoznat, kdy úlohu vyřeší šablona, makro nebo klasický nástroj lépe.</li>
+          <li><strong>Formulace zadání.</strong> Sestavit prompt s kontextem, příklady a požadovaným formátem.</li>
+          <li><strong>Kritické hodnocení výstupu.</strong> Hledat halucinace, ověřovat fakta, rozeznat sebevědomé tvrzení od podloženého.</li>
+          <li><strong>Etické zacházení s daty.</strong> Vědět, co lze a nelze do AI vkládat (citlivá data, osobní údaje, duševní vlastnictví).</li>
+          <li><strong>Sebereflexe.</strong> Umět říci &bdquo;na tohle moje AI gramotnost nestačí, potřebuji konzultaci&ldquo;.</li>
+        </ul>
+      </div>
+      <div class="lit-block">
+        <div class="lit-block-label">Příklady v praxi</div>
+        <ul class="lit-list">
+          <li>Použít AI na sumarizaci dlouhého dokumentu, ne na faktické vyhledávání.</li>
+          <li>Poznat, že AI si vymyslela citaci, protože se &bdquo;hodila&ldquo; do textu.</li>
+          <li>Nestrkat citlivá data do veřejné verze chatbota.</li>
+          <li>Použít AI jako prvního čtenáře vlastního textu, ne jako autora.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lit-warn">
+      <div class="lit-warn-label">Co znamená nemít AI gramotnost</div>
+      <ul>
+        <li>Berete AI výstupy jako pravdu a předáváte je dál bez ověření.</li>
+        <li>Používáte AI tam, kde je nevhodná (přesné výpočty, kalibrace nejistoty).</li>
+        <li>Vystavujete data jiných osob nebo organizace riziku tím, že je dáváte do nesprávných nástrojů.</li>
+        <li>Necítíte rozdíl mezi sebevědomě řečenou nepravdou a sebevědomě řečenou pravdou.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ────────── HIERARCHY ────────── -->
+  <section>
+    <h2 class="section-title">Proč nestačí jeden ze základů</h2>
+    <p class="section-lead">
+      AIG vyrůstá v překryvu. Když chybí jedna z obou vrstev, překryv neexistuje
+      a AI gramotnost nemá z čeho vyrůst. Co se stane v jednotlivých situacích:
+    </p>
+
+    <div class="hierarchy">
+      <h3>Když chybí informační gramotnost</h3>
+      <p>
+        Neumíte ohodnotit AI výstup. AI vám sebevědomě vrátí halucinaci a vy ji
+        použijete, protože vám chybí mechanismus, který by ji odhalil. AI
+        v rukou informačně negramotného uživatele je <strong>generátor přesvědčivě
+        znějících nepravd</strong>. Cesta vede přes posílení informační vrstvy
+        (kritické čtení, ověřování zdrojů, hodnocení autority).
+      </p>
+
+      <h3>Když chybí digitální gramotnost</h3>
+      <p>
+        Neumíte AI použít. Nedostanete se přes rozhraní, neumíte převést
+        dokument do formátu, který AI zvládne, neumíte AI integrovat do svého
+        workflow. <strong>AI zůstane oddělená demonstrace</strong>, která se
+        nedostane k práci, kterou byste s ní mohli dělat. Cesta vede přes posílení
+        digitální vrstvy (nástroje, formáty, bezpečnost dat).
+      </p>
+
+      <h3>Když chybí obě</h3>
+      <p>
+        Nejhorší možný scénář. Používáte AI nahodile, výstupy přijímáte slepě,
+        citlivá data protékají někam, kde neměla být. Tento profil je
+        <strong>nejnebezpečnější</strong>, protože rychlost AI se násobí
+        s nepřesností a riskem. Proto se v sérii začíná demystifikací (informační
+        vrstva) a bezpečností (digitální vrstva), teprve potom přicházejí
+        konkrétní AI nástroje.
+      </p>
+    </div>
+
+    <div class="callout">
+      <strong>Dobrá zpráva:</strong> Pokud děláte odbornou práci s textem
+      a digitálními nástroji, informační i digitální gramotnost už nejspíš máte.
+      AIG na tomto základě nestavíte od nuly. Stavíte aplikační doménu
+      v překryvu, který už dávno máte, plus nové otázky kolem AI samotné.
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 1 · Hands-on
+    <br>
+    Dotazy: <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+  </footer>
+
+</main>
+
+<script>
+/* ================================================================
+   REGION DATA
+   ================================================================ */
+
+const REGIONS = {
+  'info-only': {
+    title: 'Pouze informační gramotnost',
+    tags: [
+      { label: 'Informační', cls: 'info' },
+      { label: 'Digitální', cls: 'no' }
+    ],
+    type: 'normal',
+    lead: 'Informační gramotnost funguje jak v analogovém, tak v digitálním světě. Je založená na schopnosti definovat informační potřebu, na epistemologické bázi a kritickém přístupu k informacím.',
+    note: 'V této pozici máte první ze dvou základů, na kterých stojí AIG. Druhý (digitální gramotnost) zatím chybí.',
+    link: { label: 'Informační gramotnost podrobněji', href: '#info-deep' }
+  },
+  'digi-only': {
+    title: 'Pouze digitální gramotnost',
+    tags: [
+      { label: 'Informační', cls: 'no' },
+      { label: 'Digitální', cls: 'digi' }
+    ],
+    type: 'normal',
+    lead: 'Digitální gramotnost je schopnost efektivně, uvědoměle a bezpečně pracovat s digitálními nástroji a pohybovat se v digitálním prostředí. Je založená na ovládání rozhraní, znalosti formátů a bezpečnosti dat.',
+    note: 'V této pozici máte druhý ze dvou základů, na kterých stojí AIG. První (informační gramotnost) zatím chybí.',
+    link: { label: 'Digitální gramotnost podrobněji', href: '#digi-deep' }
+  },
+  'lens': {
+    title: 'Informační + digitální (zatím bez AI)',
+    tags: [
+      { label: 'Informační', cls: 'info' },
+      { label: 'Digitální', cls: 'digi' }
+    ],
+    type: 'normal',
+    lead: 'Profil moderního odborníka před AI érou. Stojíte na obou nohách: umíte pracovat s informacemi i s nástroji.',
+    note: 'Z této pozice je AIG dostupná. Stačí přidat aplikační vrstvu nad to, co už máte. To je obsah této série.',
+    link: { label: 'AI gramotnost podrobněji', href: '#ai-deep' }
+  },
+  'aig': {
+    title: 'AI gramotnost (AIG): aplikační doména v překryvu',
+    tags: [
+      { label: 'Informační', cls: 'info' },
+      { label: 'Digitální', cls: 'digi' },
+      { label: 'AI', cls: 'ai' }
+    ],
+    type: 'complete',
+    lead: 'AIG není čtvrtá samostatná schopnost. Je to <strong>aplikační doména</strong>, která se otevírá tehdy, máte-li informační i digitální gramotnost a přidáte k nim porozumění AI.',
+    note: 'Otevírá nové otázky, které předchozí dvě vrstvy neřešily: jak AI funguje, kdy ji použít a jak posoudit její pravděpodobnostní výstup.',
+    link: { label: 'AI gramotnost podrobněji', href: '#ai-deep' }
+  }
+};
+
+/* ================================================================
+   RENDER
+   ================================================================ */
+
+let selectedRegion = 'aig';
+
+function renderRegion() {
+  const r = REGIONS[selectedRegion];
+  const wrap = document.getElementById('region-detail');
+  wrap.className = 'region-detail' + (r.type === 'complete' ? ' complete' : '');
+
+  const tagHtml = r.tags.map(t => `<span class="region-tag ${t.cls}">${t.label}</span>`).join('');
+  const noteHtml = r.note ? `<div class="region-note">${r.note}</div>` : '';
+  const linkHtml = r.link ? `<a class="region-link" href="${r.link.href}">${r.link.label} <span aria-hidden="true">↓</span></a>` : '';
+
+  wrap.innerHTML = `
+    <div class="region-tag-row">${tagHtml}</div>
+    <div class="region-title">${r.title}</div>
+    <div class="region-lead">${r.lead}</div>
+    ${noteHtml}
+    ${linkHtml}
+  `;
+
+  document.querySelectorAll('.venn-pin, .aig-box').forEach(el => {
+    el.classList.toggle('selected', el.getAttribute('data-region') === selectedRegion);
+  });
+}
+
+document.querySelectorAll('.venn-pin, .aig-box').forEach(el => {
+  el.addEventListener('click', () => {
+    selectedRegion = el.getAttribute('data-region');
+    renderRegion();
+  });
+});
+
+renderRegion();
+
+// ── Reading progress bar + reveal on scroll ────────────────
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

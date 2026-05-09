@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Jak funguje strojové učení a neuronové sítě</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #3a6b4a;
+    --accent-hover: #2c5538;
+    --accent-soft: #e3eee6;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e8f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 15px;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* ── BACK / NAV ──────────────────────────────────────── */
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.6px;
+    margin-bottom: 18px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 720px;
+  }
+
+  /* ── SECTIONS ─────────────────────────────────────────── */
+  section { margin-bottom: 56px; }
+
+  h2.section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 14px;
+  }
+
+  .section-lead {
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+
+  p { margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul.body-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 16px;
+  }
+  ul.body-list li {
+    padding: 4px 0 4px 22px;
+    position: relative;
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  ul.body-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 12px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ── CALLOUT ─────────────────────────────────────────── */
+  .callout {
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    padding: 16px 22px;
+    margin: 18px 0;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .callout strong { color: var(--accent); }
+
+  .callout.warm {
+    background: var(--warm-soft);
+    border-left-color: var(--warm);
+    color: #4a3f2e;
+  }
+  .callout.warm strong { color: var(--warm); }
+
+  /* ── FORMULA / CODE ──────────────────────────────────── */
+  code, .mono {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 0.92em;
+    background: var(--paper);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  .neuron-card-label {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  /* ── SCALE LADDER ────────────────────────────────────── */
+  .ladder {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .ladder-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .ladder-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+
+  .ladder-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Source Serif 4', Georgia, serif;
+    flex-shrink: 0;
+  }
+
+  .ladder-head h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+  }
+
+  .ladder-tag {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    margin: 0 0 6px 44px;
+  }
+
+  .ladder-left p:not(.ladder-tag) {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin: 0 0 0 44px;
+    max-width: 480px;
+  }
+
+  .weight-meanings {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 480px;
+  }
+  .weight-meanings li {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    padding-left: 18px;
+    position: relative;
+  }
+  .weight-meanings li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .weight-meanings strong { color: var(--ink); }
+  .weight-meanings em { font-style: italic; color: var(--accent); }
+
+  .ladder-vis {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 110px;
+  }
+
+  .ladder-vis svg {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+  }
+
+  .size-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    font-size: 11.5px;
+  }
+  .size-list li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--line);
+    align-items: baseline;
+  }
+  .size-list li:last-child { border-bottom: none; }
+  .size-list li span:first-child { color: var(--muted); line-height: 1.3; }
+  .size-list li span:last-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ── MODE CARDS ──────────────────────────────────────── */
+  .mode-card {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 24px 28px;
+    margin-bottom: 18px;
+    border-left: 4px solid var(--accent);
+  }
+
+  .mode-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .mode-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+
+  .mode-titles {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .mode-titles h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+  }
+
+  .mode-tag {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .mode-card > p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin: 0 0 14px 46px;
+  }
+
+  .mode-points {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0 46px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .mode-points li {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    padding-left: 14px;
+    position: relative;
+  }
+  .mode-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 8px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .mode-points strong { color: var(--ink); }
+
+  /* ── INFERENCE FLOW DIAGRAM ──────────────────────────── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 6px 0 18px 46px;
+  }
+
+  .flow-row-mid {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .flow-row-mid .flow-box {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .flow-box {
+    flex: 1;
+    min-width: 130px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .flow-box.flow-model {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  .flow-label {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .flow-model .flow-label { color: var(--accent); }
+
+  .flow-box em {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: normal;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .flow-model em { color: var(--accent); font-style: italic; font-size: 13px; }
+
+  .flow-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.4;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  .train-note {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin: 16px 0 0 0;
+    font-style: italic;
+  }
+
+  .flow-note {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: -2px 0 0 46px;
+    font-style: italic;
+  }
+
+  /* ── TRAIN EXPLAINER (toggle before viz) ─────────────── */
+  .train-explainer {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    margin-left: 0;
+  }
+
+  .train-explainer summary {
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--accent);
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .train-explainer summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .train-explainer summary::before {
+    content: "+";
+    display: inline-block;
+    width: 14px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .train-explainer[open] summary::before {
+    content: "−";
+    color: var(--accent);
+  }
+
+  .train-explainer summary:hover {
+    background: var(--bg);
+  }
+
+  .train-explainer-body {
+    padding: 4px 18px 14px 40px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  .train-explainer-body p {
+    margin-bottom: 10px;
+  }
+
+  .train-explainer-body p:last-child { margin-bottom: 0; }
+
+  .train-explainer-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 12px 0;
+  }
+
+  .train-explainer-body li {
+    padding: 3px 0 3px 14px;
+    position: relative;
+    line-height: 1.55;
+  }
+
+  .train-explainer-body li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    top: -2px;
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .train-explainer-body strong { color: var(--ink); }
+  .train-explainer-body em { font-style: italic; color: var(--accent); }
+  .train-explainer-body code {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+
+  /* ── TRAINING DEMO ───────────────────────────────────── */
+  .train-card {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 28px 32px;
+    margin: 24px 0;
+  }
+
+  .train-plot-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 14px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+  }
+
+  .train-svg {
+    display: block;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    height: auto;
+  }
+
+  .axis-line { stroke: var(--line-strong); stroke-width: 1; }
+  .axis-tick { stroke: var(--line-strong); stroke-width: 1; }
+  .axis-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--muted); }
+  .grid-line { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+  .train-curve { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+  .data-point.healthy { fill: var(--green); stroke: var(--bg); stroke-width: 2; }
+  .data-point.fever { fill: var(--red); stroke: var(--bg); stroke-width: 2; }
+  .threshold-line { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.5; }
+
+  .train-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .train-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .train-stat-label {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .train-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .train-stat-value.accent { color: var(--accent); }
+
+  .train-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 9px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .btn:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+  .btn.secondary {
+    background: var(--bg);
+    color: var(--accent);
+  }
+  .btn.secondary:hover {
+    background: var(--accent-soft);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+  .legend-dot.healthy { background: var(--green); }
+  .legend-dot.fever { background: var(--red); }
+  .legend-line {
+    width: 18px;
+    height: 2.5px;
+    background: var(--accent);
+  }
+
+  /* ── LIFECYCLE ───────────────────────────────────────── */
+  .lifecycle {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+  .phase {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .phase-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .phase-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Source Serif 4', Georgia, serif;
+    flex-shrink: 0;
+  }
+  .phase-head h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+  }
+  .phase-body { padding-left: 46px; }
+  .phase-body p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 12px;
+    max-width: 760px;
+  }
+  .phase-body p:last-child { margin-bottom: 0; }
+  .phase-body em { font-style: italic; color: var(--accent); }
+  .phase-bullets, .phase-steps {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 12px 0;
+  }
+  .phase-bullets li {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    padding: 5px 0 5px 18px;
+    position: relative;
+  }
+  .phase-bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 8px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .phase-bullets strong { color: var(--ink); }
+  .phase-bullets em { color: var(--accent); font-style: italic; }
+  .phase-steps {
+    counter-reset: step;
+  }
+  .phase-steps li {
+    counter-increment: step;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    padding: 5px 0 5px 28px;
+    position: relative;
+  }
+  .phase-steps li::before {
+    content: counter(step) ".";
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .phase-steps strong { color: var(--ink); }
+
+  /* ── STATES TABLE ────────────────────────────────────── */
+  .states-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-top: 12px;
+  }
+  .states-table th, .states-table td {
+    padding: 14px 18px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 14.5px;
+    line-height: 1.55;
+    border-bottom: 1px solid var(--line);
+  }
+  .states-table tr:last-child td { border-bottom: none; }
+  .states-table thead th {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 700;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 12px;
+  }
+  .states-table td:first-child,
+  .states-table th:first-child {
+    width: 200px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ── PAGER ───────────────────────────────────────────── */
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .pager-link {
+    flex: 1;
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    transition: all 0.15s ease;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .pager-link:hover {
+    border-color: var(--accent);
+    background: var(--paper);
+    text-decoration: none;
+  }
+  .pager-link.next { text-align: right; }
+  .pager-eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .pager-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 720px) {
+    .ladder-item { grid-template-columns: 1fr; gap: 14px; }
+    .ladder-vis { max-width: 320px; margin-left: 44px; }
+    .mode-card > p,
+    .mode-points,
+    .flow,
+    .flow-note { margin-left: 0; }
+    .flow-row-mid { flex-direction: column; gap: 6px; }
+    .flow-arrow { transform: rotate(90deg); }
+    .train-stats { grid-template-columns: repeat(2, 1fr); }
+    .phase-body { padding-left: 0; }
+    .states-table td:first-child,
+    .states-table th:first-child { width: auto; font-size: 11px; }
+    .pager { flex-direction: column; }
+    .pager-link.next { text-align: left; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 18px 60px; }
+    .train-card { padding: 20px 18px; }
+    .mode-card { padding: 20px 18px; }
+    .ladder-tag,
+    .ladder-left p:not(.ladder-tag),
+    .weight-meanings { margin-left: 0; }
+    .ladder-vis { margin-left: 0; }
+    .ladder-head { margin-left: 0; }
+  }
+
+  /* ── ENHANCED DESIGN: progress bar, section numbers, hero strip, reveal ── */
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 1000;
+    transition: width 0.1s ease;
+    pointer-events: none;
+  }
+
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .hero::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  // Set js-enabled early to avoid flash; only if observer is supported
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 1 · Hands-on</p>
+    <h1>Jak funguje <em>strojové učení</em> a neuronové sítě</h1>
+    <p class="hero-subtitle">
+      Co se vlastně děje, když „model se učí“. Projdeme sedm fází životního cyklu modelu (od sběru dat přes architekturu a trénink po nasazení) a rozlišíme dva stavy, ve kterých model existuje: trénování a používání.
+    </p>
+  </header>
+
+  <!-- ─── 1 · INTRO ────────────────────────────────────── -->
+  <section>
+    <h2 class="section-title">Co se vlastně mění</h2>
+    <p class="section-lead">
+      U tradičního programu změna chování znamená <strong>přepsat kód</strong>. U strojového učení se během tréninku kódu nikdo nedotýká, mění se <strong>čísla uvnitř modelu</strong>. Těmto číslům říkáme <em>váhy</em> a u dnešních modelů jich jsou miliardy. (Architektura modelu se mění také, ale to už je úloha pro novou generaci, viz fáze 7 níže.)
+    </p>
+
+    <div class="callout">
+      <strong>Drobné upřesnění předem.</strong> Tato stránka popisuje tzv. <em>supervised</em> trénink (model dostává lidsky označené páry „vstup–správná odpověď“). Existují i jiné způsoby učení, například <em>reinforcement learning</em> (učení z odměn) nebo <em>self-supervised</em> (model si „odpovědi“ tvoří sám z dat, takhle se předtrénovávají LLM). Jejich rozdíly podrobně probereme na následující lekci.
+    </div>
+  </section>
+
+  <!-- ─── 2 · LIFECYCLE ─────────────────────────────────── -->
+  <section>
+    <h2 class="section-title">Životní cyklus modelu</h2>
+    <p class="section-lead">
+      Univerzální schéma toho, co se s modelem děje od začátku po nasazení. Sedm fází, kterými projde každý neuronový model.
+    </p>
+
+    <div class="callout">
+      <strong>Pozor, schéma je univerzální.</strong> Různé typy modelů (CNN pro obraz, Transformer pro text, RNN pro sekvence) se v detailech liší, třeba v tom, jak data zpracovávají nebo jak vrstvy spolupracují. Princip ale platí pro každý.
+    </div>
+
+    <ol class="lifecycle">
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">1</span>
+          <h3>Data</h3>
+        </div>
+        <div class="phase-body">
+          <p>Sbírají se tisíce až miliardy příkladů. U <em>supervised</em> učení musí být každý vstup spárovaný se správnou odpovědí (e-mail spam/ne-spam, obraz pes/kočka, věta a její překlad). Data se vyčistí, převedou na čísla a rozdělí na <strong>trénovací</strong> (~80 %), <strong>validační</strong> (~10 %) a <strong>testovací</strong> (~10 %).</p>
+        </div>
+      </li>
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">2</span>
+          <h3>Architektura</h3>
+        </div>
+        <div class="phase-body">
+          <p>Programátor navrhne <strong>strukturu</strong> modelu: kolik bude mít vrstev, kolik neuronů, jak budou propojené. Samotné <em>hodnoty</em> uvnitř (váhy) na začátku ještě neexistují, doplní se až tréninkem. Stavební prvky struktury, od nejmenšího po největší:</p>
+          <ul class="phase-bullets">
+            <li><strong>Váha</strong>: jedno číslo. Po tréninku jich má model desítky až stovky miliard.</li>
+            <li><strong>Neuron</strong>: malá skupinka vah. Vezme čísla na vstupu, každé vynásobí svou váhou, sečte je, přičte konstantu (v žargonu se jí říká <em>bias</em>) a výsledek prožene <em>aktivační funkcí</em> (ReLU, sigmoid). Vrátí jediné číslo.</li>
+            <li><strong>Vrstva</strong>: mnoho neuronů paralelně. Sdílejí stejný vstup, ale každý má jiné váhy.</li>
+            <li><strong>Síť</strong>: vrstvy zařazené za sebou, výstup jedné je vstupem další. Když má hodně vrstev, mluví se o <em>hlubokém učení</em>.</li>
+            <li><strong>Velký jazykový model (LLM)</strong>: stejný princip v obří škále. GPT-4 má odhadem ~1,5 bilionu vah.</li>
+          </ul>
+          <p>Tahle struktura je <strong>pevná, neučí se</strong>. Tvar modelu (kolik vrstev, jak jsou propojené) je rozhodnutí programátora a liší se podle úkolu. Co se v něm učí jsou až ty váhy uvnitř.</p>
+        </div>
+      </li>
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">3</span>
+          <h3>Inicializace</h3>
+        </div>
+        <div class="phase-body">
+          <p>Všechny váhy se nastaví na <strong>náhodná čísla</strong> (typicky kolem nuly). Model v tu chvíli neumí absolutně nic užitečného a jeho odpovědi jsou náhodné.</p>
+        </div>
+      </li>
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">4</span>
+          <h3>Trénink</h3>
+        </div>
+        <div class="phase-body">
+          <p>Tady se „učení“ skutečně odehrává. Probíhá smyčka, která proběhne v řádech milionů až miliard iterací:</p>
+          <ol class="phase-steps">
+            <li>Vezmi vzorek z trénovacích dat.</li>
+            <li><strong>Forward pass:</strong> spočti odhad modelu (vážené součty plus aktivace, vrstvu po vrstvě).</li>
+            <li><strong>Loss:</strong> porovnej odhad se správnou odpovědí, spočti chybu jako jediné číslo.</li>
+            <li><strong>Backward pass:</strong> spočti, jak moc každá z miliard vah za chybu může (gradient).</li>
+            <li><strong>Update:</strong> posuň každou váhu o malý krok ve směru, který chybu zmenšuje.</li>
+            <li>Vezmi další vzorek a opakuj.</li>
+          </ol>
+          <p>U velkých modelů toto proběhne týdny až měsíce na klastrech specializovaných čipů. Vyzkoušejte si miniaturní verzi (1 vstup, 8 trénovacích bodů, model = 1 neuron):</p>
+
+          <details class="train-explainer">
+            <summary>Jak tento příklad funguje</summary>
+            <div class="train-explainer-body">
+              <p><strong>Data:</strong> 8 studentů. U každého víme, kolik hodin se před zkouškou učil (vstup) a jestli prošel, nebo neprošel (správná odpověď). Zelený bod = prošel, červený = neprošel.</p>
+              <p><strong>Model:</strong> dostane počet hodin a vrátí pravděpodobnost projití mezi 0 a 1. Tu vidíte v grafu jako modrou křivku. Představte si, že model staví <strong>rozhodovací laťku</strong>, kterou určují dvě naučená čísla, <code>w</code> a <code>b</code>. Trénink je postupně upravuje, aby laťka stála na správném místě.</p>
+              <p><strong>Co znamenají statistiky pod grafem:</strong></p>
+              <ul>
+                <li><strong>Iterace</strong>: kolikrát už proběhla úprava vah</li>
+                <li><strong>Váha <code>w</code></strong>: jak <strong>přísná</strong> ta laťka je. Když je 0, žádná laťka neexistuje a model dává všem 50 % (neví nic). Čím větší <code>w</code>, tím ostřejší rozhodnutí: pod laťkou jednoznačně neprošel, nad ní jednoznačně prošel.</li>
+                <li><strong>Bias <code>b</code></strong>: <strong>kde</strong> ta laťka leží, tedy na kolika hodinách model „mění názor“. Bez biasu by ležela pevně uprostřed datového rozsahu (na 5 hodinách); s biasem ji model může posunout kamkoli, kde data hranici opravdu mají (v našem příkladě kolem 4 hodin).</li>
+                <li><strong>Chyba</strong>: jak špatně model momentálně odhaduje (jediné číslo přes všechny studenty; čím menší, tím lépe)</li>
+              </ul>
+              <p><strong>Co dělat:</strong> klikněte na <em>Trénuj 1 krok</em> a sledujte, jak se hodnoty <code>w</code> a <code>b</code> mění a křivka se přibližuje datům. <em>Trénuj 100×</em> spustí 100 kroků za sebou. <em>Reset</em> vrátí váhy na nulu (počáteční stav).</p>
+              <p><strong>Co z toho plyne:</strong> tahle smyčka „spočítej výstup, porovnej s pravdou, uprav váhy“ je esencí celého strojového učení. U velkých modelů jsou parametry miliardy a iterací biliony, ale princip je úplně stejný.</p>
+            </div>
+          </details>
+
+      <div class="train-card">
+      <p class="neuron-card-label">Interaktivní · model se učí z 8 studentů</p>
+
+      <div class="train-plot-wrap">
+        <svg class="train-svg" viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Plot area: x in [38, 41.5] → svg [70, 690]; y in [0, 1] → svg [280, 30] -->
+
+          <!-- Grid lines (y) -->
+          <g class="grid-line">
+            <line x1="70" y1="30"  x2="690" y2="30"/>
+            <line x1="70" y1="80"  x2="690" y2="80"/>
+            <line x1="70" y1="130" x2="690" y2="130"/>
+            <line x1="70" y1="180" x2="690" y2="180"/>
+            <line x1="70" y1="230" x2="690" y2="230"/>
+          </g>
+
+          <!-- Axes -->
+          <line class="axis-line" x1="70" y1="280" x2="690" y2="280"/>
+          <line class="axis-line" x1="70" y1="30"  x2="70"  y2="280"/>
+
+          <!-- Y ticks -->
+          <g class="axis-label" text-anchor="end">
+            <text x="62" y="34">1,0</text>
+            <text x="62" y="134">0,5</text>
+            <text x="62" y="284">0,0</text>
+          </g>
+          <g class="axis-tick">
+            <line x1="65" y1="30"  x2="70" y2="30"/>
+            <line x1="65" y1="130" x2="70" y2="130"/>
+            <line x1="65" y1="280" x2="70" y2="280"/>
+          </g>
+
+          <!-- X ticks: hodiny 0, 2, 4, 6, 8, 10 -->
+          <g class="axis-label" text-anchor="middle">
+            <text x="70"  y="298">0</text>
+            <text x="194" y="298">2</text>
+            <text x="318" y="298">4</text>
+            <text x="442" y="298">6</text>
+            <text x="566" y="298">8</text>
+            <text x="690" y="298">10</text>
+          </g>
+          <g class="axis-tick">
+            <line x1="70"  y1="280" x2="70"  y2="285"/>
+            <line x1="194" y1="280" x2="194" y2="285"/>
+            <line x1="318" y1="280" x2="318" y2="285"/>
+            <line x1="442" y1="280" x2="442" y2="285"/>
+            <line x1="566" y1="280" x2="566" y2="285"/>
+            <line x1="690" y1="280" x2="690" y2="285"/>
+          </g>
+
+          <!-- Axis titles -->
+          <text class="axis-label" x="380" y="316" text-anchor="middle">počet hodin učení před zkouškou</text>
+          <text class="axis-label" x="20"  y="155" text-anchor="middle" transform="rotate(-90, 20, 155)">pravděpodobnost projití zkoušky</text>
+
+          <!-- Decision threshold (0.5) -->
+          <line class="threshold-line" x1="70" y1="130" x2="690" y2="130"/>
+
+          <!-- Model curve (filled by JS) -->
+          <path id="train-curve" class="train-curve" d=""/>
+
+          <!-- Data points (filled by JS) -->
+          <g id="train-points"></g>
+        </svg>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot fever"></span>Neprošel (y = 0)</span>
+          <span class="legend-item"><span class="legend-dot healthy"></span>Prošel (y = 1)</span>
+          <span class="legend-item"><span class="legend-line"></span>Predikce modelu</span>
+        </div>
+      </div>
+
+      <div class="train-stats">
+        <div class="train-stat">
+          <span class="train-stat-label">Iterace</span>
+          <span class="train-stat-value" id="stat-iter">0</span>
+        </div>
+        <div class="train-stat">
+          <span class="train-stat-label">Váha w</span>
+          <span class="train-stat-value" id="stat-w">0,00</span>
+        </div>
+        <div class="train-stat">
+          <span class="train-stat-label">Bias b</span>
+          <span class="train-stat-value" id="stat-b">0,00</span>
+        </div>
+        <div class="train-stat">
+          <span class="train-stat-label">Chyba</span>
+          <span class="train-stat-value accent" id="stat-loss">0,693</span>
+        </div>
+      </div>
+
+      <div class="train-controls">
+        <button class="btn" id="btn-step">Trénuj 1 krok</button>
+        <button class="btn" id="btn-many">Trénuj 100×</button>
+        <button class="btn secondary" id="btn-reset">Reset</button>
+      </div>
+      </div>
+
+          <p class="train-note">
+            Na začátku model „nic neví“ a všem studentům přiřazuje pravděpodobnost projití 0,5 (chyba je největší). S každou iterací se váhy posunou kousek blíž k datům. Po několika desítkách kroků křivka projde body téměř ideálně a chyba klesne k nule.
+          </p>
+
+          <div class="callout warm" style="margin-top:18px; margin-bottom:0;">
+            <strong>U reálných modelů</strong> je princip stejný, ale rozsah jiný. Místo 8 bodů jsou to miliardy příkladů, místo 2 vah jsou jich miliardy, a místo desítek kroků trénink běží týdny až měsíce na klastrech specializovaných čipů.
+          </div>
+        </div>
+      </li>
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">5</span>
+          <h3>Validace</h3>
+        </div>
+        <div class="phase-body">
+          <p>Periodicky se model otestuje na <strong>validačních datech</strong>, která neviděl při tréninku. Pokud chyba klesá i tam, učí se obecně. Pokud klesá jen na trénincích a na validaci stoupá, model si výsledky „pamatuje“ místo aby je rozuměl (říká se tomu <em>overfitting</em>) a je třeba zasáhnout: zjednodušit model, přidat data, nebo zkrátit trénink.</p>
+        </div>
+      </li>
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">6</span>
+          <h3>Použití (inference)</h3>
+        </div>
+        <div class="phase-body">
+          <p>Po skončení tréninku jsou váhy <strong>pevné</strong>. Model se nasadí, lidé ho používají. Vstupní text se převede na čísla (<em>tokeny</em> a <em>embeddings</em>), ta projdou skrz pevné váhy vrstvu po vrstvě, model vrátí odpověď. Trvá to milisekundy a váhy se přitom nemění.</p>
+
+          <div class="flow">
+            <div class="flow-box">
+              <span class="flow-label">vstup (text)</span>
+              <em>„Hlavní město Francie?“</em>
+              <span class="flow-sub">co napíše uživatel</span>
+            </div>
+
+            <div class="flow-row-mid">
+              <div class="flow-box">
+                <span class="flow-label">tokeny</span>
+                <em>[0,42, -0,13, 0,87, …]</em>
+                <span class="flow-sub">text se rozseká na kousky a každý se převede na vektor čísel</span>
+              </div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-box flow-model">
+                <span class="flow-label">model</span>
+                <em>pevné váhy</em>
+                <span class="flow-sub">čísla projdou desítkami vrstev, v každé se násobí naučenými váhami</span>
+              </div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-box">
+                <span class="flow-label">pravděpodobnosti</span>
+                <em>Paříž 94 % / Lyon 3 % / …</em>
+                <span class="flow-sub">model každé možné odpovědi přiřadí pravděpodobnost</span>
+              </div>
+            </div>
+
+            <div class="flow-box">
+              <span class="flow-label">výstup (text)</span>
+              <em>„Paříž“</em>
+              <span class="flow-sub">vybere nejpravděpodobnější a převede zpět na text</span>
+            </div>
+          </div>
+
+          <p class="flow-note">
+            Token = malý kousek textu (slovo, část slova, znak). Aby s ním model mohl počítat, převede se na vektor čísel. Tabulka „token → vektor“ se sama učí z dat, je to tedy další skupina vah uvnitř modelu.
+          </p>
+        </div>
+      </li>
+
+      <li class="phase">
+        <div class="phase-head">
+          <span class="phase-num">7</span>
+          <h3>Monitoring a re-training</h3>
+        </div>
+        <div class="phase-body">
+          <p>V provozu se sleduje, jak se model chová. Svět se mění (nový spam, nová terminologie, nová témata) a model proto postupně zastarává. Reakce má dvě úrovně:</p>
+          <ul class="phase-bullets">
+            <li><strong>Drobné aktualizace</strong> (časté, řádově měsíce): stejná architektura, model se <em>dotrénuje</em> nebo přetrénuje na čerstvějších datech. Tak vznikají úpravy uvnitř jedné generace (například GPT-4 → GPT-4-turbo nebo Claude 3 → 3.5).</li>
+            <li><strong>Generační skok</strong> (zřídka, řádově roky): kostra se <em>mění také</em>, často významně, víc vrstev, jiné mechanismy, větší kontextové okno. Tak vzniká skok GPT-3 → GPT-4 nebo Claude 3 → Claude 4. To už není přetrénování, je to nový model navržený od nuly.</li>
+          </ul>
+        </div>
+      </li>
+
+    </ol>
+  </section>
+
+  <!-- ─── 3 · TWO STATES ─────────────────────────────────── -->
+  <section>
+    <h2 class="section-title">Dva stavy: trénování a používání</h2>
+    <p class="section-lead">
+      Fáze 4 (učení) a fáze 6 (používání) jsou dva naprosto odlišné stavy modelu. V běžné řeči se často slévají, ale stojí za to je nezaměňovat:
+    </p>
+
+    <table class="states-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Trénování (fáze 4)</th>
+          <th>Používání (fáze 6)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Co se v modelu mění</td>
+          <td>všechny váhy, postupně</td>
+          <td>nic, váhy jsou pevné</td>
+        </tr>
+        <tr>
+          <td>Jak dlouho trvá</td>
+          <td>hodiny až týdny</td>
+          <td>milisekundy</td>
+        </tr>
+        <tr>
+          <td>Kdy probíhá</td>
+          <td>před nasazením, periodicky</td>
+          <td>kdykoliv někdo model použije</td>
+        </tr>
+        <tr>
+          <td>Co potřebuje</td>
+          <td>velké datové sady, GPU klastry</td>
+          <td>natrénovaný model</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── 5 · IMPLICATIONS ────────────────────────────────── -->
+  <section>
+    <h2 class="section-title">Co z toho plyne v praxi</h2>
+    <p class="section-lead">
+      Z tohoto způsobu fungování plynou všechny vlastnosti, které dnes na adaptivní AI vidíme, dobré i problematické.
+    </p>
+    <ul class="body-list">
+      <li><strong>Kvalita dat určuje kvalitu modelu.</strong> Pokud trénovací data obsahovala chybu, model si ji „naučí“. Pokud chyběla určitá situace, model ji bude odhadovat jen přibližně.</li>
+      <li><strong>Model nemá pravidla, jen váhy.</strong> Není možné se ho zeptat „proč jsi rozhodl takto“ a dostat krátký, čitelný důvod. Důvod je rozprostřený v miliardách čísel. Říká se tomu „černá skříňka“.</li>
+      <li><strong>Vždy nějakou odpověď dá.</strong> Model nepředpokládá, že by mohl nevědět. Když nemá oporu v datech, stejně něco vyprodukuje, často sebevědomě a chybně. Pro jazykové modely se tomu říká halucinace.</li>
+      <li><strong>Učení nikdy nekončí.</strong> Nová verze modelu = nová data + nový trénink. Pravidla se tedy mění s každou verzí, často nezdokumentovaně.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Praktický důsledek:</strong> u systémů založených na adaptivní AI nelze ověřovat „pravidla“ tak jako u tradičního softwaru, protože žádná explicitní pravidla neexistují. Ověřuje se kvalita trénovacích dat, výkon na testovací sadě, postupy ladění a chování v hraničních případech.
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 1 · Hands-on
+    <br>
+    Dotazy: <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  function fmt(n, d) { d = d == null ? 2 : d; return n.toFixed(d).replace('.', ','); }
+  function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+
+  // ──────────────────────────────────────────────────────
+  // Training visualization (logistic regression)
+  // ──────────────────────────────────────────────────────
+  // Data: hodiny učení → projití zkouškou (0/1)
+  const DATA = [
+    { x: 0.5, y: 0 },
+    { x: 1.5, y: 0 },
+    { x: 2.5, y: 0 },
+    { x: 3.5, y: 0 },
+    { x: 4.5, y: 1 },
+    { x: 6.0, y: 1 },
+    { x: 8.0, y: 1 },
+    { x: 9.5, y: 1 },
+  ];
+  const X_CENTER = 5.0;
+  const X_SCALE = 2.0;            // normalizace: z = (x - 5) / 2
+  const LR = 0.6;                 // learning rate
+
+  // SVG plot config
+  const X_MIN = 0.0, X_MAX = 10.0;
+  const SVG_X0 = 70, SVG_X1 = 690;
+  const SVG_Y0 = 280, SVG_Y1 = 30;
+  const xToSvg = (x) => SVG_X0 + (x - X_MIN) / (X_MAX - X_MIN) * (SVG_X1 - SVG_X0);
+  const yToSvg = (y) => SVG_Y0 + y * (SVG_Y1 - SVG_Y0);
+
+  let model = { w: 0, b: 0 };
+  let iter = 0;
+  let animTimer = null;
+
+  const elCurve = document.getElementById('train-curve');
+  const elPoints = document.getElementById('train-points');
+  const statIter = document.getElementById('stat-iter');
+  const statW    = document.getElementById('stat-w');
+  const statB    = document.getElementById('stat-b');
+  const statLoss = document.getElementById('stat-loss');
+  const btnStep  = document.getElementById('btn-step');
+  const btnMany  = document.getElementById('btn-many');
+  const btnReset = document.getElementById('btn-reset');
+
+  function predict(x) {
+    const z = (x - X_CENTER) / X_SCALE;
+    return sigmoid(model.w * z + model.b);
+  }
+
+  function loss() {
+    let s = 0;
+    for (const d of DATA) {
+      const p = Math.max(1e-9, Math.min(1 - 1e-9, predict(d.x)));
+      s += -(d.y * Math.log(p) + (1 - d.y) * Math.log(1 - p));
+    }
+    return s / DATA.length;
+  }
+
+  function step() {
+    let dw = 0, db = 0;
+    for (const d of DATA) {
+      const z = (d.x - X_CENTER) / X_SCALE;
+      const p = sigmoid(model.w * z + model.b);
+      const err = p - d.y;
+      dw += err * z;
+      db += err;
+    }
+    dw /= DATA.length;
+    db /= DATA.length;
+    model.w -= LR * dw;
+    model.b -= LR * db;
+    iter += 1;
+  }
+
+  function drawPoints() {
+    let html = '';
+    for (const d of DATA) {
+      // y=1 (passed) → green (.healthy), y=0 (failed) → red (.fever)
+      const cls = d.y === 1 ? 'healthy' : 'fever';
+      html += '<circle class="data-point ' + cls + '" cx="' + xToSvg(d.x).toFixed(1) + '" cy="' + yToSvg(d.y).toFixed(1) + '" r="6"/>';
+    }
+    elPoints.innerHTML = html;
+  }
+
+  function drawCurve() {
+    const N = 80;
+    let path = '';
+    for (let i = 0; i <= N; i++) {
+      const x = X_MIN + (i / N) * (X_MAX - X_MIN);
+      const y = predict(x);
+      path += (i === 0 ? 'M' : 'L') + xToSvg(x).toFixed(1) + ' ' + yToSvg(y).toFixed(1) + ' ';
+    }
+    elCurve.setAttribute('d', path);
+  }
+
+  function updateStats() {
+    statIter.textContent = String(iter);
+    statW.textContent    = fmt(model.w);
+    statB.textContent    = fmt(model.b);
+    statLoss.textContent = fmt(loss(), 3);
+  }
+
+  function render() {
+    drawCurve();
+    updateStats();
+  }
+
+  function reset() {
+    if (animTimer) { clearInterval(animTimer); animTimer = null; btnMany.textContent = 'Trénuj 100×'; btnMany.disabled = false; btnStep.disabled = false; }
+    model = { w: 0, b: 0 };
+    iter = 0;
+    render();
+  }
+
+  function trainMany() {
+    if (animTimer) {
+      clearInterval(animTimer);
+      animTimer = null;
+      btnMany.textContent = 'Trénuj 100×';
+      btnStep.disabled = false;
+      return;
+    }
+    btnMany.textContent = 'Stop';
+    btnStep.disabled = true;
+    let count = 0;
+    animTimer = setInterval(() => {
+      step();
+      render();
+      count += 1;
+      if (count >= 100) {
+        clearInterval(animTimer);
+        animTimer = null;
+        btnMany.textContent = 'Trénuj 100×';
+        btnStep.disabled = false;
+      }
+    }, 30);
+  }
+
+  btnStep.addEventListener('click', () => { step(); render(); });
+  btnMany.addEventListener('click', trainMany);
+  btnReset.addEventListener('click', reset);
+
+  drawPoints();
+  render();
+})();
+
+// ── Reading progress bar + reveal on scroll ────────────────
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>

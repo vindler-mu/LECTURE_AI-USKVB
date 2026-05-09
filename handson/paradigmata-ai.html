@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Tradiční program, GOFAI, adaptivní AI – tři paradigmata vedle sebe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #3a6b4a;
+    --accent-hover: #2c5538;
+    --accent-soft: #e3eee6;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --ada: #1d3557;
+    --ada-soft: #eaeef5;
+    --gofai: #b5651d;
+    --gofai-soft: #fbf3e7;
+    --trad: #6b6f76;
+    --trad-soft: #f1efe9;
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* ── BACK LINK ───────────────────────────────────────── */
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.6px;
+    margin-bottom: 18px;
+    max-width: 880px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 760px;
+  }
+
+  .definition {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    font-size: 14.5px;
+    color: var(--ink);
+    max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  /* ── SECTION HEADERS ─────────────────────────────────── */
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 780px;
+    margin-bottom: 28px;
+  }
+
+  /* ── PICKER ──────────────────────────────────────────── */
+  .picker {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 22px 26px;
+    margin-bottom: 32px;
+  }
+
+  .picker-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .picker-label {
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .reset {
+    font-size: 12px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+    padding: 0;
+  }
+  .reset:hover { color: var(--accent); }
+
+  .symptoms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 8px 14px;
+  }
+
+  .symptom {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13.5px;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .symptom:hover { border-color: var(--line-strong); }
+  .symptom input { accent-color: var(--accent); cursor: pointer; }
+  .symptom.checked {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .presets {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .presets-label {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .preset-btn {
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 6px 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .preset-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── PARADIGMS GRID ──────────────────────────────────── */
+  .paradigms {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .card-trad { border-top-color: var(--trad); }
+  .card-gofai { border-top-color: var(--gofai); }
+  .card-ada { border-top-color: var(--ada); }
+
+  .card-head .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .card-trad .badge { color: var(--trad); }
+  .card-gofai .badge { color: var(--gofai); }
+  .card-ada .badge { color: var(--ada); }
+
+  .card-head h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .card-head p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .hood {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .card-gofai .hood { background: var(--gofai-soft); border-color: #efe1cc; }
+  .card-ada .hood { background: var(--ada-soft); border-color: #d6deeb; }
+
+  .hood-label {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .hood pre {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+  .hood pre .kw { color: var(--accent); font-weight: 500; }
+  .hood pre .str { color: var(--warm); }
+  .hood pre .com { color: var(--muted); font-style: italic; }
+
+  .rules {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11.3px;
+    line-height: 1.65;
+  }
+  .rules li {
+    padding: 2px 0;
+    color: #4a3f2e;
+  }
+  .rules .op { color: var(--gofai); font-weight: 500; }
+
+  .hood-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  .matrix {
+    margin-top: 8px;
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 10.5px;
+  }
+  .matrix th, .matrix td {
+    padding: 3px 6px;
+    text-align: center;
+    border-bottom: 1px solid #d6deeb;
+  }
+  .matrix th {
+    color: var(--muted);
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .matrix th:first-child, .matrix td:first-child {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink-soft);
+  }
+
+  /* ── RESULT BOXES ────────────────────────────────────── */
+  .result {
+    border-top: 1px dashed var(--line-strong);
+    padding-top: 16px;
+  }
+
+  .result-label {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .result-value {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .result-value.empty { color: var(--muted); font-weight: 400; font-style: italic; font-family: inherit; font-size: 14px; }
+  .result-value.unknown { color: var(--trad); }
+
+  .derivation {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px 0;
+    counter-reset: step;
+    font-size: 12.5px;
+  }
+  .derivation li {
+    counter-increment: step;
+    padding: 5px 0 5px 26px;
+    position: relative;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .derivation li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gofai-soft);
+    border: 1px solid var(--gofai);
+    color: var(--gofai);
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+  }
+  .derivation li.empty-row {
+    counter-increment: none;
+    padding-left: 0;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .derivation li.empty-row::before { display: none; }
+  .derivation .fact {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--gofai);
+    font-weight: 500;
+  }
+  .conclusion {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 44px;
+    gap: 10px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+  .bar-name { color: var(--ink-soft); line-height: 1.2; }
+  .bar-name.top { color: var(--accent); font-weight: 600; }
+  .bar-track {
+    height: 8px;
+    background: var(--paper);
+    border-radius: 100px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+  .bar-row:not(.top) .bar-fill { background: #aab7cf; }
+  .bar-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: right;
+  }
+  .bar-row.top .bar-pct { color: var(--accent); font-weight: 600; }
+
+  /* ── DOMAIN TABS ─────────────────────────────────────── */
+  .domain-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .domain-tab {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 12px 22px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 500;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .domain-tab:hover { color: var(--ink); }
+  .domain-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── TAKEAWAY ────────────────────────────────────────── */
+  .takeaway {
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    padding: 18px 22px;
+    margin-bottom: 56px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #4a3f2e;
+  }
+  .takeaway strong { color: var(--warm); }
+
+  /* ── COMPARISON TABLE ────────────────────────────────── */
+  .compare {
+    margin-top: 56px;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .compare-table th, .compare-table td {
+    padding: 16px 18px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.55;
+    border-bottom: 1px solid var(--line);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table th {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 700;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 14px;
+  }
+  .compare-table td:first-child,
+  .compare-table th:first-child {
+    width: 130px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .compare-table .logic {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+
+  /* ── PAGER ───────────────────────────────────────────── */
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .pager-link {
+    flex: 1;
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    transition: all 0.15s ease;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .pager-link:hover {
+    border-color: var(--accent);
+    background: var(--paper);
+    text-decoration: none;
+  }
+  .pager-link.next { text-align: right; }
+  .pager-eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .pager-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  @media (max-width: 720px) {
+    .pager { flex-direction: column; }
+    .pager-link.next { text-align: left; }
+  }
+
+  /* ── CLOSING ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .paradigms { grid-template-columns: 1fr; }
+    .compare-table td:first-child,
+    .compare-table th:first-child { width: 110px; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 18px 60px; }
+    .compare-table th, .compare-table td { padding: 12px 10px; font-size: 13px; }
+    .symptoms { grid-template-columns: 1fr; }
+  }
+
+  /* ── ENHANCED DESIGN: progress bar, section numbers, hero strip, reveal ── */
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 1000;
+    transition: width 0.1s ease;
+    pointer-events: none;
+  }
+
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .hero::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  // Set js-enabled early to avoid flash; only if observer is supported
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 1 · Hands-on</p>
+    <h1>AI je <em>adaptivní</em> systém s různorodými funkcemi</h1>
+    <p class="hero-subtitle" id="hero-subtitle">
+      Dva srovnatelné úkoly, na obou si všimnete, jak jiným způsobem k řešení přistupuje tradiční program, klasická AI (GOFAI) a moderní adaptivní AI.
+    </p>
+    <div class="definition">
+      <strong>Adaptivní systém</strong> = systém, který se přizpůsobuje na základě trénování (mění své chování podle dat, ne podle nového kódu).
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Tři paradigmata, jeden vstup</h2>
+    <p class="section-lead" id="section-lead">
+      Vyberte si úlohu a sledujte, jak se liší tři věci: co každý systém má „uvnitř“, jak k závěru dochází a jak se zachová při neobvyklém vstupu.
+    </p>
+
+    <div class="domain-tabs" id="domain-tabs">
+      <button class="domain-tab active" data-domain="vet">Veterinární diagnostika</button>
+      <button class="domain-tab" data-domain="spam">Filtr spamu</button>
+    </div>
+
+    <div class="picker">
+      <div class="picker-row">
+        <span class="picker-label" id="picker-label">Vstupy</span>
+        <button class="reset" id="reset">Vymazat výběr</button>
+      </div>
+
+      <div class="symptoms" id="symptoms"></div>
+
+      <div class="presets" id="presets">
+        <span class="presets-label">Rychlé příklady:</span>
+        <span id="presets-buttons"></span>
+      </div>
+    </div>
+
+    <div class="paradigms">
+
+      <article class="card card-trad">
+        <header class="card-head">
+          <span class="badge">Paradigma 1</span>
+          <h3>Tradiční program</h3>
+          <p>Pevně daná pravidla. Programátor předem napsal, co se má při dané kombinaci stát.</p>
+        </header>
+        <div class="hood">
+          <span class="hood-label">Uvnitř: kód</span>
+          <pre id="trad-pre"></pre>
+        </div>
+        <div class="result">
+          <span class="result-label">Výstup</span>
+          <div class="result-value empty" id="trad-out">Vyberte vlastnosti výše</div>
+        </div>
+      </article>
+
+      <article class="card card-gofai">
+        <header class="card-head">
+          <span class="badge">Paradigma 2 · GOFAI</span>
+          <h3>Klasická AI (expertní systém)</h3>
+          <p>Báze pravidel a inferenční stroj. Pravidla řetězí a odvozuje nové fakty v rámci toho, co odborník zapsal.</p>
+        </header>
+        <div class="hood">
+          <span class="hood-label">Uvnitř: báze pravidel</span>
+          <ul class="rules" id="rules-list"></ul>
+        </div>
+        <div class="result">
+          <span class="result-label">Odvození (forward chaining)</span>
+          <ol class="derivation" id="gofai-deriv"><li class="empty-row">žádná fakta na vstupu</li></ol>
+          <div><span class="result-label" style="margin-bottom:6px;">Závěr</span><span class="conclusion" id="gofai-out">–</span></div>
+        </div>
+      </article>
+
+      <article class="card card-ada">
+        <header class="card-head">
+          <span class="badge">Paradigma 3 · ML / DL</span>
+          <h3>Adaptivní AI</h3>
+          <p id="ada-desc">Pravidla nikdo nezapsal. Model se „naučil“ z dat.</p>
+        </header>
+        <div class="hood">
+          <span class="hood-label">Uvnitř: naučená matice (zjednodušeno)</span>
+          <p class="hood-note" id="ada-hood-note"></p>
+          <div id="matrix-container"></div>
+        </div>
+        <div class="result">
+          <span class="result-label">Pravděpodobnostní odhad</span>
+          <div class="bars" id="ada-bars"></div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="takeaway" id="takeaway">
+      <strong>Pozorování:</strong> Vyberte různé kombinace a všimněte si tří věcí. (1) Tradiční program odpoví <em>NEROZPOZNÁNO</em> na cokoli, co programátor předem nezahrnul. (2) GOFAI odvodí pouze to, co lze poskládat z pravidel v bázi: pokud chybí pravidlo, závěr není. (3) Adaptivní AI dá odhad i pro novou kombinaci, ale jako pravděpodobnost, ne jistotu.
+    </div>
+  </section>
+
+  <section class="compare">
+    <h2 class="section-title">Srovnání paradigmat</h2>
+    <p class="section-lead">
+      Pět os, na kterých se tři paradigmata liší. Stejnou tabulku najdete v přednášce; zde slouží jako přehled toho, co interaktivní demo ilustruje.
+    </p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Tradiční program</th>
+          <th>GOFAI<br><span style="font-weight:400;font-size:12px;color:var(--muted);">(good old-fashioned AI)</span></th>
+          <th>Adaptivní AI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pravidla</td>
+          <td>pevně daná</td>
+          <td>pevně daná</td>
+          <td>naučená z dat</td>
+        </tr>
+        <tr>
+          <td>Co dělá</td>
+          <td>přímá transformace</td>
+          <td>odvozování v definovaném prostoru</td>
+          <td>odvozování v naučeném prostoru</td>
+        </tr>
+        <tr>
+          <td>Aktualizace</td>
+          <td>nový kód</td>
+          <td>nová pravidla / instrukce</td>
+          <td>nová data</td>
+        </tr>
+        <tr>
+          <td>Logika</td>
+          <td class="logic">„X → Y“</td>
+          <td class="logic">„pokud X a pravidla → odvozené Y“</td>
+          <td class="logic">„pokud X → pravděpodobně Y“</td>
+        </tr>
+        <tr>
+          <td>Příklad</td>
+          <td>kalkulačka, if-then skripty</td>
+          <td>expertní systémy, šachové enginy</td>
+          <td>LLM, rozpoznávání obrazu</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 1 · Hands-on
+    <br>
+    Dotazy: <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ──────────────────────────────────────────────────────
+  // Domain configurations
+  // ──────────────────────────────────────────────────────
+  const DOMAINS = {
+
+    vet: {
+      sectionLead: 'Z několika příznaků pacienta odhadněte pravděpodobnou diagnózu. Sledujte u každého systému tři věci: co má „uvnitř“, jak k závěru dochází a jak se zachová při neobvyklém vstupu.',
+      pickerLabel: 'Příznaky pacienta (pes)',
+      placeholder: 'Vyberte příznaky výše',
+
+      features: [
+        { key: 'fever',    label: 'Horečka (&gt; 39,5 °C)' },
+        { key: 'cough',    label: 'Kašel' },
+        { key: 'dyspnoe',  label: 'Dušnost' },
+        { key: 'vomit',    label: 'Zvracení' },
+        { key: 'diarrhea', label: 'Průjem' },
+        { key: 'anorex',   label: 'Nechutenství' },
+        { key: 'lethargy', label: 'Letargie' },
+      ],
+
+      presets: [
+        { key: 'resp',     label: 'respirační infekce',         features: ['cough', 'fever', 'dyspnoe'] },
+        { key: 'gi',       label: 'gastroenteritida',           features: ['vomit', 'diarrhea', 'lethargy'] },
+        { key: 'pancreas', label: 'podezření na pankreatitidu', features: ['vomit', 'anorex', 'lethargy'] },
+        { key: 'weird',    label: 'atypická kombinace',         features: ['fever', 'vomit'] },
+        { key: 'empty',    label: 'bez příznaků',               features: [] },
+      ],
+
+      tradCode:
+        '<span class="kw">if</span> (kašel <span class="kw">&&</span> horečka <span class="kw">&&</span> dušnost)\n' +
+        '  <span class="kw">return</span> <span class="str">"Bronchitida"</span>;\n' +
+        '<span class="kw">if</span> (kašel <span class="kw">&&</span> horečka)\n' +
+        '  <span class="kw">return</span> <span class="str">"Respirační infekce"</span>;\n' +
+        '<span class="kw">if</span> (zvracení <span class="kw">&&</span> průjem)\n' +
+        '  <span class="kw">return</span> <span class="str">"Gastroenteritida"</span>;\n' +
+        '<span class="kw">if</span> (zvracení <span class="kw">&&</span> nechutenství)\n' +
+        '  <span class="kw">return</span> <span class="str">"Pankreatitida (susp.)"</span>;\n' +
+        '<span class="kw">if</span> (žádný_příznak)\n' +
+        '  <span class="kw">return</span> <span class="str">"Klinicky zdráv"</span>;\n' +
+        '<span class="kw">return</span> <span class="str">"NEROZPOZNÁNO"</span>;',
+
+      tradEvaluate: function (s) {
+        if (s.cough && s.fever && s.dyspnoe) return { label: 'Bronchitida', kind: 'known' };
+        if (s.cough && s.fever)              return { label: 'Respirační infekce', kind: 'known' };
+        if (s.vomit && s.diarrhea)           return { label: 'Gastroenteritida', kind: 'known' };
+        if (s.vomit && s.anorex)             return { label: 'Pankreatitida (susp.)', kind: 'known' };
+        if (Object.values(s).every(v => !v)) return { label: 'Klinicky zdráv', kind: 'known' };
+        return { label: 'NEROZPOZNÁNO', kind: 'unknown' };
+      },
+
+      rules: [
+        { ifAll: ['cough', 'fever'],                then: 'respiratoryProblem', label: 'kašel ∧ horečka ⇒ respiračníProblém' },
+        { ifAll: ['respiratoryProblem', 'dyspnoe'], then: 'bronchitis',         label: 'respiračníProblém ∧ dušnost ⇒ bronchitida',  diag: 'Bronchitida' },
+        { ifAll: ['respiratoryProblem'],            then: 'upperResp',          label: 'respiračníProblém ⇒ horníDýchacíCesty',      diag: 'Zánět horních cest dýchacích' },
+        { ifAll: ['vomit', 'diarrhea'],             then: 'giProblem',          label: 'zvracení ∧ průjem ⇒ gastrointProblém' },
+        { ifAll: ['giProblem', 'fever'],            then: 'infectiousGastro',   label: 'gastrointProblém ∧ horečka ⇒ infekčníGastritida', diag: 'Infekční gastroenteritida' },
+        { ifAll: ['giProblem'],                     then: 'acuteGastro',        label: 'gastrointProblém ⇒ akutníGastritida',        diag: 'Akutní gastroenteritida' },
+        { ifAll: ['vomit', 'anorex'],               then: 'pancreatitisSusp',   label: 'zvracení ∧ nechutenství ⇒ pankreatitidaSusp', diag: 'Pankreatitida (susp.)' },
+        { ifAll: ['fever', 'lethargy'],             then: 'infectiousProc',     label: 'horečka ∧ letargie ⇒ infekčníProces',        diag: 'Infekční proces (nespecif.)' },
+      ],
+
+      adaDesc:     'Pravidla nikdo nezapsal. Model se „naučil“ z dat, jak často se který příznak vyskytuje u které diagnózy.',
+      adaHoodNote: 'Z dat 50 000 anonymizovaných případů model získal pravděpodobnost <em>P(příznak | diagnóza)</em>. Při odhadu je kombinuje (Bayesova věta).',
+
+      matrixHeaders: ['horeč.', 'kaš.', 'duš.', 'zvr.', 'průj.', 'nech.', 'let.'],
+      matrixOrder:   ['fever', 'cough', 'dyspnoe', 'vomit', 'diarrhea', 'anorex', 'lethargy'],
+
+      priors: {
+        gastroent: 0.30,
+        bronch:    0.20,
+        pancreat:  0.10,
+        poison:    0.05,
+        healthy:   0.35,
+      },
+
+      condP: {
+        gastroent: { fever: 0.40, cough: 0.05, dyspnoe: 0.05, vomit: 0.85, diarrhea: 0.80, anorex: 0.70, lethargy: 0.70 },
+        bronch:    { fever: 0.70, cough: 0.85, dyspnoe: 0.60, vomit: 0.10, diarrhea: 0.05, anorex: 0.40, lethargy: 0.50 },
+        pancreat:  { fever: 0.50, cough: 0.05, dyspnoe: 0.10, vomit: 0.70, diarrhea: 0.50, anorex: 0.70, lethargy: 0.60 },
+        poison:    { fever: 0.30, cough: 0.10, dyspnoe: 0.20, vomit: 0.80, diarrhea: 0.60, anorex: 0.70, lethargy: 0.60 },
+        healthy:   { fever: 0.02, cough: 0.02, dyspnoe: 0.01, vomit: 0.02, diarrhea: 0.02, anorex: 0.05, lethargy: 0.05 },
+      },
+
+      diagLabels: {
+        gastroent: 'Gastroenteritida',
+        bronch:    'Bronchitida',
+        pancreat:  'Pankreatitida',
+        poison:    'Otrava',
+        healthy:   'Klinicky zdráv',
+      },
+
+      matrixRowLabels: {
+        gastroent: 'Gastroent.',
+        bronch:    'Bronchit.',
+        pancreat:  'Pankreat.',
+        poison:    'Otrava',
+        healthy:   'Zdráv',
+      },
+    },
+
+    spam: {
+      sectionLead: 'Z několika vlastností e-mailu rozhodněte, zda jde o spam, phishing, nebo legitimní zprávu. Sledujte u každého systému tři věci: co má „uvnitř“, jak k závěru dochází a jak se zachová při neobvyklém vstupu.',
+      pickerLabel: 'Vlastnosti e-mailu',
+      placeholder: 'Vyberte vlastnosti výše',
+
+      features: [
+        { key: 'vyhra',    label: 'Marketingová slova („VÝHRA“, „ZDARMA“, „AKCE“)' },
+        { key: 'caps',     label: 'Mnoho VELKÝCH PÍSMEN v předmětu' },
+        { key: 'odkaz',    label: 'Obsahuje odkaz' },
+        { key: 'neznamy',  label: 'Neznámý odesílatel' },
+        { key: 'udaje',    label: 'Žádá o osobní údaje (heslo, PIN, číslo karty)' },
+        { key: 'nalehave', label: 'Naléhavá výzva („nyní“, „okamžitě“, „do hodiny“)' },
+      ],
+
+      presets: [
+        { key: 'spam',      label: 'typický spam',       features: ['vyhra', 'odkaz', 'neznamy'] },
+        { key: 'phishing',  label: 'phishing',           features: ['udaje', 'odkaz', 'nalehave'] },
+        { key: 'marketing', label: 'jen marketing',      features: ['vyhra'] },
+        { key: 'weird',     label: 'neobvyklá kombinace',features: ['caps', 'udaje'] },
+        { key: 'empty',     label: 'nic podezřelého',    features: [] },
+      ],
+
+      tradCode:
+        '<span class="kw">if</span> (žádá_údaje <span class="kw">&&</span> odkaz <span class="kw">&&</span> naléhavé)\n' +
+        '  <span class="kw">return</span> <span class="str">"Phishing"</span>;\n' +
+        '<span class="kw">if</span> (VÝHRA <span class="kw">&&</span> odkaz)\n' +
+        '  <span class="kw">return</span> <span class="str">"Spam"</span>;\n' +
+        '<span class="kw">if</span> (mnoho_CAPS <span class="kw">&&</span> neznámý)\n' +
+        '  <span class="kw">return</span> <span class="str">"Spam"</span>;\n' +
+        '<span class="kw">if</span> (žádá_údaje <span class="kw">&&</span> odkaz)\n' +
+        '  <span class="kw">return</span> <span class="str">"Phishing"</span>;\n' +
+        '<span class="kw">if</span> (žádný_atribut)\n' +
+        '  <span class="kw">return</span> <span class="str">"Legitimní e-mail"</span>;\n' +
+        '<span class="kw">return</span> <span class="str">"NEROZPOZNÁNO"</span>;',
+
+      tradEvaluate: function (s) {
+        if (s.udaje && s.odkaz && s.nalehave) return { label: 'Phishing', kind: 'known' };
+        if (s.vyhra && s.odkaz)               return { label: 'Spam', kind: 'known' };
+        if (s.caps && s.neznamy)              return { label: 'Spam', kind: 'known' };
+        if (s.udaje && s.odkaz)               return { label: 'Phishing', kind: 'known' };
+        if (Object.values(s).every(v => !v))  return { label: 'Legitimní e-mail', kind: 'known' };
+        return { label: 'NEROZPOZNÁNO', kind: 'unknown' };
+      },
+
+      rules: [
+        { ifAll: ['vyhra', 'odkaz'],           then: 'reklamniObsah', label: 'VÝHRA ∧ odkaz ⇒ reklamníObsah' },
+        { ifAll: ['reklamniObsah', 'neznamy'], then: 'spam_silne',    label: 'reklamníObsah ∧ neznámý ⇒ SPAM',          diag: 'Spam' },
+        { ifAll: ['reklamniObsah'],            then: 'spam_slabe',    label: 'reklamníObsah ⇒ SPAM_běžný',              diag: 'Spam (běžný reklamní)' },
+        { ifAll: ['udaje', 'odkaz'],           then: 'kradezDat',     label: 'žádáÚdaje ∧ odkaz ⇒ krádežDat' },
+        { ifAll: ['kradezDat', 'nalehave'],    then: 'phishing_silne',label: 'krádežDat ∧ naléhavé ⇒ PHISHING',         diag: 'Phishing' },
+        { ifAll: ['kradezDat'],                then: 'phishing_slabe',label: 'krádežDat ⇒ PHISHING_možný',              diag: 'Phishing (možný)' },
+        { ifAll: ['caps', 'neznamy'],          then: 'spam_format',   label: 'mnohoCAPS ∧ neznámý ⇒ SPAM',              diag: 'Spam' },
+        { ifAll: ['nalehave', 'neznamy'],      then: 'podezrele',     label: 'naléhavé ∧ neznámý ⇒ podezřelé' },
+      ],
+
+      adaDesc:     'Pravidla nikdo nezapsal. Model se „naučil“ z dat, jak často se která vlastnost vyskytuje u kterého typu e-mailu.',
+      adaHoodNote: 'Z dat 100 000 označených e-mailů model získal pravděpodobnost <em>P(vlastnost | typ)</em>. Při odhadu je kombinuje (Bayesova věta).',
+
+      matrixHeaders: ['VÝHRA', 'CAPS', 'odkaz', 'nezn.', 'údaje', 'nalh.'],
+      matrixOrder:   ['vyhra', 'caps', 'odkaz', 'neznamy', 'udaje', 'nalehave'],
+
+      priors: {
+        spam:     0.20,
+        phishing: 0.05,
+        legit:    0.75,
+      },
+
+      condP: {
+        spam:     { vyhra: 0.65, caps: 0.55, odkaz: 0.75, neznamy: 0.70, udaje: 0.10, nalehave: 0.45 },
+        phishing: { vyhra: 0.20, caps: 0.40, odkaz: 0.95, neznamy: 0.85, udaje: 0.95, nalehave: 0.85 },
+        legit:    { vyhra: 0.02, caps: 0.05, odkaz: 0.30, neznamy: 0.15, udaje: 0.02, nalehave: 0.08 },
+      },
+
+      diagLabels: {
+        spam:     'Spam',
+        phishing: 'Phishing',
+        legit:    'Legitimní e-mail',
+      },
+
+      matrixRowLabels: {
+        spam:     'Spam',
+        phishing: 'Phishing',
+        legit:    'Legitimní',
+      },
+    },
+  };
+
+  let currentDomain = 'vet';
+  const D = () => DOMAINS[currentDomain];
+
+  // ──────────────────────────────────────────────────────
+  // Engines (read from current domain)
+  // ──────────────────────────────────────────────────────
+  function tradEvaluate(s) { return D().tradEvaluate(s); }
+
+  function gofaiEvaluate(s) {
+    const facts = new Set();
+    for (const k in s) if (s[k]) facts.add(k);
+    const RULES = D().rules;
+    const steps = [];
+    let changed = true;
+    const fired = new Set();
+    while (changed) {
+      changed = false;
+      for (let i = 0; i < RULES.length; i++) {
+        if (fired.has(i)) continue;
+        const r = RULES[i];
+        if (r.ifAll.every(f => facts.has(f))) {
+          if (!facts.has(r.then)) {
+            facts.add(r.then);
+            steps.push(r);
+            fired.add(i);
+            changed = true;
+          }
+        }
+      }
+    }
+    const diagRules = steps.filter(x => x.diag);
+    let finalConcl = null;
+    if (diagRules.length) {
+      const best = diagRules.slice().sort((a, b) => b.ifAll.length - a.ifAll.length)[0];
+      finalConcl = best.diag;
+    }
+    return { steps, finalConcl, anyInput: facts.size > 0 };
+  }
+
+  function adaEvaluate(s) {
+    const PRIORS = D().priors;
+    const COND_P = D().condP;
+    const scores = {};
+    for (const d in PRIORS) {
+      let score = PRIORS[d];
+      for (const sym in s) {
+        const p = COND_P[d][sym];
+        score *= s[sym] ? p : (1 - p);
+      }
+      scores[d] = score;
+    }
+    const total = Object.values(scores).reduce((a, b) => a + b, 0) || 1;
+    const probs = {};
+    for (const d in scores) probs[d] = scores[d] / total;
+    return probs;
+  }
+
+  // ──────────────────────────────────────────────────────
+  // DOM elements
+  // ──────────────────────────────────────────────────────
+  const domainTabs    = document.getElementById('domain-tabs');
+  const sectionLead   = document.getElementById('section-lead');
+  const pickerLabel   = document.getElementById('picker-label');
+  const symptomsEl    = document.getElementById('symptoms');
+  const presetsEl     = document.getElementById('presets-buttons');
+  const tradPre       = document.getElementById('trad-pre');
+  const tradOut       = document.getElementById('trad-out');
+  const rulesList     = document.getElementById('rules-list');
+  const gofaiDeriv    = document.getElementById('gofai-deriv');
+  const gofaiOut      = document.getElementById('gofai-out');
+  const adaDescEl     = document.getElementById('ada-desc');
+  const adaHoodNote   = document.getElementById('ada-hood-note');
+  const matrixCont    = document.getElementById('matrix-container');
+  const adaBars       = document.getElementById('ada-bars');
+  const resetBtn      = document.getElementById('reset');
+
+  function getState() {
+    const s = {};
+    symptomsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      s[cb.dataset.sym] = cb.checked;
+    });
+    return s;
+  }
+
+  function setState(symList) {
+    symptomsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = symList.indexOf(cb.dataset.sym) !== -1;
+      cb.closest('.symptom').classList.toggle('checked', cb.checked);
+    });
+    update();
+  }
+
+  function buildMatrix() {
+    const d = D();
+    let html = '<table class="matrix"><thead><tr><th></th>';
+    for (const h of d.matrixHeaders) html += '<th>' + h + '</th>';
+    html += '</tr></thead><tbody>';
+    for (const cls in d.condP) {
+      html += '<tr><td>' + d.matrixRowLabels[cls] + '</td>';
+      for (const f of d.matrixOrder) {
+        const p = d.condP[cls][f];
+        html += '<td>' + p.toFixed(2).replace('.', ',') + '</td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    return html;
+  }
+
+  function applyDomain() {
+    const d = D();
+
+    // Update labels and descriptions
+    sectionLead.textContent = d.sectionLead;
+    pickerLabel.textContent = d.pickerLabel;
+    adaDescEl.textContent   = d.adaDesc;
+    adaHoodNote.innerHTML   = d.adaHoodNote;
+
+    // Rebuild features (checkboxes)
+    symptomsEl.innerHTML = d.features.map(f =>
+      '<label class="symptom"><input type="checkbox" data-sym="' + f.key + '"> ' + f.label + '</label>'
+    ).join('');
+
+    // Rebuild presets
+    presetsEl.innerHTML = d.presets.map(p =>
+      '<button class="preset-btn" data-preset="' + p.key + '">' + p.label + '</button>'
+    ).join('');
+
+    // Code, rules, matrix
+    tradPre.innerHTML  = d.tradCode;
+    rulesList.innerHTML = d.rules.map(r =>
+      '<li>' + r.label.replace(/∧/g, '<span class="op">∧</span>').replace(/⇒/g, '<span class="op">⇒</span>') + '</li>'
+    ).join('');
+    matrixCont.innerHTML = buildMatrix();
+
+    // Reset placeholder for traditional output
+    tradOut.textContent = d.placeholder;
+    tradOut.className = 'result-value empty';
+
+    // Reset GOFAI display
+    gofaiDeriv.innerHTML = '<li class="empty-row">žádná fakta na vstupu</li>';
+    gofaiOut.textContent = '–';
+
+    // Recompute adaptive based on empty state
+    update();
+  }
+
+  function update() {
+    const s = getState();
+    const anyChecked = Object.values(s).some(v => v);
+    const d = D();
+
+    // Sync visual state of checkboxes
+    symptomsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.closest('.symptom').classList.toggle('checked', cb.checked);
+    });
+
+    // ── Traditional ──
+    const r = tradEvaluate(s);
+    tradOut.textContent = r.label;
+    tradOut.className = 'result-value' + (r.kind === 'unknown' ? ' unknown' : '');
+
+    // ── GOFAI ──
+    const g = gofaiEvaluate(s);
+    if (!g.anyInput) {
+      gofaiDeriv.innerHTML = '<li class="empty-row">žádná fakta na vstupu</li>';
+      gofaiOut.textContent = '–';
+    } else if (g.steps.length === 0) {
+      gofaiDeriv.innerHTML = '<li class="empty-row">Žádné pravidlo se neaplikuje. Báze pravidel tuto kombinaci nepokrývá.</li>';
+      gofaiOut.textContent = 'Závěr nelze odvodit';
+    } else {
+      gofaiDeriv.innerHTML = g.steps.map(st =>
+        '<li><span class="fact">' + st.label + '</span></li>'
+      ).join('');
+      gofaiOut.textContent = g.finalConcl || 'pouze mezivýsledky (žádná klasifikace)';
+    }
+
+    // ── Adaptive ──
+    const probs = adaEvaluate(s);
+    const sorted = Object.keys(probs).sort((a, b) => probs[b] - probs[a]);
+    const top = sorted[0];
+    adaBars.innerHTML = sorted.map(k => {
+      const pct = (probs[k] * 100);
+      const display = pct < 0.1 ? '< 0,1' : pct.toFixed(pct < 10 ? 1 : 0).replace('.', ',');
+      const isTop = k === top;
+      return (
+        '<div class="bar-row' + (isTop ? ' top' : '') + '">' +
+          '<span class="bar-name' + (isTop ? ' top' : '') + '">' + d.diagLabels[k] + '</span>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + Math.max(pct, 0.4).toFixed(1) + '%"></div></div>' +
+          '<span class="bar-pct">' + display + ' %</span>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  // ──────────────────────────────────────────────────────
+  // Event handlers (delegation, since DOM is rebuilt)
+  // ──────────────────────────────────────────────────────
+  symptomsEl.addEventListener('change', e => {
+    if (e.target.matches('input[type="checkbox"]')) update();
+  });
+
+  presetsEl.addEventListener('click', e => {
+    const btn = e.target.closest('.preset-btn');
+    if (!btn) return;
+    const key = btn.dataset.preset;
+    const preset = D().presets.find(p => p.key === key);
+    if (preset) setState(preset.features);
+  });
+
+  resetBtn.addEventListener('click', () => setState([]));
+
+  domainTabs.addEventListener('click', e => {
+    const btn = e.target.closest('.domain-tab');
+    if (!btn) return;
+    const domain = btn.dataset.domain;
+    if (!DOMAINS[domain] || domain === currentDomain) return;
+    currentDomain = domain;
+    domainTabs.querySelectorAll('.domain-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.domain === domain)
+    );
+    applyDomain();
+  });
+
+  // Initial render
+  applyDomain();
+})();
+
+// ── Reading progress bar + reveal on scroll ────────────────
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Jagged Intelligence – kde AI exceluje a kde selhává</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #3a6b4a;
+    --accent-hover: #2c5538;
+    --accent-soft: #e3eee6;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e8f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* ── BACK LINK ───────────────────────────────────────── */
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.6px;
+    margin-bottom: 18px;
+    max-width: 880px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 760px;
+  }
+
+  .definition {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    font-size: 14.5px;
+    color: var(--ink);
+    max-width: 780px;
+  }
+  .definition strong { color: var(--accent); }
+
+  /* ── SECTION ─────────────────────────────────────────── */
+  section { margin-bottom: 56px; }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 800px;
+    margin-bottom: 24px;
+  }
+
+  /* ── TOGGLE ──────────────────────────────────────────── */
+  .toggle-row {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .toggle-label {
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .toggle-group {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .toggle-btn {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 16px;
+    background: var(--bg);
+    border: none;
+    border-right: 1px solid var(--line);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .toggle-btn:last-child { border-right: none; }
+  .toggle-btn:hover { background: var(--paper); color: var(--accent); }
+  .toggle-btn.active {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 500;
+  }
+  .toggle-hint {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* ── RADAR PAIR ──────────────────────────────────────── */
+  .radar-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 880px) {
+    .radar-pair { grid-template-columns: 1fr; }
+  }
+
+  .radar-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 20px 22px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .radar-card.expected { border-top: 3px solid var(--muted); }
+  .radar-card.real { border-top: 3px solid var(--accent); }
+
+  .radar-card-head {
+    margin-bottom: 12px;
+  }
+  .radar-card-tag {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .radar-card.real .radar-card-tag { color: var(--accent); }
+
+  .radar-card-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .radar-card-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .radar-svg-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0 0;
+  }
+  .radar-svg-wrap svg { width: 100%; height: auto; max-width: 460px; }
+
+  /* SVG radar styling */
+  .grid-poly { fill: none; stroke: var(--line); stroke-width: 1; }
+  .grid-poly.outer { stroke: var(--line-strong); }
+  .axis-line { stroke: var(--line); stroke-width: 1; }
+  .axis-tick {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    fill: var(--muted);
+  }
+  .axis-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    fill: var(--ink-soft);
+    cursor: pointer;
+  }
+  .axis-label:hover { fill: var(--accent); font-weight: 600; }
+  .axis-label.selected { fill: var(--accent); font-weight: 700; }
+
+  .data-poly-expected {
+    fill: rgba(107, 111, 118, 0.10);
+    stroke: var(--muted);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+  }
+  .data-poly-real {
+    fill: rgba(29, 53, 87, 0.15);
+    stroke: var(--accent);
+    stroke-width: 2;
+    transition: all 0.5s ease;
+  }
+  .data-poly-real-bg {
+    fill: rgba(160, 74, 74, 0.05);
+    stroke: var(--red);
+    stroke-width: 1;
+    stroke-dasharray: 2 2;
+    opacity: 0.5;
+  }
+  .data-point {
+    fill: var(--accent);
+    stroke: var(--bg);
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: r 0.2s ease;
+  }
+  .data-point.selected { r: 6; fill: var(--warm); }
+  .data-point.expected {
+    fill: var(--muted);
+    r: 2.5;
+  }
+  .axis-highlight { stroke: var(--warm); stroke-width: 2; opacity: 0.5; }
+
+  /* ── DIMENSION DETAIL ─────────────────────────────────── */
+  .detail-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warm);
+    padding: 22px 26px;
+    margin-bottom: 28px;
+    min-height: 200px;
+  }
+  .detail-eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--warm);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .detail-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 14px;
+    line-height: 1.25;
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 720px) {
+    .detail-grid { grid-template-columns: 1fr; }
+  }
+  .detail-block {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+  }
+  .detail-block-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .detail-score {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .detail-score.basic { color: var(--warm); }
+  .detail-score-tag {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .detail-bench {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+  .detail-bench strong { color: var(--ink); }
+  .detail-take {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.65;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-left: 2px solid var(--accent);
+  }
+  .detail-take strong { color: var(--accent); }
+
+  /* ── DIMENSION LIST ──────────────────────────────────── */
+  .dim-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px 10px;
+    margin-bottom: 32px;
+  }
+  .dim-btn {
+    font-family: inherit;
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .dim-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--paper);
+  }
+  .dim-btn.active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .dim-btn-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .dim-btn.active .dim-btn-num { color: var(--accent); }
+
+  .dim-btn-bar {
+    margin-left: auto;
+    width: 50px;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .dim-btn-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .dim-btn-bar-fill.basic { background: var(--warm); }
+
+  /* ── INSIGHTS / TAKEAWAYS ────────────────────────────── */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 720px) {
+    .insight-grid { grid-template-columns: 1fr; }
+  }
+  .insight {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+  }
+  .insight.warm { background: var(--warm-soft); border-color: #efe1cc; }
+  .insight.green { background: var(--green-soft); border-color: #c8d8cc; }
+  .insight-tag {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--muted);
+  }
+  .insight.warm .insight-tag { color: var(--warm); }
+  .insight.green .insight-tag { color: var(--green); }
+  .insight-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .insight p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* ── SOURCES ─────────────────────────────────────────── */
+  .sources {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 22px 26px;
+    margin-top: 8px;
+  }
+  .sources-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+  .sources-list li {
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .sources-list li:last-child { border-bottom: none; }
+  .sources-list strong { color: var(--ink); font-weight: 600; }
+  .sources-list .ref-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-right: 8px;
+  }
+
+  /* ── CALLOUT ─────────────────────────────────────────── */
+  .callout {
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    padding: 16px 22px;
+    margin: 18px 0;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .callout strong { color: var(--accent); }
+  .callout.warm {
+    background: var(--warm-soft);
+    border-left-color: var(--warm);
+    color: #4a3f2e;
+  }
+  .callout.warm strong { color: var(--warm); }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  /* ── SMALL SCREENS ───────────────────────────────────── */
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 18px 60px; }
+    .toggle-row {
+      padding: 14px 16px;
+      gap: 10px;
+    }
+    .toggle-hint { margin-left: 0; }
+    .toggle-btn { padding: 8px 12px; font-size: 12.5px; }
+    .radar-card { padding: 16px 18px 20px; }
+    .radar-svg-wrap svg { max-width: 380px; }
+    .dim-list { grid-template-columns: 1fr; }
+    .detail-card { padding: 18px 20px; }
+    .insight { padding: 14px 16px; }
+    .sources { padding: 18px 20px; }
+  }
+
+  /* ── ENHANCED DESIGN: progress bar, section numbers, hero strip, reveal ── */
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 1000;
+    transition: width 0.1s ease;
+    pointer-events: none;
+  }
+
+  .wrap { counter-reset: section; }
+  .wrap > section:not(.hero):has(.section-title) { counter-increment: section; }
+  .wrap > section:not(.hero) .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .hero::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  // Set js-enabled early to avoid flash; only if observer is supported
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <!-- ────────── HERO ────────── -->
+  <section class="hero">
+    <div class="hero-eyebrow">Setkání 1 · Hands-on</div>
+    <h1>Nerovnoměrná inteligence: <em>kde AI exceluje a kde selhává</em></h1>
+    <p class="hero-subtitle">
+      AI není rovnoměrně inteligentní. Zvládá náročné úlohy, ale selhává u zdánlivě
+      jednoduchých. Tato nevyrovnanost má jméno: <em>jagged intelligence</em>
+      (zoubkovaná inteligence). Tady ji uvidíte na reálných datech z publikovaných
+      benchmarků.
+    </p>
+    <div class="definition">
+      <strong>Jagged intelligence</strong> popisuje, že schopnosti AI nejsou hladké
+      ani předvídatelné. Profil výkonu vypadá jako zoubkovaná hrana: vrcholy
+      v některých úlohách, hluboké propady v jiných. Termín pochází z práce
+      Dell&rsquo;Acqua et al. (Harvard Business School, 2023) a popularizoval jej
+      Ethan Mollick.
+    </div>
+  </section>
+
+  <!-- ────────── KONCEPT ────────── -->
+  <section>
+    <h2 class="section-title">Co lidé čekají vs. co AI dělá</h2>
+    <p class="section-lead">
+      Naivní představa: AI je rovnoměrně chytrá napříč obory a typy úloh. Realita:
+      AI má specifické silné stránky (rozpoznávání vzorů ve velkém objemu textu)
+      a specifické slabiny (faktická přesnost, kalibrace, úsudek v novém kontextu). Levý
+      radar ukazuje očekávání, pravý realitu.
+    </p>
+
+    <div class="toggle-row">
+      <span class="toggle-label">Úroveň AI</span>
+      <div class="toggle-group" role="tablist" aria-label="Úroveň modelu">
+        <button class="toggle-btn active" data-level="frontier" role="tab" aria-selected="true">Špičkové modely (frontier)</button>
+        <button class="toggle-btn" data-level="basic" role="tab" aria-selected="false">Běžně dostupné nástroje</button>
+      </div>
+      <span class="toggle-hint" id="toggle-hint">GPT-5, Claude Opus 4.x, Gemini 2.5 Pro</span>
+    </div>
+
+    <div class="radar-pair">
+      <div class="radar-card expected">
+        <div class="radar-card-head">
+          <div class="radar-card-tag">Naivní očekávání</div>
+          <div class="radar-card-title">Jak si představujeme, že AI funguje</div>
+          <div class="radar-card-sub">Rovnoměrně vysoký výkon napříč všemi typy úloh.</div>
+        </div>
+        <div class="radar-svg-wrap">
+          <svg id="radar-expected" viewBox="0 0 460 460" aria-label="Radar očekávané inteligence"></svg>
+        </div>
+      </div>
+      <div class="radar-card real">
+        <div class="radar-card-head">
+          <div class="radar-card-tag" id="real-tag">Realita · frontier modely</div>
+          <div class="radar-card-title" id="real-title">Co AI doopravdy zvládá</div>
+          <div class="radar-card-sub" id="real-sub">Měřeno na publikovaných benchmarcích (2023–2025).</div>
+        </div>
+        <div class="radar-svg-wrap">
+          <svg id="radar-real" viewBox="0 0 460 460" aria-label="Radar reálného výkonu AI"></svg>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-lead" style="margin-top: 12px;">
+      Klikněte na úlohu níže nebo přímo na popisek na radaru. Uvidíte konkrétní
+      benchmark, skóre frontier i běžných modelů, zdroj a co z toho plyne pro
+      odbornou praxi.
+    </p>
+
+    <div class="dim-list" id="dim-list" role="tablist" aria-label="Úlohy"></div>
+
+    <div class="detail-card" id="detail" aria-live="polite">
+      <!-- vyplní se JS -->
+    </div>
+  </section>
+
+  <!-- ────────── INSIGHTS ────────── -->
+  <section>
+    <h2 class="section-title">Co z toho plyne</h2>
+    <p class="section-lead">
+      Jagged intelligence není problém, který &bdquo;nová verze opraví&ldquo;. Je
+      to rys současné AI, který odráží způsob, jakým se učí (z velkého množství
+      dat) a jak generuje výstup (predikcí pravděpodobného pokračování). Pro
+      praktickou práci z toho plynou tři věci.
+    </p>
+
+    <div class="insight-grid">
+      <div class="insight green">
+        <div class="insight-tag">Co dělat</div>
+        <div class="insight-title">Mapovat, kde AI v čem pomáhá</div>
+        <p>
+          Místo otázky &bdquo;Je AI dobrá?&ldquo; se ptejte &bdquo;V čem konkrétně
+          je dobrá pro tuhle úlohu?&ldquo; Stejný model je v sumarizaci skvělý,
+          v kalibraci nejistoty slabý. Vědět to dopředu šetří čas a chyby.
+        </p>
+      </div>
+      <div class="insight warm">
+        <div class="insight-tag">Čeho se vyvarovat</div>
+        <div class="insight-title">Generalizovat z jednoho úspěchu</div>
+        <p>
+          AI vám výborně sumarizuje 30 stran textu. To <em>neznamená</em>, že
+          spočítá kolikrát se ve stejných 30 stranách vyskytuje konkrétní termín
+          (počítání je její slabina). Úspěch v jedné úloze nepředpovídá úspěch
+          v jiné, i když nám to oběma připadá jako &bdquo;to samé&ldquo;.
+        </p>
+      </div>
+      <div class="insight">
+        <div class="insight-tag">Pro odborníka</div>
+        <div class="insight-title">Vědět, kde leží meze</div>
+        <p>
+          Klíčová kompetence není AI <em>používat</em>, ale <em>vědět, kde
+          přestává být spolehlivá</em>. Tam, kde AI selhává (kalibrace, faktická
+          přesnost, úsudek v novém kontextu), zůstává odborník nezastupitelný
+          a často právě tam o nezastupitelnosti rozhoduje.
+        </p>
+      </div>
+      <div class="insight">
+        <div class="insight-tag">Pro tým a instituci</div>
+        <div class="insight-title">Sdílet zkušenost o úskalích</div>
+        <p>
+          Jagged profil se mění s každou novou generací modelů (něco se posune,
+          něco zůstane). Sdílení konkrétních pádů a úspěchů uvnitř týmu je
+          rychlejší cesta k mapě než opakované individuální experimentování.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warm">
+      <strong>Důležité:</strong> Čísla v tomto artefaktu reprezentují stav
+      v období 2023–2025 a budou se měnit. Pravidelně se posouvají hlavně oblasti,
+      kde AI vyniká (matematika, kód). Slabiny (kalibrace, halucinace, úsudek
+      v novém kontextu) se posouvají pomaleji. <strong>Tvar zubatosti
+      zůstává</strong>, jen se mění výška vrcholů.
+    </div>
+  </section>
+
+  <!-- ────────── ZDROJE ────────── -->
+  <section>
+    <h2 class="section-title">Zdroje a benchmarky</h2>
+    <p class="section-lead">
+      Všechna čísla v radaru pocházejí z publikovaných benchmarků nebo expertních
+      odhadů s odkazem na zdroj. U úloh, kde žádný uznávaný benchmark neexistuje
+      (typicky úzce regulátorské úlohy), používám blízké proxy a označuji to
+      jako odhad.
+    </p>
+    <div class="sources">
+      <ul class="sources-list" id="sources-list"></ul>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 1 · Hands-on
+    <br>
+    Dotazy: <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+  </footer>
+
+</main>
+
+<script>
+/* ================================================================
+   DATA
+   ================================================================ */
+
+// 8 dimenzí, řazené tak, aby se na radaru čitelně střídaly silné a slabé
+const DIMENSIONS = [
+  {
+    id: 'search',
+    label: 'Vyhledávání v dokumentech',
+    short: 'Vyhledávání',
+    expected: 90,
+    frontier: 85,
+    basic: 70,
+    benchmark: 'BEIR (Recall@5, NDCG@10)',
+    benchYear: '2024',
+    benchDesc: 'Standardní benchmark pro information retrieval. Frontier modely v RAG pipeline (retrieval-augmented generation) dosahují NDCG@10 kolem 0.80–0.85. Klasické search engines bez AI dosahují srovnatelných čísel.',
+    takeaway: 'Vyhledávání v indexovaných dokumentech AI zvládá výborně, ale typicky nepřekonává klasické nástroje. Hodnota AI je hlavně v interpretaci a syntéze nálezu, ne v samotném hledání.',
+    sourceRef: 1
+  },
+  {
+    id: 'translation',
+    label: 'Překlad odborných textů (EN↔CS)',
+    short: 'Překlad EN↔CS',
+    expected: 90,
+    frontier: 88,
+    basic: 78,
+    benchmark: 'WMT 2024 (COMET, EN→CS)',
+    benchYear: '2024',
+    benchDesc: 'Frontier modely dosahují COMET skóre kolem 0.85+ pro EN→CS, srovnatelné s lidským překladatelem na obecném textu. U úzce specializovaného odborného textu (regulační, farmaceutický) skóre klesá o 5–10 %, hlavně kvůli terminologii.',
+    takeaway: 'Strojový překlad je dnes velmi silný, ale stále vyžaduje kontrolu odborníkem u terminologie, kontextu a registru. AI nezachytí, že váš výraz je v daném dokumentu používán nestandardně.',
+    sourceRef: 2
+  },
+  {
+    id: 'summarization',
+    label: 'Sumarizace dokumentu',
+    short: 'Sumarizace',
+    expected: 90,
+    frontier: 85,
+    basic: 75,
+    benchmark: 'HELM Summarization (faithfulness)',
+    benchYear: '2024',
+    benchDesc: 'Frontier modely dosahují vysokých skóre v krycí relevanci (jak dobře sumace pokrývá hlavní body) a v koherenci. Slabší jsou ve faithfulness (zda sumace neobsahuje informace, které v originálu nejsou): kolem 85 %, tedy 1 ze 7 sumací obsahuje halucinaci.',
+    takeaway: 'Sumarizace je jedna z nejsilnějších úloh GenAI. Výsledek vždy ověřte u klíčových faktů a čísel, kde halucinace má největší dopad. Pro orientační přehled stačí, pro citaci ne.',
+    sourceRef: 3
+  },
+  {
+    id: 'factual',
+    label: 'Faktická přesnost (bez halucinací)',
+    short: 'Fakta bez halucinací',
+    expected: 90,
+    frontier: 50,
+    basic: 30,
+    benchmark: 'SimpleQA (OpenAI)',
+    benchYear: '2024',
+    benchDesc: 'SimpleQA testuje přesnost odpovědí na faktické otázky s jednou správnou odpovědí. Frontier modely (GPT-5, Claude Opus 4) dosahují kolem 50 % přesnosti, GPT-4o mini kolem 8–10 %. Polovina odpovědí frontier modelu je halucinace nebo zkreslení.',
+    takeaway: 'Toto je největší slabina současné AI. Frontier model halucinuje stejně sebejistě jako odpovídá správně. Pro faktické dotazy potřebujete buď ověření, nebo nástroj s citacemi (Perplexity, Claude se search).',
+    sourceRef: 4
+  },
+  {
+    id: 'calibration',
+    label: 'Kalibrace ("vím, co nevím")',
+    short: 'Kalibrace nejistoty',
+    expected: 90,
+    frontier: 40,
+    basic: 25,
+    benchmark: 'TruthfulQA + calibration studies',
+    benchYear: '2023–2024',
+    benchDesc: 'Kalibrace měří, zda model umí říci, kdy si není jistý. Studie ukazují, že LLM mají systematicky overconfident chování. Frontier modely jsou mírně lepší (RLHF trénink na &bdquo;přiznej nejistotu&ldquo;), ale stále vydávají nesprávné odpovědi se stejnou jistotou jako správné.',
+    takeaway: 'AI <em>neví, že neví</em>. Říká &bdquo;to nevím&ldquo; jen občas a často nepředvídatelně. Kdykoli AI něco tvrdí sebejistě, zacházejte s tím s rezervou. Sebejistota není kalibrovaná na pravdu.',
+    sourceRef: 5
+  },
+  {
+    id: 'agent',
+    label: 'Vícekrokové úlohy (agent)',
+    short: 'Multi-step úlohy',
+    expected: 90,
+    frontier: 60,
+    basic: 20,
+    benchmark: 'GAIA, SWE-bench Verified',
+    benchYear: '2024–2025',
+    benchDesc: 'Úlohy, kde AI musí rozplánovat řadu kroků (vyhledat, zpracovat, ověřit, zapsat). GAIA Level 2 dosahuje frontier kolem 60 %, SWE-bench Verified (řešení reálných GitHub issues) kolem 50–60 %. Běžné modely kolem 10–20 %.',
+    takeaway: 'Pro úlohy s 5+ kroky se chyby kumulují (každý krok má pravděpodobnost selhání). Lepší je rozdělit úlohu na menší kroky a kontrolovat průběžně, než pustit AI na celý workflow najednou.',
+    sourceRef: 6
+  },
+  {
+    id: 'math',
+    label: 'Matematika a přesné výpočty',
+    short: 'Matematika',
+    expected: 90,
+    frontier: 88,
+    basic: 35,
+    benchmark: 'AIME 2024, MATH',
+    benchYear: '2024',
+    benchDesc: 'Modely s reasoning (o3, Claude Opus 4 thinking, Gemini 2.5 Pro thinking) dosahují na AIME 2024 kolem 85–95 %, na MATH benchmarku 95 %+. Bez reasoning módu (běžné modely) dramaticky horší, kolem 30–40 %.',
+    takeaway: 'Toto je oblast, kde se AI v posledních dvou letech zlomově zlepšila. Důležité ale je: reasoning modely jsou pomalejší, dražší a nejsou vždy aktivní. V běžné konverzaci dostáváte výkon &bdquo;běžného nástroje&ldquo;, ne reasoning modelu.',
+    sourceRef: 7
+  },
+  {
+    id: 'novel',
+    label: 'Úsudek v novém kontextu',
+    short: 'Nový kontext',
+    expected: 90,
+    frontier: 35,
+    basic: 15,
+    benchmark: 'ARC-AGI v2, Humanity\'s Last Exam',
+    benchYear: '2024–2025',
+    benchDesc: 'Benchmarky, které testují schopnost řešit problémy, jež nejsou variantami toho, co model viděl v trénovacích datech. ARC-AGI v2: frontier kolem 30 %, lidé 95 %+. HLE (Humanity&rsquo;s Last Exam): frontier kolem 25 % na expertních otázkách napříč obory.',
+    takeaway: 'V opravdu nové situaci, která nemá precedent v trénovacích datech, je AI slabá. Tady stojí a padá nezastupitelnost odborníka: kontext, který se ještě nestal, a úsudek o něm.',
+    sourceRef: 8
+  }
+];
+
+const SOURCES = [
+  { ref: 1, text: '<strong>BEIR benchmark.</strong> Thakur et al. (2021), &bdquo;BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models.&ldquo; NeurIPS Datasets and Benchmarks. Aktuální leaderboard a metodika dostupné v repozitáři projektu BEIR.' },
+  { ref: 2, text: '<strong>WMT 2024 Conference on Machine Translation.</strong> Shared task výsledky, EN-CS pair. COMET metric: Rei et al. (2020). Pro odborné domény viz studie WMT Biomedical Translation Task.' },
+  { ref: 3, text: '<strong>HELM (Holistic Evaluation of Language Models).</strong> Liang et al. (Stanford CRFM, 2022, průběžně aktualizováno). Sumarizační scenarios včetně faithfulness metriky.' },
+  { ref: 4, text: '<strong>SimpleQA benchmark.</strong> OpenAI (2024), &bdquo;SimpleQA: Measuring short-form factuality in large language models.&ldquo; Publikováno spolu s o1 release. Klíčové zjištění: i nejlepší modely halucinují u poloviny faktických otázek.' },
+  { ref: 5, text: '<strong>TruthfulQA.</strong> Lin, Hilton, Evans (2021). Plus calibration studies: Kadavath et al. (2022), &bdquo;Language Models (Mostly) Know What They Know.&ldquo;' },
+  { ref: 6, text: '<strong>GAIA benchmark.</strong> Mialon et al. (Meta AI, 2023). <strong>SWE-bench Verified.</strong> Jimenez et al. (Princeton, 2024). Aktuální leaderboardy pro pokrok agentních modelů.' },
+  { ref: 7, text: '<strong>AIME (American Invitational Mathematics Examination).</strong> Reasoning model performance: OpenAI o1/o3 system cards (2024–2025), Anthropic Claude Opus 4 model card (2025). <strong>MATH benchmark.</strong> Hendrycks et al. (2021).' },
+  { ref: 8, text: '<strong>ARC-AGI v2.</strong> François Chollet et al. (2024–2025). <strong>Humanity&rsquo;s Last Exam.</strong> Center for AI Safety + Scale AI (2025). Oba benchmarky designované tak, aby odolaly memorování z trénovacích dat.' },
+  { ref: 0, text: '<strong>Koncept &bdquo;jagged frontier&ldquo;.</strong> Dell&rsquo;Acqua, Kellogg, Mollick et al. (2023), &bdquo;Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of AI on Knowledge Worker Productivity and Quality.&ldquo; HBS Working Paper 24-013. Popularizováno Ethanem Mollickem (One Useful Thing).' }
+];
+
+const TOGGLE_HINTS = {
+  frontier: 'GPT-5, Claude Opus 4.x, Gemini 2.5 Pro (s reasoning módem)',
+  basic: 'ChatGPT free, GPT-4o mini, Copilot základní verze, Llama 3 8B'
+};
+
+const REAL_TAGS = {
+  frontier: 'Realita · frontier modely',
+  basic: 'Realita · běžně dostupné nástroje'
+};
+
+const REAL_SUBS = {
+  frontier: 'Špička dnes dostupných modelů. Stále výrazně zoubkovaná.',
+  basic: 'Modely, které většina uživatelů reálně používá. Zoubek hlubší a širší.'
+};
+
+/* ================================================================
+   STATE
+   ================================================================ */
+
+let currentLevel = 'frontier';
+let selectedDim = 'search';
+
+/* ================================================================
+   RADAR RENDER
+   ================================================================ */
+
+const RADAR = {
+  cx: 230,
+  cy: 230,
+  r: 145,
+  scaleMax: 100,
+  rings: [20, 40, 60, 80, 100]
+};
+
+function angleFor(i, n) {
+  // start at top (-90 deg), go clockwise
+  return (-Math.PI / 2) + (i * 2 * Math.PI / n);
+}
+
+function point(value, i, n) {
+  const a = angleFor(i, n);
+  const r = (value / RADAR.scaleMax) * RADAR.r;
+  return [RADAR.cx + r * Math.cos(a), RADAR.cy + r * Math.sin(a)];
+}
+
+function buildPolygon(values) {
+  const n = values.length;
+  return values.map((v, i) => point(v, i, n).join(',')).join(' ');
+}
+
+function buildGrid(svgId) {
+  const svg = document.getElementById(svgId);
+  svg.innerHTML = '';
+  const n = DIMENSIONS.length;
+
+  // grid rings (concentric polygons)
+  RADAR.rings.forEach((ring, idx) => {
+    const pts = DIMENSIONS.map((_, i) => point(ring, i, n).join(',')).join(' ');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', pts);
+    poly.setAttribute('class', 'grid-poly' + (idx === RADAR.rings.length - 1 ? ' outer' : ''));
+    svg.appendChild(poly);
+  });
+
+  // axis lines
+  for (let i = 0; i < n; i++) {
+    const [x, y] = point(100, i, n);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', RADAR.cx);
+    line.setAttribute('y1', RADAR.cy);
+    line.setAttribute('x2', x);
+    line.setAttribute('y2', y);
+    line.setAttribute('class', 'axis-line');
+    line.setAttribute('id', svgId + '-axis-' + i);
+    svg.appendChild(line);
+  }
+
+  // axis tick labels (only on top axis to avoid clutter)
+  RADAR.rings.forEach(ring => {
+    if (ring === 100 || ring === 0) return;
+    const [x, y] = point(ring, 0, n);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x + 4);
+    text.setAttribute('y', y + 3);
+    text.setAttribute('class', 'axis-tick');
+    text.textContent = ring;
+    svg.appendChild(text);
+  });
+
+  // axis labels (clickable)
+  for (let i = 0; i < n; i++) {
+    const a = angleFor(i, n);
+    const labelDist = RADAR.r + 22;
+    const x = RADAR.cx + labelDist * Math.cos(a);
+    const y = RADAR.cy + labelDist * Math.sin(a);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y);
+    text.setAttribute('class', 'axis-label');
+    text.setAttribute('id', svgId + '-label-' + i);
+    text.setAttribute('data-dim', DIMENSIONS[i].id);
+    // positioning
+    const cosA = Math.cos(a), sinA = Math.sin(a);
+    if (Math.abs(cosA) < 0.3) text.setAttribute('text-anchor', 'middle');
+    else if (cosA > 0) text.setAttribute('text-anchor', 'start');
+    else text.setAttribute('text-anchor', 'end');
+    if (sinA > 0.3) text.setAttribute('dy', '0.9em');
+    else if (sinA < -0.3) text.setAttribute('dy', '-0.2em');
+    else text.setAttribute('dy', '0.35em');
+
+    // wrap into multi-line tspans for long labels
+    const words = DIMENSIONS[i].short.split(' ');
+    if (words.length > 2) {
+      const mid = Math.ceil(words.length / 2);
+      const line1 = words.slice(0, mid).join(' ');
+      const line2 = words.slice(mid).join(' ');
+      const t1 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      t1.textContent = line1;
+      t1.setAttribute('x', x);
+      const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      t2.textContent = line2;
+      t2.setAttribute('x', x);
+      t2.setAttribute('dy', '1.1em');
+      text.appendChild(t1);
+      text.appendChild(t2);
+    } else {
+      text.textContent = DIMENSIONS[i].short;
+    }
+
+    text.addEventListener('click', () => selectDimension(DIMENSIONS[i].id));
+    svg.appendChild(text);
+  }
+}
+
+function drawData(svgId, values, polyClass, pointClass) {
+  const svg = document.getElementById(svgId);
+
+  // remove old data
+  svg.querySelectorAll('.data-poly-' + polyClass + ', .data-point-' + polyClass).forEach(el => el.remove());
+
+  // polygon
+  const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  poly.setAttribute('points', buildPolygon(values));
+  poly.setAttribute('class', 'data-poly-' + polyClass);
+  svg.appendChild(poly);
+
+  // points
+  values.forEach((v, i) => {
+    const [x, y] = point(v, i, values.length);
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', x);
+    c.setAttribute('cy', y);
+    c.setAttribute('r', pointClass === 'expected' ? 2.5 : 4);
+    c.setAttribute('class', 'data-point ' + pointClass);
+    c.setAttribute('data-dim', DIMENSIONS[i].id);
+    c.addEventListener('click', () => selectDimension(DIMENSIONS[i].id));
+    svg.appendChild(c);
+  });
+}
+
+function renderRadars() {
+  buildGrid('radar-expected');
+  buildGrid('radar-real');
+
+  const expectedValues = DIMENSIONS.map(d => d.expected);
+  const realValues = DIMENSIONS.map(d => currentLevel === 'frontier' ? d.frontier : d.basic);
+
+  drawData('radar-expected', expectedValues, 'expected', 'expected');
+  drawData('radar-real', realValues, 'real', 'real');
+
+  // update header text
+  document.getElementById('real-tag').textContent = REAL_TAGS[currentLevel];
+  document.getElementById('real-sub').textContent = REAL_SUBS[currentLevel];
+
+  highlightSelected();
+}
+
+/* ================================================================
+   DIMENSION LIST
+   ================================================================ */
+
+function renderDimList() {
+  const wrap = document.getElementById('dim-list');
+  wrap.innerHTML = '';
+
+  DIMENSIONS.forEach((d, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'dim-btn';
+    btn.setAttribute('data-dim', d.id);
+    btn.setAttribute('role', 'tab');
+    const score = currentLevel === 'frontier' ? d.frontier : d.basic;
+    btn.innerHTML = `
+      <span class="dim-btn-num">${String(i + 1).padStart(2, '0')}</span>
+      <span class="dim-btn-text">${d.label}</span>
+      <span class="dim-btn-bar"><span class="dim-btn-bar-fill ${currentLevel === 'basic' ? 'basic' : ''}" style="width: ${score}%"></span></span>
+    `;
+    btn.addEventListener('click', () => selectDimension(d.id));
+    wrap.appendChild(btn);
+  });
+
+  highlightSelected();
+}
+
+/* ================================================================
+   DETAIL CARD
+   ================================================================ */
+
+function renderDetail() {
+  const card = document.getElementById('detail');
+  if (!selectedDim) {
+    card.innerHTML = `
+      <div class="detail-eyebrow">Vyberte úlohu</div>
+      <div class="detail-title">Klikněte na úlohu nahoře, popisek na radaru, nebo bod v grafu</div>
+      <p style="color: var(--ink-soft); line-height: 1.65; font-size: 14.5px;">
+        Zobrazí se konkrétní benchmark, skóre obou tříd modelů, zdroj a co z toho
+        plyne pro odbornou praxi.
+      </p>
+    `;
+    return;
+  }
+
+  const d = DIMENSIONS.find(x => x.id === selectedDim);
+  if (!d) return;
+  const sourceItem = SOURCES.find(s => s.ref === d.sourceRef);
+
+  card.innerHTML = `
+    <div class="detail-eyebrow">Úloha · ${d.benchYear}</div>
+    <div class="detail-title">${d.label}</div>
+    <div class="detail-grid">
+      <div class="detail-block">
+        <div class="detail-block-label">Frontier modely</div>
+        <div class="detail-score">${d.frontier} <span style="font-size: 14px; color: var(--muted); font-weight: 400;">/ 100</span></div>
+        <div class="detail-score-tag">vs. očekáváných ${d.expected}</div>
+      </div>
+      <div class="detail-block">
+        <div class="detail-block-label">Běžné nástroje</div>
+        <div class="detail-score basic">${d.basic} <span style="font-size: 14px; color: var(--muted); font-weight: 400;">/ 100</span></div>
+        <div class="detail-score-tag">vs. očekáváných ${d.expected}</div>
+      </div>
+    </div>
+    <div class="detail-bench">
+      <strong>Benchmark:</strong> ${d.benchmark} · ${d.benchDesc}
+    </div>
+    <div class="detail-take" style="margin-top: 14px;">
+      <strong>Pro praxi:</strong> ${d.takeaway}
+    </div>
+  `;
+}
+
+/* ================================================================
+   SELECTION & HIGHLIGHT
+   ================================================================ */
+
+function selectDimension(id) {
+  selectedDim = (selectedDim === id) ? null : id;
+  highlightSelected();
+  renderDetail();
+}
+
+function highlightSelected() {
+  // dim list buttons
+  document.querySelectorAll('.dim-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-dim') === selectedDim);
+  });
+
+  // svg labels
+  document.querySelectorAll('.axis-label').forEach(label => {
+    label.classList.toggle('selected', label.getAttribute('data-dim') === selectedDim);
+  });
+
+  // svg points
+  document.querySelectorAll('.data-point').forEach(pt => {
+    pt.classList.toggle('selected', pt.getAttribute('data-dim') === selectedDim);
+  });
+}
+
+/* ================================================================
+   TOGGLE
+   ================================================================ */
+
+function setupToggle() {
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentLevel = btn.getAttribute('data-level');
+      document.querySelectorAll('.toggle-btn').forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+      });
+      document.getElementById('toggle-hint').textContent = TOGGLE_HINTS[currentLevel];
+      renderRadars();
+      renderDimList();
+      renderDetail();
+    });
+  });
+}
+
+/* ================================================================
+   SOURCES
+   ================================================================ */
+
+function renderSources() {
+  const ul = document.getElementById('sources-list');
+  // sort: 0 (jagged frontier concept) first, then 1..8
+  const sorted = SOURCES.slice().sort((a, b) => {
+    if (a.ref === 0) return -1;
+    if (b.ref === 0) return 1;
+    return a.ref - b.ref;
+  });
+  ul.innerHTML = sorted.map(s => `
+    <li>
+      <span class="ref-tag">${s.ref === 0 ? 'koncept' : '[' + s.ref + ']'}</span>${s.text}
+    </li>
+  `).join('');
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+
+renderRadars();
+renderDimList();
+renderDetail();
+renderSources();
+setupToggle();
+
+// ── Reading progress bar + reveal on scroll ────────────────
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>
