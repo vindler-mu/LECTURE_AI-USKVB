@@ -629,8 +629,28 @@
   }
 
   .resources-link {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 600;
     color: var(--accent);
-    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .resources-link .arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .resources-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .resources-link:hover .arrow {
+    transform: translateX(3px);
   }
 
   .resources-placeholder {
@@ -896,7 +916,7 @@
 <script>
 // Sdílená prezentace pro celou sérii. Vyplňte URL, jakmile budete mít odkaz.
 // Příklad: const seriesSlidesUrl = "https://docs.google.com/presentation/d/...";
-const seriesSlidesUrl = "";
+const seriesSlidesUrl = "https://canva.link/0op7czldw8a7lxt";
 
 // Materiály k jednotlivým setkáním se zobrazí až den po datu daného setkání,
 // aby se neproflákly před přednáškou. Neovlivňuje to přístup k samotným
@@ -921,8 +941,8 @@ function materialsAvailable(session) {
   const el = document.getElementById('series-slides-link');
   if (!el) return;
   el.innerHTML = seriesSlidesUrl
-    ? `<a href="${seriesSlidesUrl}" target="_blank" rel="noopener" class="resources-link">Prezentace série ↗</a>`
-    : `<span class="resources-placeholder">Prezentace série · bude doplněno</span>`;
+    ? `<a href="${seriesSlidesUrl}" target="_blank" rel="noopener" class="resources-link">Prezentace <span class="arrow">↗</span></a>`
+    : `<span class="resources-placeholder">Prezentace · bude doplněno</span>`;
 })();
 
 const sessions = [
@@ -1160,7 +1180,7 @@ updateNavButtons();
   const months = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
   const today = new Date();
   const todayIso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  const idx = sessions.findIndex(s => s.date && s.date >= todayIso);
+  const idx = sessions.findIndex(s => s.date && s.date > todayIso);
   if (idx === -1) return;
   const s = sessions[idx];
   const [y, m, d] = s.date.split('-').map(Number);
