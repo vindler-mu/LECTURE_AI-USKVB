@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Pravděpodobnostní generátor – proč AI není databáze</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #2c5e6e;
+    --accent-hover: #1f4a58;
+    --accent-soft: #e0eaed;
+    --det: #4a7c59;
+    --det-soft: #e7f0ea;
+    --prob: #b5651d;
+    --prob-soft: #fbf3e7;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TOKEN TREE ───────────────────────────────────────── */
+  .tree-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 24px 26px;
+  }
+  .tree-prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .tree-current {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    min-height: 56px;
+  }
+  .tree-current .pending {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 18px;
+  }
+  .tree-instructions {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 6px;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+  .branches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .branch {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .branch:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .branch:hover .branch-pct { color: var(--accent); }
+  .branch-token {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .branch-bar-track {
+    height: 6px;
+    background: var(--paper);
+    border-radius: 100px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .branch-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 100px;
+  }
+  .branch-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: right;
+  }
+  .branch.top .branch-bar-fill { background: var(--prob); }
+  .branch.top .branch-token { color: var(--prob); }
+
+  .tree-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .tree-btn {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tree-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .tree-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+  .tree-btn.primary:hover { background: var(--accent-hover); color: white; }
+
+  /* ── TEMPERATURE ──────────────────────────────────────── */
+  .temp-bar {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .temp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  input[type="range"].temp-slider {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .temp-readout {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .temp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .temp-grid { grid-template-columns: 1fr; } }
+  .temp-col {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .temp-col h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .temp-col .temp-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+  }
+  .temp-col .temp-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .temp-samples {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .temp-sample {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .temp-sample::before {
+    content: counter(samp);
+    counter-increment: samp;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--muted);
+    margin-right: 8px;
+    font-style: normal;
+  }
+  .temp-col { counter-reset: samp; }
+
+  .temp-col.cold { border-left: 3px solid var(--det); }
+  .temp-col.mid { border-left: 3px solid var(--accent); }
+  .temp-col.hot { border-left: 3px solid var(--prob); }
+  .temp-col.cold .temp-val { color: var(--det); }
+  .temp-col.mid .temp-val { color: var(--accent); }
+  .temp-col.hot .temp-val { color: var(--prob); }
+
+  /* ── DET vs PROB ──────────────────────────────────────── */
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 720px) { .vs-grid { grid-template-columns: 1fr; } }
+  .vs-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .vs-card.det { border-top-color: var(--det); }
+  .vs-card.prob { border-top-color: var(--prob); }
+  .vs-card .badge {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .vs-card.det .badge { color: var(--det); }
+  .vs-card.prob .badge { color: var(--prob); }
+  .vs-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .vs-card p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+  .vs-input {
+    background: var(--ink);
+    color: white;
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+  .vs-input::before {
+    content: "Vstup: ";
+    color: rgba(255,255,255,0.55);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-right: 6px;
+  }
+  .vs-outputs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .vs-output {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .vs-card.det .vs-output {
+    background: var(--det-soft);
+    border-left: 3px solid var(--det);
+  }
+  .vs-card.prob .vs-output {
+    background: var(--prob-soft);
+    border-left: 3px solid var(--prob);
+  }
+  .vs-meta {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+    border-top: 1px dashed var(--line);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  /* ── HALLUCINATION CALLOUT ────────────────────────────── */
+  .hal-callout {
+    background: var(--red-soft);
+    border-left: 3px solid var(--red);
+    padding: 22px 24px;
+    max-width: 880px;
+  }
+  .hal-callout h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+  .hal-callout p {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .hal-callout strong { color: var(--red); }
+  .hal-callout em { color: var(--ink-soft); font-style: italic; }
+
+  /* ── TAKEAWAYS ────────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ──────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <h1>AI není databáze. Je to <em>pravděpodobnostní</em> generátor</h1>
+    <p class="hero-subtitle">
+      Když napíšete dotaz do AI, neptáte se na uložené fakto. Žádáte model, aby vám vygeneroval nejpravděpodobnější pokračování. Pokaždé znova, slovo po slovu. Tato stránka ukazuje, jak takové generování vypadá uvnitř, proč stejný dotaz může dát různé odpovědi a proč halucinace nejsou porucha, ale logický důsledek.
+    </p>
+    <div class="definition">
+      <strong>Deterministický systém</strong>: stejný vstup → vždy stejný výstup (kalkulačka, FAQ bot). <strong>Probabilistický systém</strong>: stejný vstup → výstup z pravděpodobnostního rozdělení (LLM, klasifikátor obrazů).
+    </div>
+    <p style="margin-top: 14px; font-size: 12.5px; color: var(--muted); font-style: italic; max-width: 760px;">
+      Pravděpodobnosti tokenů v interaktivním stromě a ukázkové výstupy pro různé teploty jsou pedagogicky navržené, ne odečtené z konkrétního modelu. Princip generování ano; konkrétní čísla ilustrativně.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Generování po tokenech: klikněte si vlastní větu</h2>
+    <p class="section-lead">
+      LLM generuje text <strong>jeden token po druhém</strong>. Pro každý další token spočítá pravděpodobnost všech možných pokračování a vybere. Vyberte cestu klikáním a sledujte, jak věta postupně vzniká. (Pravděpodobnosti jsou ilustrativní, postavené tak, jak by takový strom mohl vypadat u typického modelu.)
+    </p>
+
+    <div class="tree-wrap">
+      <div class="tree-prompt">Aktuální věta</div>
+      <div class="tree-current" id="tree-current"><span class="pending">Začněte kliknutím na token níže.</span></div>
+      <div class="tree-instructions" id="tree-instructions">Vyberte první token. Strom pokračuje, dokud nedojdete na konec věty.</div>
+
+      <div class="branches" id="branches"></div>
+
+      <div class="tree-controls">
+        <button class="tree-btn primary" id="tree-reset">Začít znova</button>
+        <button class="tree-btn" id="tree-greedy">Vždy nejpravděpodobnější (T = 0)</button>
+        <button class="tree-btn" id="tree-random">Vyber za mě (T = 1)</button>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 880px;">
+      <strong>Klíčová věc:</strong> model nevybírá z hotových vět, ale staví větu po slovech. Při každém kroku má desítky možných tokenů, jeden vybere, pokračuje. Pokaždé může vybrat jinak. Z toho plyne i to, proč halucinace vznikají: stačí jediná chybná volba v řetězci a věta se odchýlí od pravdy.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Teplota: kolik náhody do výběru pustit</h2>
+    <p class="section-lead">
+      Parametr <strong>temperature</strong> kontroluje, jak moc se model drží nejpravděpodobnějších variant. Nízká teplota = vždy bere nejlepší možnost (deterministicky). Vysoká teplota = vybírá rozmanitější, někdy překvapivé varianty (kreativní, ale taky chybové).
+    </p>
+
+    <div class="temp-grid">
+      <div class="temp-col cold">
+        <h4>Studeno</h4>
+        <div class="temp-val">T = 0</div>
+        <div class="temp-desc">Vždy nejpravděpodobnější token. Stejný vstup dá vždy stejný výstup. Vhodné pro shrnutí, klasifikaci, jednoduché otázky.</div>
+        <div class="temp-samples">
+          <div class="temp-sample">Kočka spí na gauči.</div>
+          <div class="temp-sample">Kočka spí na gauči.</div>
+          <div class="temp-sample">Kočka spí na gauči.</div>
+        </div>
+      </div>
+      <div class="temp-col mid">
+        <h4>Vlažně</h4>
+        <div class="temp-val">T ≈ 0,7 (default)</div>
+        <div class="temp-desc">Většinou bere nejlepší, občas druhou. Trochu variabilní. Defaultní nastavení ChatGPT, Claude a podobně.</div>
+        <div class="temp-samples">
+          <div class="temp-sample">Kočka spí na gauči.</div>
+          <div class="temp-sample">Kočka loví myši na zahradě.</div>
+          <div class="temp-sample">Kočka mňouká u dveří.</div>
+        </div>
+      </div>
+      <div class="temp-col hot">
+        <h4>Horko</h4>
+        <div class="temp-val">T = 1,5+</div>
+        <div class="temp-desc">Pravděpodobnostní rozdělení se zploští, model bere i málo pravděpodobné možnosti. Kreativní, ale taky často nesmyslné nebo halucinatorní.</div>
+        <div class="temp-samples">
+          <div class="temp-sample">Kočka tančila s deštníkem.</div>
+          <div class="temp-sample">Kočka úspěšně skládala daňové přiznání.</div>
+          <div class="temp-sample">Kočka uvažovala o filozofii Wittgensteina.</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: 18px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 880px;">
+      <strong>Co to znamená v praxi.</strong> Web aplikace (ChatGPT.com, Claude.ai) běžnému uživateli teplotu neukazují; nastavuje ji systém. Přes API máte plnou kontrolu. Pro hodnotící zprávy, vyhledávání v zákonech, sumarizaci textů použijte nízkou teplotu (T ≈ 0–0,3). Pro brainstorming a kreativní psaní vyšší. Když AI v ChatGPT dvakrát po sobě odpoví různě, nehráli jste se sliderem; aplikace ji uvnitř nastavila.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Deterministicky vs. pravděpodobnostně</h2>
+    <p class="section-lead">
+      Dva typy systémů vedle sebe na stejném typu úlohy. Vidíte, kde každý funguje a v jakém režimu.
+    </p>
+
+    <div class="vs-grid">
+      <div class="vs-card det">
+        <span class="badge">Deterministický systém</span>
+        <h3>FAQ bot / pravidlový systém</h3>
+        <p>
+          Klíčová slova → naprogramovaná odpověď. Pokud klíčová slova padnou, dostanete přesně tu jednu odpověď. Pokud nepadnou, fallback nebo „nerozumím".
+        </p>
+        <div class="vs-input">Chci resetovat heslo</div>
+        <div class="vs-outputs">
+          <div class="vs-output">Pro reset hesla klikněte na tento odkaz: reset.firma.cz/heslo</div>
+          <div class="vs-output">Pro reset hesla klikněte na tento odkaz: reset.firma.cz/heslo</div>
+          <div class="vs-output">Pro reset hesla klikněte na tento odkaz: reset.firma.cz/heslo</div>
+        </div>
+        <div class="vs-meta">
+          <strong>3 pokusy, 3 stejné odpovědi.</strong> Spolehlivost: 100 %. Flexibilita: nula. Pokud napíšete „nemůžu se přihlásit", FAQ bot najednou „nerozumí" a vrátí fallback.
+        </div>
+      </div>
+
+      <div class="vs-card prob">
+        <span class="badge">Probabilistický systém</span>
+        <h3>LLM (Claude, ChatGPT)</h3>
+        <p>
+          Pro stejný vstup spočítá pravděpodobnostní distribuci možných výstupů. Vrátí jeden vzorek z této distribuce. Při dalším pokusu vrátí jiný vzorek.
+        </p>
+        <div class="vs-input">Napiš mi něco o kočce.</div>
+        <div class="vs-outputs">
+          <div class="vs-output">Kočka spí na gauči, ocasem švihne, jen když ji někdo vyruší.</div>
+          <div class="vs-output">Kočka loví v zahradě myši; je domácí, ale instinkty jí zůstaly.</div>
+          <div class="vs-output">Kočka mňouká u dveří, nejspíš chce ven, nebo nazpět dovnitř.</div>
+        </div>
+        <div class="vs-meta">
+          <strong>3 pokusy, 3 různé odpovědi.</strong> Flexibilita: vysoká. Spolehlivost: variabilní. Vždy zní rozumně, ale konkrétní fakta se mění. „Pravdivost" výstupu závisí na tom, co model našel ve svých trénovacích datech.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Proč halucinace nejsou porucha</h2>
+    <p class="section-lead">
+      Z pohledu modelu je každý další token jen pravděpodobnostní volba. Model nemá zabudovaný rozdíl mezi „pravdivá věta" a „věrohodně znějící věta". Cíl je <em>plynulé pokračování</em>, ne <em>pravdivé pokračování</em>.
+    </p>
+
+    <div class="hal-callout">
+      <h3>Halucinace = nejpravděpodobnější pokračování, které se náhodou minulo s pravdou</h3>
+      <p>
+        Když se LLM zeptáte na něco, k čemu má dost trénovacích dat (běžné fakto, opakovaná otázka), pravděpodobnostně vyhraje pravdivá odpověď. Když se zeptáte na něco, k čemu má jen málo dat, neexistující data, nebo si protichůdná data, model přesto někoho vybere. <strong>Ne proto, že by věděl. Proto, že musí vybrat token.</strong>
+      </p>
+      <p>
+        Příklad: zeptáte se na konkrétní paragraf vyhlášky, kterou model v trénovacích datech viděl jen z popisu, ne v plném znění. Model vyplodí <em>plausibilně znějící paragraf</em> včetně čísla a věty, která zní jako právní formulace. Není to chyba programu; je to logický výstup pravděpodobnostního generování při nedostatku dat.
+      </p>
+      <p>
+        <strong>Z toho plyne:</strong> halucinace nelze úplně odstranit. Lze je jen zmenšit a omezit, kdy se na ně musíte ptát. Snížit teplotu, dát modelu primární zdroj, ověřit kritické informace mimo model.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si z toho odnést</h2>
+    <p class="section-lead">
+      Pět praktických návyků, které vznikají z pochopení probability.
+    </p>
+
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Nepokládejte stejnou otázku znovu pro ověření.</strong> Druhý výstup může být úplně jiný, a oba mohou být chybné. Ověřujte mimo model, ne uvnitř.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pro konzistenci snižte teplotu.</strong> Pokud používáte API nebo aplikaci s nastavením, nastavte T ≈ 0 pro shrnutí, klasifikaci, vyhledávání. Web rozhraní vám teplotu neukazují, ale formulujte přesněji.
+      </div>
+      <div class="takeaway-card">
+        <strong>Halucinace nejsou chyba, jsou cena.</strong> Cenou za flexibilitu a plynulý jazyk je nestabilita faktického obsahu. U konkrétních faktů (čísla paragrafů, jména, data) ověřujte vždy.
+      </div>
+      <div class="takeaway-card">
+        <strong>Nedostatek dat = halucinační hnízdo.</strong> Čím vzácnější fakto požadujete, tím větší riziko, že model vyplodí plausibilní výmysl. Hlavní česká legislativa: relativně OK. Konkrétní vyhláška ÚSKVBL: ověřit.
+      </div>
+      <div class="takeaway-card">
+        <strong>Plynulost není kvalita.</strong> Plynulou českou odpověď napíše model i ve chvíli, kdy halucinuje. „Zní to dobře" není kvalitativní kritérium; je to defaultní stav.
+      </div>
+      <div class="takeaway-card">
+        <strong>Stejný prompt v různý čas = různý výstup.</strong> Aplikace mění modely za běhu. Pokud potřebujete stabilní výstup pro stejný vstup, použijte deterministický nástroj (Excel, šablona, regex), ne LLM.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   TOKEN TREE — illustrative probability distributions
+   ────────────────────────────────────────────────────────── */
+
+// A nested tree of possible token continuations.
+// Each node has token (string) + probability (0–1).
+// At each step, branches sum to roughly 1.0 (illustrative).
+
+const TREE = {
+  root: [
+    { token: "Kočka", prob: 0.42, next: "kocka" },
+    { token: "Pes", prob: 0.18, next: "pes" },
+    { token: "Včera", prob: 0.12, next: "vcera" },
+    { token: "V", prob: 0.10, next: "v" },
+    { token: "Nikdo", prob: 0.08, next: "nikdo" },
+    { token: "Náhle", prob: 0.06, next: "nahle" },
+    { token: "Tehdy", prob: 0.04, next: "tehdy" }
+  ],
+  kocka: [
+    { token: "spí", prob: 0.32, next: "kocka_spi" },
+    { token: "loví", prob: 0.18, next: "kocka_lovi" },
+    { token: "mňouká", prob: 0.15, next: "kocka_mnouka" },
+    { token: "leží", prob: 0.12, next: "kocka_lezi" },
+    { token: "hraje", prob: 0.08, next: "kocka_hraje" },
+    { token: "přede", prob: 0.07, next: "kocka_prede" },
+    { token: "sleduje", prob: 0.05, next: "kocka_sleduje" },
+    { token: "tančila", prob: 0.03, next: null }
+  ],
+  kocka_spi: [
+    { token: "na", prob: 0.55, next: "kocka_spi_na" },
+    { token: "v", prob: 0.20, next: "kocka_spi_v" },
+    { token: "celý", prob: 0.10, next: "kocka_spi_cely" },
+    { token: "pod", prob: 0.08, next: "kocka_spi_pod" },
+    { token: "vedle", prob: 0.05, next: null },
+    { token: "tiše", prob: 0.02, next: null }
+  ],
+  kocka_spi_na: [
+    { token: "gauči", prob: 0.30, next: "end" },
+    { token: "polštáři", prob: 0.20, next: "end" },
+    { token: "stole", prob: 0.15, next: "end" },
+    { token: "slunci", prob: 0.13, next: "end" },
+    { token: "topení", prob: 0.10, next: "end" },
+    { token: "křesle", prob: 0.08, next: "end" },
+    { token: "klávesnici", prob: 0.04, next: "end" }
+  ],
+  kocka_spi_v: [
+    { token: "krabici", prob: 0.40, next: "end" },
+    { token: "koutě", prob: 0.20, next: "end" },
+    { token: "košíku", prob: 0.18, next: "end" },
+    { token: "kuchyni", prob: 0.12, next: "end" },
+    { token: "zahradě", prob: 0.10, next: "end" }
+  ],
+  kocka_spi_cely: [
+    { token: "den.", prob: 0.85, next: null },
+    { token: "týden.", prob: 0.10, next: null },
+    { token: "víkend.", prob: 0.05, next: null }
+  ],
+  kocka_spi_pod: [
+    { token: "stolem", prob: 0.45, next: "end" },
+    { token: "dekou", prob: 0.30, next: "end" },
+    { token: "křeslem", prob: 0.15, next: "end" },
+    { token: "postelí", prob: 0.10, next: "end" }
+  ],
+  kocka_lovi: [
+    { token: "myši", prob: 0.45, next: "end" },
+    { token: "ptáky", prob: 0.20, next: "end" },
+    { token: "hmyz", prob: 0.15, next: "end" },
+    { token: "na", prob: 0.12, next: "end" },
+    { token: "v", prob: 0.08, next: "end" }
+  ],
+  kocka_mnouka: [
+    { token: "u", prob: 0.40, next: "end" },
+    { token: "na", prob: 0.25, next: "end" },
+    { token: "hladově.", prob: 0.18, next: null },
+    { token: "tiše.", prob: 0.10, next: null },
+    { token: "hlasitě.", prob: 0.07, next: null }
+  ],
+  kocka_lezi: [
+    { token: "na", prob: 0.50, next: "end" },
+    { token: "v", prob: 0.25, next: "end" },
+    { token: "u", prob: 0.15, next: "end" },
+    { token: "klidně.", prob: 0.10, next: null }
+  ],
+  kocka_hraje: [
+    { token: "si", prob: 0.80, next: "end" },
+    { token: "s", prob: 0.15, next: "end" },
+    { token: "fotbal.", prob: 0.05, next: null }
+  ],
+  kocka_prede: [
+    { token: "spokojeně.", prob: 0.55, next: null },
+    { token: "tiše.", prob: 0.30, next: null },
+    { token: "hluboce.", prob: 0.15, next: null }
+  ],
+  kocka_sleduje: [
+    { token: "ptáka", prob: 0.35, next: "end" },
+    { token: "okno.", prob: 0.30, next: null },
+    { token: "ryby", prob: 0.20, next: "end" },
+    { token: "vás.", prob: 0.15, next: null }
+  ],
+  pes: [
+    { token: "štěká", prob: 0.42, next: "end" },
+    { token: "běží", prob: 0.20, next: "end" },
+    { token: "vrtí", prob: 0.15, next: "end" },
+    { token: "spí", prob: 0.13, next: "end" },
+    { token: "hraje", prob: 0.10, next: "end" }
+  ],
+  vcera: [
+    { token: "jsem", prob: 0.35, next: "end" },
+    { token: "ráno", prob: 0.25, next: "end" },
+    { token: "večer", prob: 0.20, next: "end" },
+    { token: "pršelo.", prob: 0.10, next: null },
+    { token: "se", prob: 0.10, next: "end" }
+  ],
+  v: [
+    { token: "lese", prob: 0.30, next: "end" },
+    { token: "domě", prob: 0.20, next: "end" },
+    { token: "Praze", prob: 0.20, next: "end" },
+    { token: "noci", prob: 0.15, next: "end" },
+    { token: "kuchyni", prob: 0.15, next: "end" }
+  ],
+  nikdo: [
+    { token: "nevěděl,", prob: 0.40, next: "end" },
+    { token: "neslyšel,", prob: 0.25, next: "end" },
+    { token: "neviděl,", prob: 0.20, next: "end" },
+    { token: "nezůstal.", prob: 0.15, next: null }
+  ],
+  nahle: [
+    { token: "se", prob: 0.45, next: "end" },
+    { token: "zazněl", prob: 0.30, next: "end" },
+    { token: "začalo", prob: 0.15, next: "end" },
+    { token: "přišel", prob: 0.10, next: "end" }
+  ],
+  tehdy: [
+    { token: "jsem", prob: 0.40, next: "end" },
+    { token: "se", prob: 0.30, next: "end" },
+    { token: "to", prob: 0.20, next: "end" },
+    { token: "ještě", prob: 0.10, next: "end" }
+  ],
+  end: [
+    { token: ".", prob: 0.70, next: null },
+    { token: ",", prob: 0.15, next: "root" },
+    { token: "a", prob: 0.10, next: "root" },
+    { token: "ale", prob: 0.05, next: "root" }
+  ]
+};
+
+const currentEl = document.getElementById('tree-current');
+const branchesEl = document.getElementById('branches');
+const instrEl = document.getElementById('tree-instructions');
+const resetBtn = document.getElementById('tree-reset');
+const greedyBtn = document.getElementById('tree-greedy');
+const randomBtn = document.getElementById('tree-random');
+
+let path = [];
+let nodeKey = 'root';
+
+function getBranches() {
+  return TREE[nodeKey] || [];
+}
+
+function renderTree() {
+  // Render current sentence
+  if (path.length === 0) {
+    currentEl.innerHTML = '<span class="pending">Začněte kliknutím na token níže.</span>';
+  } else {
+    currentEl.textContent = path.join('');
+  }
+
+  const branches = getBranches();
+  if (branches.length === 0 || nodeKey === null) {
+    branchesEl.innerHTML = '<p style="grid-column: 1 / -1; padding: 12px; color: var(--muted); font-size: 13px; font-style: italic;">Konec věty. Klikněte na „Začít znova" pro novou.</p>';
+    instrEl.textContent = 'Věta dokončena. Pravděpodobnostní generování končí v tomto bodě.';
+    return;
+  }
+
+  // Find max prob to mark top
+  const maxProb = Math.max(...branches.map(b => b.prob));
+  branchesEl.innerHTML = branches.map(b => {
+    const pct = Math.round(b.prob * 100);
+    const isTop = b.prob === maxProb;
+    return `
+      <div class="branch ${isTop ? 'top' : ''}" data-next="${b.next}" data-token="${escapeAttr(b.token)}">
+        <div class="branch-token">${escapeHtml(b.token)}</div>
+        <div class="branch-bar-track"><div class="branch-bar-fill" style="width: ${b.prob * 100}%"></div></div>
+        <div class="branch-pct">${pct} %</div>
+      </div>
+    `;
+  }).join('');
+
+  branchesEl.querySelectorAll('.branch').forEach(el => {
+    el.addEventListener('click', () => {
+      const tok = el.dataset.token;
+      const next = el.dataset.next;
+      pickToken(tok, next === 'null' ? null : next);
+    });
+  });
+
+  instrEl.textContent = 'Klikněte na další token. Větve seřazené podle pravděpodobnosti, oranžová = nejvyšší.';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+function pickToken(tok, next) {
+  // Add token to path with proper spacing
+  if (path.length === 0) {
+    path.push(tok);
+  } else {
+    // No space before punctuation
+    const noSpace = /^[.,;:!?]/.test(tok);
+    path.push(noSpace ? tok : ' ' + tok);
+  }
+  nodeKey = next;
+  renderTree();
+}
+
+function reset() {
+  path = [];
+  nodeKey = 'root';
+  renderTree();
+}
+
+resetBtn.addEventListener('click', reset);
+
+greedyBtn.addEventListener('click', () => {
+  // Walk the tree always picking the highest-prob branch
+  reset();
+  let safetyCounter = 0;
+  while (nodeKey && safetyCounter < 20) {
+    const branches = getBranches();
+    if (branches.length === 0) break;
+    const best = branches.reduce((a, b) => b.prob > a.prob ? b : a);
+    pickToken(best.token, best.next);
+    safetyCounter++;
+  }
+});
+
+randomBtn.addEventListener('click', () => {
+  reset();
+  let safetyCounter = 0;
+  while (nodeKey && safetyCounter < 20) {
+    const branches = getBranches();
+    if (branches.length === 0) break;
+    // Sample by probability
+    const r = Math.random();
+    let cum = 0;
+    let chosen = branches[branches.length - 1];
+    for (const b of branches) {
+      cum += b.prob;
+      if (r <= cum) { chosen = b; break; }
+    }
+    pickToken(chosen.token, chosen.next);
+    safetyCounter++;
+  }
+});
+
+renderTree();
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

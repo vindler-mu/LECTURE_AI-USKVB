@@ -913,6 +913,7 @@
 
 </div>
 
+<script src="sessions.js"></script>
 <script>
 // Sdílená prezentace pro celou sérii. Vyplňte URL, jakmile budete mít odkaz.
 // Příklad: const seriesSlidesUrl = "https://docs.google.com/presentation/d/...";
@@ -944,102 +945,6 @@ function materialsAvailable(session) {
     ? `<a href="${seriesSlidesUrl}" target="_blank" rel="noopener" class="resources-link">Prezentace <span class="arrow">↗</span></a>`
     : `<span class="resources-placeholder">Prezentace · bude doplněno</span>`;
 })();
-
-const sessions = [
-  {
-    n: 1,
-    short: "Orientace",
-    title: "Orientace v&nbsp;AI krajině a&nbsp;nastavení přístupu",
-    date: "2026-05-11",
-    timing: "11.&nbsp;května 2026, 13:00 · 90&nbsp;minut",
-    desc: "Co AI je a&nbsp;co není. Nastavení realistických očekávání: kde AI exceluje, kde selhává a&nbsp;proč na tom záleží. Jak o&nbsp;AI přemýšlet jako odborník a&nbsp;co definuje odbornost v&nbsp;době AI. Jaký mindset potřebujete pro práci s&nbsp;AI ve&nbsp;své profesi. Společná formulace toho, co od&nbsp;série potřebujete.",
-    why: "Bez realistického nastavení očekávání hrozí dvě krajnosti: přehnaná důvěra v&nbsp;AI, nebo naopak neopodstatněná skepse. Cílem je najít rovnováhu a&nbsp;zároveň zmapovat, kde vnímáte největší potenciál ve své práci.",
-    topics: ["Co je a&nbsp;co není AI", "Demystifikace AI", "AI mindset", "Odborná práce", "Analýza potřeb"],
-    prep: "2–3 konkrétní pracovní úkoly z&nbsp;vaší praxe, kde trávíte hodně času, něco se opakuje, nebo byste rádi pracovali efektivněji. Nemusí se přímo týkat AI; jde o&nbsp;materiál, se kterým budeme společně pracovat.",
-    practice: "Formulujete, kde ve svých pracovních procesech vidíte příležitosti nebo úskalí. Tento vstup formuje obsah dalších seminářů.",
-    materials: [
-      { label: "Tradiční program, GOFAI a&nbsp;adaptivní AI", href: "handson/paradigmata-ai.html" },
-      { label: "Jak funguje strojové učení a&nbsp;neuronové sítě", href: "handson/strojove-uceni.html" },
-      { label: "Jagged intelligence: kde AI exceluje a&nbsp;kde selhává", href: "handson/jagged-inteligence.html" },
-      { label: "Tři vrstvy gramotnosti: informační, digitální, AI", href: "handson/gramotnosti.html" }
-    ],
-    toolkit: [
-      { label: "Claude", href: "https://claude.ai" }
-    ]
-  },
-  {
-    n: 2,
-    short: "Principy",
-    title: "Jak AI funguje: principy srozumitelně",
-    date: "2026-05-25",
-    timing: "25.&nbsp;května 2026, 13:00 · 90&nbsp;minut",
-    desc: "Srozumitelný výklad toho, jak jazykové modely pracují, proč někdy selhávají a&nbsp;co z&nbsp;toho plyne pro jejich používání v&nbsp;odborné praxi. Bez matematiky, s&nbsp;důrazem na praktické důsledky.",
-    why: "Kdo rozumí principům fungování nástroje, dokáže předvídat jeho selhání. V&nbsp;prostředí, kde se pracuje s&nbsp;přesnými daty a&nbsp;odbornými texty, je porozumění limitům AI podmínkou bezpečného použití.",
-    topics: ["Jak jazykové modely generují text", "Proč AI halucinuje", "Rozdíly mezi typy AI", "Limity a&nbsp;silné stránky"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Živé ukázky, kde AI uspěje a&nbsp;kde selže na příkladech z&nbsp;vaší praxe."
-  },
-  {
-    n: 3,
-    short: "Vyhledávání",
-    title: "AI-asistované vyhledávání a&nbsp;práce s&nbsp;informacemi",
-    date: "2026-06-01",
-    timing: "1.&nbsp;června 2026, 13:00 · 90&nbsp;minut",
-    desc: "Jak AI mění způsob vyhledávání a&nbsp;zpracování odborných informací. Přehled dostupných nástrojů, porovnání s&nbsp;klasickým vyhledáváním a&nbsp;klíčová otázka: jak ověřovat to, co AI najde.",
-    why: "Významná část odborné práce zahrnuje vyhledávání, čtení a&nbsp;vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud umíte ověřit, že nalezené informace a&nbsp;zdroje jsou skutečné a&nbsp;relevantní.",
-    topics: ["Nástroje pro AI rešerše", "Vyhledávání v&nbsp;legislativě a&nbsp;odborné literatuře", "Ověřování zdrojů a&nbsp;citací", "Klasická vs. AI rešerše"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Zkoušíte vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe."
-  },
-  {
-    n: 4,
-    short: "Kritika",
-    title: "Kritické myšlení při práci s&nbsp;AI",
-    date: null,
-    timing: "Termín bude upřesněn · 90&nbsp;minut",
-    desc: "Jak systematicky hodnotit důvěryhodnost toho, co AI vygeneruje. Rozpoznávání typických chyb, zkreslení a&nbsp;slepých míst. Praktický rámec pro ověřování výstupů v&nbsp;odborném kontextu.",
-    why: "AI výstupy vypadají přesvědčivě, i&nbsp;když obsahují chyby. V&nbsp;odborném prostředí, kde mají výstupy reálné důsledky, je schopnost kriticky posoudit AI odpověď stejně důležitá jako schopnost ji získat. Tento seminář buduje návyk, ne jen znalost.",
-    topics: ["Halucinace a&nbsp;chyby v&nbsp;praxi", "Jak ověřovat výstupy", "Zkreslení a&nbsp;slepá místa AI", "Kdy AI (ne)důvěřovat"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Dostáváte AI-generované výstupy a&nbsp;hledáte v&nbsp;nich chyby. Následně sdílíte strategie, které vám fungují ve vaší konkrétní práci."
-  },
-  {
-    n: 5,
-    short: "Nástroje",
-    title: "Efektivní práce s&nbsp;AI nástroji",
-    date: null,
-    timing: "Termín bude upřesněn · 90&nbsp;minut",
-    desc: "Jak formulovat zadání, aby AI dávala užitečné výstupy. Práce s&nbsp;dokumenty, sumarizace, extrakce informací, překlady. Porovnání dostupných nástrojů a&nbsp;jejich vhodnosti pro různé typy úkolů.",
-    why: "Kvalita výstupu AI závisí z&nbsp;velké části na kvalitě zadání. Rozdíl mezi vágním a&nbsp;dobře strukturovaným zadáním může být rozdíl mezi nepoužitelným a&nbsp;vysoce užitečným výstupem.",
-    topics: ["Jak formulovat zadání (prompty)", "Práce s&nbsp;dokumenty a&nbsp;texty", "Porovnání nástrojů (ChatGPT, Claude, Gemini, Copilot)", "Opakované úlohy a&nbsp;šablony"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Přinesete konkrétní úkol ze své práce a&nbsp;společně hledáme nejlepší způsob, jak ho s&nbsp;AI řešit."
-  },
-  {
-    n: 6,
-    short: "Praxe",
-    title: "AI v&nbsp;pracovních procesech: od teorie k&nbsp;praxi",
-    date: null,
-    timing: "Termín bude upřesněn · 90&nbsp;minut",
-    desc: "Přenesení všeho dosavadního do vašich konkrétních pracovních situací. Společná práce nad reálnými úkoly, sdílení zkušeností z&nbsp;mezidobí a&nbsp;hledání postupů, které fungují v&nbsp;praxi.",
-    why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o&nbsp;tom, abyste odešli s&nbsp;alespoň jedním konkrétním postupem, který reálně použijete ve své práci.",
-    topics: ["Řešení vašich reálných úkolů", "Sdílení zkušeností", "Co funguje a&nbsp;co ne", "Postupy pro opakované úlohy"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Přinesete konkrétní pracovní situaci. Společně procházíme celý postup od zadání po ověření výstupu."
-  },
-  {
-    n: 7,
-    short: "Instituce",
-    title: "Jak AI zakotvit v&nbsp;instituci: pravidla, nástroje, kompetence",
-    date: null,
-    timing: "Termín bude upřesněn · 90&nbsp;minut",
-    desc: "Závěrečný seminář propojující dvě roviny: (1) co regulace AI (EU AI Act) znamená pro úřad a&nbsp;regulované subjekty, a&nbsp;(2) praktické kroky k&nbsp;tomu, aby AI v&nbsp;instituci fungovala odpovědně. Od výběru nástrojů přes bezpečnost dat po interní pravidla a&nbsp;budování kompetencí.",
-    why: "Bez institucionálního ukotvení zůstane AI individuálním experimentem jednotlivců. Jako regulatorní úřad navíc ÚSKVBL potřebuje rozumět regulaci AI, protože ovlivní i&nbsp;regulované subjekty.",
-    topics: ["Regulace AI v&nbsp;EU", "Bezpečnost dat při práci s&nbsp;AI", "Uzavřené vs. veřejné nástroje, licence", "Interní pravidla a&nbsp;odpovědnosti", "Budování kompetencí do budoucna"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Návrat k&nbsp;potřebám z&nbsp;prvního semináře. Co se za dobu série změnilo? Společná formulace prvních doporučení pro další kroky instituce."
-  }
-];
 
 const nodesEl = document.getElementById('nodes');
 const sessionEl = document.getElementById('session');

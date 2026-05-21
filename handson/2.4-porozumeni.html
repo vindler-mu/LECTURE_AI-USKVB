@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Slova bez zkušenosti – jak AI rozumí významu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #2c5e6e;
+    --accent-hover: #1f4a58;
+    --accent-soft: #e0eaed;
+    --syntax: #b5651d;
+    --syntax-soft: #fbf3e7;
+    --semantic: #4a7c59;
+    --semantic-soft: #e7f0ea;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .tip-toggle {
+    margin-top: 18px; max-width: 880px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+  }
+  .tip-toggle > summary {
+    padding: 12px 18px; cursor: pointer; list-style: none;
+    font-size: 13.5px; font-weight: 600; color: var(--accent);
+    display: flex; align-items: center; gap: 10px;
+    user-select: none;
+  }
+  .tip-toggle > summary::-webkit-details-marker { display: none; }
+  .tip-toggle > summary::before {
+    content: "+";
+    display: inline-block; width: 14px; text-align: center;
+    font-size: 16px; color: var(--accent); transition: transform 0.15s;
+  }
+  .tip-toggle[open] > summary::before { content: "−"; }
+  .tip-toggle .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600;
+  }
+  .tip-toggle .tip-body {
+    padding: 4px 18px 16px 30px;
+    font-size: 14px; color: var(--ink); line-height: 1.65;
+  }
+  .tip-toggle .tip-body p { margin-bottom: 8px; }
+  .tip-toggle .tip-body p:last-child { margin-bottom: 0; }
+  .tip-toggle .tip-body strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TWO APPROACHES ───────────────────────────────────── */
+  .two-app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 720px) { .two-app { grid-template-columns: 1fr; } }
+  .app-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .app-card.synt { border-top-color: var(--syntax); }
+  .app-card.sem { border-top-color: var(--semantic); }
+  .app-card .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .app-card.synt .badge { color: var(--syntax); }
+  .app-card.sem .badge { color: var(--semantic); }
+  .app-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .app-card p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }
+  .app-card ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .app-card ul li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .app-card ul li::before {
+    content: "›";
+    position: absolute;
+    left: 4px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .app-card .example-box {
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin-top: auto;
+  }
+  .app-card.synt .example-box { border-left-color: var(--syntax); background: var(--syntax-soft); }
+  .app-card.sem .example-box { border-left-color: var(--semantic); background: var(--semantic-soft); }
+  .example-box strong { color: var(--ink); }
+
+  /* ── EXAMPLE PICKER ───────────────────────────────────── */
+  .ex-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .ex-btn {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 10px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ex-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .ex-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+
+  .ex-prompt {
+    background: var(--ink);
+    color: white;
+    padding: 16px 20px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-style: italic;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  .ex-prompt::before {
+    content: "Otázka: ";
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+
+  .ex-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .ex-compare { grid-template-columns: 1fr; } }
+  .ex-side {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ex-side.synt { border-left: 3px solid var(--syntax); }
+  .ex-side.sem { border-left: 3px solid var(--semantic); }
+  .ex-side h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .ex-side.synt h5 { color: var(--syntax); }
+  .ex-side.sem h5 { color: var(--semantic); }
+  .ex-side ol {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .ex-side ol li {
+    counter-increment: step;
+    padding: 6px 0 6px 30px;
+    position: relative;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .ex-side ol li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ex-side.synt ol li::before {
+    background: var(--syntax-soft);
+    color: var(--syntax);
+    border: 1px solid var(--syntax);
+  }
+  .ex-side.sem ol li::before {
+    background: var(--semantic-soft);
+    color: var(--semantic);
+    border: 1px solid var(--semantic);
+  }
+  .ex-side ol li strong { color: var(--ink); }
+  .ex-side .ex-answer {
+    padding: 12px 14px;
+    background: var(--paper);
+    border-left: 3px solid var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-top: 6px;
+  }
+  .ex-side .ex-flag {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── NEVER EXPERIENCED ────────────────────────────────── */
+  .never-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .never-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .never-card .never-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .never-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .never-card .never-knows {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .never-card .never-knows strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .never-card .never-quotes {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-style: italic;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .reality-callout {
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    padding: 18px 22px;
+    margin-top: 28px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+    max-width: 880px;
+  }
+  .reality-callout strong { color: var(--warm); }
+  .reality-callout em { font-style: italic; color: var(--ink-soft); }
+
+  /* ── TAKEAWAYS ────────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ──────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <h1>AI rozumí slovům, ne <em>významům</em></h1>
+    <p class="hero-subtitle">
+      Když AI napíše „Paříž je hlavní město Francie", neznamená to, že ví, co je město, co je Francie a co znamená být hlavním městem. Znamená to, že tato slova v jejích trénovacích datech opakovaně stála vedle sebe. Mezi tím, jak slova používáme my, a tím, jak je AI generuje, je propast: zkušenost s žitou skutečností.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="1.1-paradigmata-ai.html">paradigmata ze Setkání 1</a>: GOFAI je <em>symbolický</em> přístup (zná entity a vztahy), adaptivní AI je <em>subsymbolická</em> (jen miliardy číselných vah). Tato stránka ukazuje, co z tohoto rozdílu plyne pro porozumění významu.
+    </p>
+    <div class="definition">
+      <strong>Syntaxe</strong> = vztahy mezi znaky uvnitř systému (slovo „pes" navazuje na „štěká"). <strong>Sémantika</strong> = vztah znaků k realitě (pes je živý tvor, který opravdu štěká). Současná AI zvládá první. Druhé jí chybí.
+    </div>
+    <p style="margin-top: 14px; font-size: 12.5px; color: var(--muted); font-style: italic; max-width: 760px;">
+      Pravděpodobnosti tokenů, kroky odvození a procentuální odhady v interaktivních příkladech jsou ilustrativní; ukazují strukturu uvažování, ne konkrétní výstupy reálného modelu.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Dvě cesty k odpovědi</h2>
+    <p class="section-lead">
+      Dva základní způsoby, jak by mohl umělý systém dojít k tomu, co odpovědět. Jeden statistický (jazykové modely jako Claude, ChatGPT), druhý logický (znalostní grafy, expertní systémy). Princip je zcela jiný, výsledek se může náhodně shodovat.
+    </p>
+    <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 820px; margin-top: -12px; margin-bottom: 24px; padding: 12px 16px; background: var(--paper); border-left: 2px solid var(--accent);">
+      <strong>Slovník této stránky:</strong> Dva nezávislé rozdíly v AI.<br><br>
+      ›&nbsp;<strong>Reprezentace</strong> (jak je znalost uložená): <strong>symbolická</strong> (pojmy a pravidla) vs. <strong>subsymbolická</strong> (miliardy čísel).<br>
+      ›&nbsp;<strong>Zpracování</strong> (jak se používá): <strong>syntaktické</strong> (vzory mezi znaky) vs. <strong>sémantické</strong> (vztah znaků ke světu).<br><br>
+      Tato stránka srovnává dva typické konce spektra:<br>
+      ›&nbsp;<strong>Subsymbolická + syntaktická</strong>: LLM (Cesta&nbsp;1)<br>
+      ›&nbsp;<strong>Symbolická + sémantická</strong>: znalostní graf (Cesta&nbsp;2)<br><br>
+      Existují i smíšené případy. <strong>Rozhodovací strom</strong> je symbolický (explicitní pravidla), ale syntaktický (jen pattern-matching, „pokud věk&nbsp;>&nbsp;65, pak X" bez porozumění tomu, co znamená věk). <strong>Neurosymbolická AI</strong> se snaží spojit subsymbolickou reprezentaci se sémantickým zpracováním (zatím spíš výzkum). Přehled kombinací je v tabulce v <a href="2.1-anatomie-aplikace.html">Anatomii AI aplikace</a>.
+    </p>
+
+    <div class="two-app">
+      <div class="app-card synt">
+        <span class="badge">Cesta 1 · Současná AI</span>
+        <h3>Syntaktický přístup</h3>
+        <p>
+          Model si pamatuje, která slova v trénovacích datech opakovaně sousedí. Když má dokončit větu, vybere statisticky nejpravděpodobnější pokračování. Co slova znamenají, do toho nevstupuje. Význam slova existuje jen jako jeho poloha mezi ostatními slovy.
+        </p>
+        <ul>
+          <li>Pravděpodobnostní statistické metody</li>
+          <li>Vzory mezi znaky, ne mezi věcmi</li>
+          <li>Černá skříňka, miliardy parametrů</li>
+          <li>Učí se z velkého korpusu textů</li>
+        </ul>
+        <div class="example-box">
+          Příklad systému: <strong>LLM</strong> (Claude, ChatGPT, Gemini, Llama). Klasifikátory obrázků. Doporučovací systémy.
+        </div>
+      </div>
+
+      <div class="app-card sem">
+        <span class="badge">Cesta 2 · Znalostní AI</span>
+        <h3>Sémantický přístup</h3>
+        <p>
+          Systém má uložené entity (Paříž, Francie, město) a vztahy mezi nimi (Paříž je hlavním městem Francie). Když dostane otázku, najde v grafu vazby a odvozuje. Ví, na co slova ukazují ve světě, protože to má explicitně zapsané.
+        </p>
+        <ul>
+          <li>Explicitní symboly a pravidla</li>
+          <li>Vztah znaků k entitám ve světě</li>
+          <li>Transparentní (lze sledovat odvození)</li>
+          <li>Znalost musí někdo ručně vložit</li>
+        </ul>
+        <div class="example-box">
+          Příklad systému: <strong>Wikidata, expertní systémy</strong>, GOFAI, lékařské diagnostické systémy typu MYCIN, šachové enginy starší generace.
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle" style="margin-top: 28px;">
+      <summary><span class="tip-label">Tip to know</span> Co je to znalostní graf?</summary>
+      <div class="tip-body">
+        <p><strong>Jednoduše:</strong> znalostní graf je mapa pojmů spojených pojmenovanými šipkami. Místo „Paříž stojí v textu vedle Francie" má systém zapsáno „Paříž&nbsp;→&nbsp;hlavní město&nbsp;→&nbsp;Francie". Něco jako rodinný strom, ale pro pojmy místo lidí.</p>
+        <p><strong>Formálněji:</strong> strukturovaná databáze pojmů a vztahů. Pojmy (Paříž, Francie, město) jsou <strong>uzly</strong>, vztahy mezi nimi (Paříž <em>je hlavním městem</em> Francie) jsou pojmenované <strong>hrany</strong>. Každý uzel může mít atributy (Paříž má populaci 2,1 mil.). Odpověď systém získá průchodem grafu od jednoho uzlu k dalšímu.</p>
+        <p><strong>Příklady:</strong> <strong>Wikidata</strong> (otevřený graf navázaný na Wikipedii), <strong>Google Knowledge Graph</strong> (pohání info-boxy ve výsledcích vyhledávání), medicínské ontologie typu <strong>SNOMED CT</strong>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Stejná otázka, dva způsoby odpovědi</h2>
+    <p class="section-lead">
+      Vyberte si otázku z přednášky a porovnejte, jak by k odpovědi došel syntaktický (statistický) a sémantický (logický) model. Často se výsledek shoduje. Cesta je ale úplně jiná, a to vysvětluje, proč syntaktická AI občas selhává tam, kde sémantická AI by selhat nemohla.
+    </p>
+
+    <div class="ex-picker" id="ex-picker">
+      <button class="ex-btn active" data-ex="paris">Paříž je hlavním městem...</button>
+      <button class="ex-btn" data-ex="rain">Když prší, je...</button>
+      <button class="ex-btn" data-ex="dog">Pes je...</button>
+      <button class="ex-btn" data-ex="trap">2024 byl rok...</button>
+    </div>
+
+    <div class="ex-prompt" id="ex-prompt">Paříž je hlavním městem...</div>
+
+    <div class="ex-compare">
+      <div class="ex-side synt" id="ex-synt">
+        <h5>Syntaktický model (LLM)</h5>
+      </div>
+      <div class="ex-side sem" id="ex-sem">
+        <h5>Sémantický model (znalostní graf)</h5>
+      </div>
+    </div>
+
+    <p id="ex-note" style="margin-top: 14px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 880px;"></p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co AI nikdy neviděla, neslyšela, necítila</h2>
+    <p class="section-lead">
+      Klíčový důvod, proč syntaktický model selhává tam, kde bychom čekali jistotu: <strong>nemá zkušenost s žitou skutečností</strong>. Všechno, co o světě „ví", má z textů. Texty mohou popisovat vůni kávy nebo bolest po injekci. Vůně a bolest samotná do modelu nikdy nevstoupí. Osm věcí, které AI nikdy nezažila.
+    </p>
+
+    <div class="never-grid">
+      <div class="never-card">
+        <div class="never-tag">CHUŤ A VŮNĚ</div>
+        <h4>Nikdy neochutnala kávu</h4>
+        <div class="never-knows">Ví: <strong>10 000+ textů</strong>, kde se „káva" objevuje vedle slov „hořká", „povzbuzující", „aromatická".</div>
+        <div class="never-quotes">„Káva voní lépe, než chutná." Klišé. Ne zkušenost.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">DOTYK</div>
+        <h4>Nikdy se nedotkla papíru</h4>
+        <div class="never-knows">Ví: že lidé píšou o „šustivém papíru", „hladkém papíru", „starém papíru". Co je „hladký" nezná z dlaně.</div>
+        <div class="never-quotes">„Hladký jako papír." Pravdivá metafora bez zakotvení.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">ČAS</div>
+        <h4>Nikdy nezažila plynutí času</h4>
+        <div class="never-knows">Ví: že „čekání trvá dlouho", že „minuty se vlečou". Sama je vždy v okamžiku.</div>
+        <div class="never-quotes">„Čas je relativní." Citát z knihy. Ne zážitek.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">TĚLO</div>
+        <h4>Nikdy nepocítila bolest</h4>
+        <div class="never-knows">Ví: že bolest „píchá", „bodá", „pulzuje". Klasifikace bolesti z lékařských textů. Bolest samotnou ne.</div>
+        <div class="never-quotes">„Bolest jako při kopu do nohy." Z literatury.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">CIT</div>
+        <h4>Nikdy se neobávala</h4>
+        <div class="never-knows">Ví: tisíce příběhů o strachu. Když má napsat o strachu, dobře to napodobí. Strach sám nezažila.</div>
+        <div class="never-quotes">„Sevřené srdce, lapání po dechu." Slovník pocitů.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">ZVUK</div>
+        <h4>Nikdy neslyšela hudbu</h4>
+        <div class="never-knows">Ví: že Bach je „matematický", že basa „zní hluboko", že refrén je „chytlavý". Tisíce hudebních recenzí. Ne jeden tón.</div>
+        <div class="never-quotes">„Tato symfonie je strhující." Recenze. Ne poslouchání.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">POHYB</div>
+        <h4>Nikdy neudělala krok</h4>
+        <div class="never-knows">Ví: že chůze „uvolňuje", že běh „rozproudí krev", že tělo se „protáhne". Z fitness textů a románů. Ne ze svalů.</div>
+        <div class="never-quotes">„Krok za krokem se cítil lépe." Z knihy. Ne z pohybu.</div>
+      </div>
+      <div class="never-card">
+        <div class="never-tag">PRACOVNÍ KONTEXT</div>
+        <h4>Nikdy nebyla na schůzi ÚSKVBL</h4>
+        <div class="never-knows">Ví: obecné informace o regulatorních úřadech, struktuře ÚSKVBL z veřejných zdrojů. Vaši kolegové, denní rutina, nepsaná pravidla pro ni neexistují.</div>
+        <div class="never-quotes">„Pracovník regulatorního úřadu typicky..." Generika.</div>
+      </div>
+    </div>
+
+    <div class="reality-callout">
+      <strong>Proč to vadí.</strong> Když AI píše o věcech, které mohly proběhnout (analýza, sumarizace, návrh dopisu), funguje to dobře: má dost vzorů. Když se ptáte na něco, co vyžaduje zakotvení v žité skutečnosti („Bude tato látka pacientovi bolet?", „Vypadá to v realitě jako problém?", „Mohu se kolegovi takhle ozvat?"), <em>plynulost odpovědi není zárukou platnosti</em>. AI nemá s čím porovnat své věty.
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Plynulost není přesnost</h2>
+    <p class="section-lead">
+      Důsledek syntaktického přístupu plus chybějící žité zkušenosti: AI dokáže napsat plynule, sebevědomě a přesvědčivě o čemkoliv. Včetně věcí, které nikdy nezažila, neumí, nebo dokonce neexistují.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+      <div style="background: var(--paper); border: 1px solid var(--line); padding: 22px 24px;">
+        <h4 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-bottom: 10px;">Co AI píše sebevědomě</h4>
+        <ul style="list-style: none; padding: 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.7;">
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Pravdivá fakta, která dobře zná</li>
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Pravdivá fakta, která zná jen z části</li>
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Plausibilně znějící spekulace</li>
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Plně vymyšlené informace (halucinace): neexistující osoba, fakt, událost</li>
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Přemíchané skutečné informace (konfabulace): reálné prvky v nepravdivé kombinaci</li>
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Citace neexistujících autorů a článků</li>
+          <li style="padding: 4px 0 4px 18px; position: relative;"><span style="position: absolute; left: 4px; color: var(--accent);">›</span> Vymyšlené paragrafy zákonů s pravdivě znějícími čísly</li>
+        </ul>
+      </div>
+      <div style="background: var(--syntax-soft); border-left: 3px solid var(--syntax); padding: 22px 24px;">
+        <h4 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--syntax);">Proč to nepoznáte z tónu</h4>
+        <p style="font-size: 14px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 12px;">
+          Model píše stejně sebejistě, ať říká pravdu, nebo si vymýšlí. Sebejistý tón pro něj není signál pravdivosti, ale <strong>základní styl</strong>, ke kterému vede trénink. Dvě věci se na tom podepisují: za prvé, <strong>RLHF</strong> ho odměňoval za plynulé a sebejisté odpovědi (lidští hodnotitelé je preferovali před váhavými). Za druhé, <strong>trénovací data</strong> se z velké části skládají z textů psaných v jistém tónu: odborné články, encyklopedie, manuály, instrukce. Texty, které otevřeně vyjadřují nejistotu („možná", „nejsem si jistý", „nevím"), jsou v menšině.
+        </p>
+        <p style="font-size: 14px; color: var(--ink-soft); line-height: 1.65;">
+          <strong style="color: var(--syntax);">Důsledek:</strong> přesvědčivý tón neznamená pravdu. Plynulá věta neznamená pravdu. Český jazyk modelu neznamená, že informaci čerpal z českých zdrojů. <em>Ověřujte.</em>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si z toho odnést</h2>
+    <p class="section-lead">
+      Čtyři pravidla, která pomáhají při každodenní práci s LLM.
+    </p>
+
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Plynulý ≠ pravdivý.</strong> Model je trénován mluvit hladce. Hladkost je výchozí stav, ne signál správnosti. Než výstup použijete, ověřte v primárním zdroji (zákon, databáze, kolega).
+      </div>
+      <div class="takeaway-card">
+        <strong>Dejte modelu kotvu.</strong> Když potřebujete pravdu, ne plynulost, vložte konkrétní zdroj přímo do promptu (odkaz, citaci, dokument). Model pak pracuje s vaším textem, ne s tím, co si „pamatuje".
+      </div>
+      <div class="takeaway-card">
+        <strong>Ptejte se na proces, ne na fakta.</strong> AI je silná u „jak strukturovat", „jak shrnout", „jak přeformulovat". U „je to pravda" nikoliv. Posuďte, kterou stranu vaše otázka váží.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pochybnost je nejvzácnější výstup.</strong> Když AI řekne „nejsem si jistý" nebo „toto by se mělo ověřit", berte to vážně. Je to vzácnější výstup než sebevědomá odpověď a obvykle má důvod.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   EXAMPLES: 4 prompts with parallel reasoning paths
+   ────────────────────────────────────────────────────────── */
+
+const EXAMPLES = {
+  paris: {
+    prompt: "Paříž je hlavním městem...",
+    note: "Klasický případ, kde se obě cesty potkávají. Výsledek stejný, princip naprosto jiný.",
+    synt: [
+      "Najde tokeny: <strong>Paříž</strong>, <strong>hlavní</strong>, <strong>město</strong>.",
+      "V trénovacích datech statisticky zjistí: v 97 % případů po této sekvenci následuje token <strong>Francie</strong>.",
+      "Vybere nejpravděpodobnější další token.",
+      "Vygeneruje odpověď. <em>Nezkontroluje, jestli je to fakticky pravda. Spoléhá na to, že texty říkají pravdu.</em>"
+    ],
+    syntAnswer: "Francie",
+    syntFlag: "Funguje proto, že tato věta má jednoznačné dokončení. U méně častých faktů by mohl model snadno halucinovat.",
+    sem: [
+      "Rozpozná entitu: <strong>Paříž</strong> jako konkrétní objekt v databázi.",
+      "Najde v grafu vazbu: <code>Paris → capitalOf → ?</code>",
+      "Vyhledá objekt na konci šipky: <strong>Francie</strong>.",
+      "Vrátí výsledek dotazu, ne pravděpodobné slovo."
+    ],
+    semAnswer: "Francie",
+    semFlag: "Funguje pouze pro entity, které někdo do databáze přidal. U nových faktů (nově vzniklé město) odpoví „nemám záznam”."
+  },
+  rain: {
+    prompt: "Když prší, je...",
+    note: "Logická vazba (déšť → mokro). Statistický model ji zachycuje skrze četnost. Logický model skrze pravidlo.",
+    synt: [
+      "Najde tokeny: <strong>když</strong>, <strong>prší</strong>, <strong>je</strong>.",
+      "V trénovacích datech tato sekvence v 95 % případů pokračuje slovem <strong>mokro</strong> nebo příbuznou variantou.",
+      "Vybere nejpravděpodobnější pokračování.",
+      "Napíše „mokro”. <em>Neví, že déšť je voda. Neví, že voda dělá věci mokré. Jenom ví, že tato slova chodí spolu.</em>"
+    ],
+    syntAnswer: "mokro",
+    syntFlag: "Selže, pokud trénovací data obsahují i neobvyklou variantu („Když prší, je sucho v poušti, dokud...” atd.). Statistika nezohledňuje absurditu.",
+    sem: [
+      "Identifikuje fakt: <strong>PRŠÍ = aktivní</strong>.",
+      "Aplikuje pravidlo A: <code>déšť → vlhkost</code>.",
+      "Aplikuje pravidlo B: <code>vlhkost = mokro</code>.",
+      "Vyvodí závěr: <strong>mokro</strong>. Kdyby existovala výjimka (krytý prostor), pravidla by zohlednila i ji."
+    ],
+    semAnswer: "mokro",
+    semFlag: "Funguje robustně i pro novou kombinaci, pokud jsou pravidla správně formulována. Náročné na zachycení nuance."
+  },
+  dog: {
+    prompt: "Pes je...",
+    note: "Tady už je vidět rozdíl. Sémantický model vrací jednu kategorii, syntaktický distribuci slov, která lidé používají.",
+    synt: [
+      "Najde tokeny: <strong>pes</strong>, <strong>je</strong>.",
+      "Spočítá pravděpodobnost dalších tokenů: savec (32 %), zvíře (24 %), věrný (12 %), nejlepší (8 %), domácí (6 %), ...",
+      "Vybere nejpravděpodobnější. Při vyšší teplotě může vybrat i méně časté.",
+      "Generuje. <em>Slovo „pes” pro model neoznačuje žádný konkrétní tvor; je to jen pozice v matici slov, ze které vychází určité statistické pokračování.</em>"
+    ],
+    syntAnswer: "savec / zvíře / věrný",
+    syntFlag: "Více možných odpovědí, různě pravděpodobných. Při opakovaném dotazu uvidíte různá pokračování.",
+    sem: [
+      "Rozpozná entitu: <strong>Pes (Canis familiaris)</strong>.",
+      "Najde v grafu: <code>Pes → typ → savec, zvíře, domestikovaný</code>.",
+      "Vrátí přesný atribut, který otázka chce. Pokud otázka zní „Co je pes?”, vrátí kategorii „savec, druh psovitých šelem”.",
+      "Stejná odpověď pokaždé."
+    ],
+    semAnswer: "savec, druh Canis familiaris",
+    semFlag: "Deterministická odpověď s explicitními atributy. Žádná „kreativita”, ale taky žádná variace."
+  },
+  trap: {
+    prompt: "Rok 2024 byl rok...",
+    note: "Past pro syntaktický model. „Rok 20XX byl rok” je velmi častý začátek vět, model si neuvědomí, že nemá konkrétní fakta o roce 2024, pokud byl trénován dřív.",
+    synt: [
+      "Najde tokeny: <strong>Rok</strong>, <strong>2024</strong>, <strong>byl</strong>, <strong>rok</strong>.",
+      "V trénovacích datech vidí podobné formulace pro mnoho jiných let.",
+      "Vygeneruje plausibilní pokračování: <em>„rok prezidentských voleb v USA”, „rok klimatických extrémů”, „rok významných sportovních událostí”</em>...",
+      "<strong>Pozor:</strong> může taky vytvořit zcela vymyšlené události, pokud o roce 2024 nemá ve svých datech dost konkrétního obsahu."
+    ],
+    syntAnswer: "(plausibilně znějící, ale nemusí být pravdivé)",
+    syntFlag: "Klasická halucinační past. Model se snaží odpovědět cokoliv, aby to znělo přirozeně. Pokud trénovací data byla starší než 2024, výstup je čistá konstrukce.",
+    sem: [
+      "Rozpozná entitu: <strong>rok 2024</strong>.",
+      "Hledá v grafu: <code>2024 → události → ?</code>",
+      "Pokud o roce 2024 nemá záznamy: <strong>odpoví „nemám záznam”</strong> nebo vrátí prázdnou množinu.",
+      "Neselhává tím, že by si vymyslel. Selhává tím, že upřímně přizná neznalost."
+    ],
+    semAnswer: "(žádný záznam pro tento dotaz)",
+    semFlag: "Hlavní výhoda sémantického přístupu: explicitní „nevím” namísto plynulé halucinace. Cena: musíte data ručně doplňovat."
+  }
+};
+
+const exPicker = document.getElementById('ex-picker');
+const exPrompt = document.getElementById('ex-prompt');
+const exSynt = document.getElementById('ex-synt');
+const exSem = document.getElementById('ex-sem');
+const exNote = document.getElementById('ex-note');
+
+function renderExample(key) {
+  const ex = EXAMPLES[key];
+  if (!ex) return;
+  exPrompt.textContent = ex.prompt;
+  exSynt.innerHTML = `
+    <h5>Syntaktický model (LLM)</h5>
+    <ol>${ex.synt.map(s => `<li>${s}</li>`).join('')}</ol>
+    <div class="ex-answer">Odpověď: ${ex.syntAnswer}</div>
+    <div class="ex-flag">${ex.syntFlag}</div>
+  `;
+  exSem.innerHTML = `
+    <h5>Sémantický model (znalostní graf)</h5>
+    <ol>${ex.sem.map(s => `<li>${s}</li>`).join('')}</ol>
+    <div class="ex-answer">Odpověď: ${ex.semAnswer}</div>
+    <div class="ex-flag">${ex.semFlag}</div>
+  `;
+  exNote.textContent = ex.note;
+}
+
+exPicker.addEventListener('click', (e) => {
+  const btn = e.target.closest('.ex-btn');
+  if (!btn) return;
+  exPicker.querySelectorAll('.ex-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderExample(btn.dataset.ex);
+});
+
+renderExample('paris');
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

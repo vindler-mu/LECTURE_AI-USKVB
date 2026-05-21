@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Svět modelů: tři cesty k AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #2c5e6e;
+    --accent-hover: #1f4a58;
+    --accent-soft: #e0eaed;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+    --purple: #5b3f7a;
+    --purple-soft: #ede5f3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── THREE PATHS (closed / open / local) ──────────────── */
+  .three-paths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 880px) { .three-paths { grid-template-columns: 1fr; } }
+  .path-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .path-card.closed { border-top-color: var(--purple); }
+  .path-card.open { border-top-color: var(--warm); }
+  .path-card.local { border-top-color: var(--green); }
+  .path-card .ptag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .path-card.closed .ptag { color: var(--purple); }
+  .path-card.open .ptag { color: var(--warm); }
+  .path-card.local .ptag { color: var(--green); }
+  .path-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .path-card .pdesc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .path-card .pros, .path-card .cons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12.5px;
+  }
+  .path-card .pros li, .path-card .cons li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .path-card .pros li::before { content: "+"; position: absolute; left: 4px; color: var(--green); font-weight: 700; }
+  .path-card .cons li::before { content: "−"; position: absolute; left: 4px; color: var(--red); font-weight: 700; }
+  .path-card .ptools {
+    background: var(--paper);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.55;
+    margin-top: auto;
+    border-left: 2px solid var(--line-strong);
+  }
+  .path-card.closed .ptools { border-left-color: var(--purple); }
+  .path-card.open .ptools { border-left-color: var(--warm); }
+  .path-card.local .ptools { border-left-color: var(--green); }
+  .path-card .ptools strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .path-card .pwhen {
+    background: var(--accent-soft);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .path-card .pwhen strong {
+    color: var(--accent);
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  /* ── TRADEOFF MATRIX ──────────────────────────────────── */
+  .tradeoff {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  .tradeoff th, .tradeoff td {
+    padding: 12px 14px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--line);
+  }
+  .tradeoff tr:last-child td { border-bottom: none; }
+  .tradeoff th {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 12px;
+    background: var(--paper);
+  }
+  .tradeoff td:first-child {
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 180px;
+  }
+  .tradeoff th.closed { color: var(--purple); }
+  .tradeoff th.open { color: var(--warm); }
+  .tradeoff th.local { color: var(--green); }
+  .tradeoff .rating {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .tradeoff .r-high { color: var(--green); }
+  .tradeoff .r-mid { color: var(--warm); }
+  .tradeoff .r-low { color: var(--red); }
+  .tradeoff td .note {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── REGULATORY CALLOUT ───────────────────────────────── */
+  .reg-callout {
+    background: var(--green-soft);
+    border-left: 3px solid var(--green);
+    padding: 18px 22px;
+    margin-top: 22px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+    max-width: 880px;
+  }
+  .reg-callout strong { color: var(--green); }
+
+  /* ── HF HUB CTA ───────────────────────────────────────── */
+  .hf-cta {
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    padding: 22px 26px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+  @media (max-width: 720px) { .hf-cta { grid-template-columns: 1fr; } }
+  .hf-cta h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .hf-cta p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .hf-cta a.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--warm);
+    color: white;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .hf-cta a.btn:hover { background: #8e4a18; color: white; text-decoration: none; }
+
+  /* ── HF LAYERS EXPLAINER ──────────────────────────────── */
+  .hf-layers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 18px 0 18px;
+  }
+  @media (max-width: 880px) { .hf-layers { grid-template-columns: 1fr; } }
+  .hf-layer {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    border-top: 3px solid var(--accent);
+  }
+  .hf-layer h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .hf-layer .hf-where {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .hf-layer p {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .hf-layer .hf-priv {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .hf-layer.is-warn { border-top-color: var(--warm); }
+  .hf-layer.is-warn .hf-where { color: var(--warm); }
+  .hf-layer.is-ok { border-top-color: var(--green); }
+  .hf-layer.is-ok .hf-where { color: var(--green); }
+
+  .hf-safety {
+    background: var(--red-soft);
+    border-left: 3px solid var(--red);
+    padding: 18px 22px;
+    margin-bottom: 24px;
+  }
+  .hf-safety h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .hf-safety p {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .hf-safety p:last-child { margin-bottom: 0; }
+  .hf-safety strong { color: var(--red); }
+  .hf-safety .hf-do {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) { .hf-safety .hf-do { grid-template-columns: 1fr; } }
+  .hf-safety .hf-do-cell {
+    background: var(--bg);
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .hf-safety .hf-do-cell.yes { border-left: 2px solid var(--green); }
+  .hf-safety .hf-do-cell.no { border-left: 2px solid var(--red); }
+  .hf-safety .hf-do-cell strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .hf-safety .hf-do-cell.yes strong { color: var(--green); }
+  .hf-safety .hf-do-cell.no strong { color: var(--red); }
+
+  /* ── HF SPACES GRID ───────────────────────────────────── */
+  .spaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .space-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .space-card .scat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--warm);
+    font-weight: 600;
+  }
+  .space-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .space-card .sauthor {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: -6px;
+  }
+  .space-card p {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .space-card .swhy {
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .space-card .swhy strong {
+    color: var(--accent);
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .space-card .stry {
+    background: var(--paper);
+    border-left: 2px solid var(--warm);
+    margin-top: -2px;
+  }
+  .space-card .stry > summary {
+    cursor: pointer; list-style: none;
+    padding: 8px 12px;
+    font-size: 10px; letter-spacing: 1.3px;
+    text-transform: uppercase; color: var(--warm); font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .space-card .stry > summary::-webkit-details-marker { display: none; }
+  .space-card .stry > summary::before {
+    content: "+"; width: 12px; text-align: center;
+    font-size: 14px; color: var(--warm);
+  }
+  .space-card .stry[open] > summary::before { content: "−"; }
+  .space-card .stry .stry-body {
+    padding: 2px 14px 12px 26px;
+    font-size: 12px; color: var(--ink); line-height: 1.55;
+  }
+  .space-card .stry .stry-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; background: var(--bg);
+    padding: 2px 6px; border-radius: 3px; color: var(--ink-soft);
+  }
+  .space-card .stry .stry-body ul {
+    list-style: none; padding: 0; margin: 6px 0 0 0;
+  }
+  .space-card .stry .stry-body ul li {
+    padding: 4px 0 4px 14px; position: relative;
+  }
+  .space-card .stry .stry-body ul li::before {
+    content: "›"; position: absolute; left: 0;
+    color: var(--warm); font-weight: 600;
+  }
+  .space-card .slink {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .space-card .slink a {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .space-card .sfallback {
+    font-size: 10.5px; color: var(--muted);
+    margin-top: 4px; line-height: 1.45;
+  }
+  .space-card .sfallback a { color: var(--muted); text-decoration: underline; }
+
+  /* ── TAKEAWAYS ────────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ──────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <h1>Svět modelů: <em>tři cesty</em> k AI</h1>
+    <p class="hero-subtitle">
+      Není to jen ChatGPT a Claude. AI je celá škála možností od plně uzavřených cloudových služeb přes otevřené modely v cloudu poskytovatelů až po lokální instalaci na vašem počítači. Tato stránka představuje tři cesty, ukazuje Hugging Face jako bránu ke všem otevřeným modelům a nabízí pět konkrétních Spaces k živému vyzkoušení.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="2.3-trenink-modelu.html">Jak vzniká model</a>: víme, jak modely vznikají. Teď se podíváme, kde je najít a jak je zkusit.
+    </p>
+    <div class="definition">
+      <strong>Open weights</strong> = model, jehož váhy jsou veřejně dostupné (ke stažení i k provozu kýmkoli). <strong>Proprietary / closed</strong> = váhy jsou tajemstvím poskytovatele. Otevřenost vah otevírá jiné způsoby použití, ne jen jiný způsob fakturace.
+    </div>
+    <p style="margin-top: 14px; font-size: 12.5px; color: var(--muted); font-style: italic; max-width: 760px;">
+      Konkrétní ceny, hardwarové požadavky a licenční podmínky se rychle mění; údaje odrážejí stav začátku roku 2026. Před závazným nasazením v instituci vždy ověřte přímo u poskytovatele.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Tři cesty k&nbsp;AI: closed cloud, open cloud, lokální provoz</h2>
+    <p class="section-lead">
+      Tři principiálně různé způsoby, jak se k AI dostat. Liší se v tom, kde model fyzicky běží, kdo ho vyrobil, jak nakládá s vašimi daty a kolik vás stojí. Pro práci s citlivými dokumenty platí: <strong>data fyzicky neopustí váš počítač jen u třetí cesty</strong>; u prvních dvou jde o smluvní ochranu (Enterprise tarify), která pro většinu organizací stačí.
+    </p>
+
+    <div class="three-paths">
+      <div class="path-card closed">
+        <div class="ptag">Cesta 1 · Closed cloud</div>
+        <h3>Uzavřené komerční služby</h3>
+        <div class="pdesc">
+          Hotová aplikace, kterou používáte přes web nebo mobil. Model je proprietární (váhy nejsou veřejné), běží na infrastruktuře poskytovatele. Data odesíláte do cloudu, dostanete odpověď zpět.
+        </div>
+        <ul class="pros">
+          <li>Nejvyšší schopnost (frontier modely: Claude Opus, GPT-5)</li>
+          <li>Žádná instalace, funguje hned</li>
+          <li>Vyleštěné rozhraní, integrované nástroje (web search, soubory)</li>
+        </ul>
+        <ul class="cons">
+          <li>Data fyzicky opouštějí organizaci</li>
+          <li>Měsíční poplatek nebo závislost na vendor</li>
+          <li>Vidíte jen výstup, ne co je „pod kapotou"</li>
+        </ul>
+        <div class="ptools">
+          <strong>Příklady</strong>
+          Claude.ai, ChatGPT, Gemini, Microsoft Copilot, Perplexity
+        </div>
+        <div class="pwhen">
+          <strong>Kdy zvolit</strong>
+          Většina běžných úloh: brainstorming, sumarizace veřejných textů, draft e-mailů, rešerše obecných témat. Pokud máte Enterprise tarif, i citlivější agenda.
+        </div>
+      </div>
+
+      <div class="path-card open">
+        <div class="ptag">Cesta 2 · Open cloud</div>
+        <h3>Otevřené modely v&nbsp;cloudu</h3>
+        <div class="pdesc">
+          Modely s veřejně dostupnými váhami (open weights) běžící v cloudu poskytovatele. Můžete si vybrat z desítek modelů, často specializovaných pro konkrétní úlohy. Data stále opouští váš počítač, ale je transparentní, co se s nimi děje.
+        </div>
+        <ul class="pros">
+          <li>Široký výběr modelů včetně specializovaných (biomedicína, kód, jazyky)</li>
+          <li>Vidíte „pod kapotu": váhy, tréninková data, licence</li>
+          <li>Často levnější než closed cloud, platí se per-use</li>
+        </ul>
+        <ul class="cons">
+          <li>Data stále opouští organizaci</li>
+          <li>Menší schopnost než frontier modely (typicky)</li>
+          <li>Vyžaduje technickou orientaci (API, parametry)</li>
+        </ul>
+        <div class="ptools">
+          <strong>Příklady</strong>
+          Hugging Face Inference API, Together AI, Replicate, Mistral La Plateforme, Groq
+        </div>
+        <div class="pwhen">
+          <strong>Kdy zvolit</strong>
+          Specializované úlohy (biomedicína, čeština, právní texty), srovnávání modelů, vývojářské projekty. Při Enterprise smlouvě i pro citlivější data.
+        </div>
+      </div>
+
+      <div class="path-card local">
+        <div class="ptag">Cesta 3 · Lokální provoz</div>
+        <h3>Modely na vašem počítači</h3>
+        <div class="pdesc">
+          Otevřený model si stáhnete do počítače a spustíte lokálně. <strong>Žádná data neopouštějí váš stroj.</strong> Funguje i offline. Nejlepší volba pro citlivé interní dokumenty, regulatorní compliance a experimentování.
+        </div>
+        <ul class="pros">
+          <li>Data nikdy neopustí váš počítač (zásadní pro citlivá data)</li>
+          <li>Žádné měsíční poplatky, funguje offline</li>
+          <li>Plná kontrola: systémový prompt, teplota, paměť</li>
+          <li>Žádná knowledge cutoff závislost na vendoru</li>
+        </ul>
+        <ul class="cons">
+          <li>Vyžaduje slušný hardware (GPU s&nbsp;8+&nbsp;GB VRAM nebo Apple Silicon s&nbsp;16+&nbsp;GB RAM)</li>
+          <li>Schopnost typicky nižší než frontier modely</li>
+          <li>Vyžaduje technické nastavení (i&nbsp;když Ollama to dost zjednodušuje)</li>
+        </ul>
+        <div class="ptools">
+          <strong>Nástroje</strong>
+          Ollama (CLI, nejjednodušší), LM Studio (GUI), GPT4All (desktop app), llama.cpp (pokročilé)
+        </div>
+        <div class="pwhen">
+          <strong>Kdy zvolit</strong>
+          Citlivá interní data (registrační dokumentace, hodnotící zprávy, osobní údaje), offline scénáře, dlouhodobé úspory, experimentování s modely.
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: 8px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 880px; margin-bottom: 24px;">
+      Konkrétní otevřené modely, které dnes fungují lokálně: <strong>Llama 4</strong> (Meta), <strong>Mistral</strong> (Mistral AI, Francie), <strong>Qwen 3</strong> (Alibaba), <strong>DeepSeek</strong>, <strong>Phi</strong> (Microsoft, malé efektivní modely), <strong>Gemma</strong> (Google). Pro češtinu typicky funguje nejlépe Mistral a Qwen.
+    </p>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-bottom: 14px; color: var(--ink);">Srovnání tří cest</h3>
+
+    <table class="tradeoff">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="closed">Closed cloud</th>
+          <th class="open">Open cloud</th>
+          <th class="local">Lokální</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Schopnost modelu</td>
+          <td><span class="rating r-high">●●●</span><span class="note">nejvyšší (frontier)</span></td>
+          <td><span class="rating r-mid">●●○</span><span class="note">vysoká, různá</span></td>
+          <td><span class="rating r-mid">●●○</span><span class="note">střední (7B–70B)</span></td>
+        </tr>
+        <tr>
+          <td>Soukromí dat</td>
+          <td><span class="rating r-low">●○○</span><span class="note">data v cloudu</span></td>
+          <td><span class="rating r-mid">●●○</span><span class="note">data v cloudu, transparentní</span></td>
+          <td><span class="rating r-high">●●●</span><span class="note">data nikdy neopustí</span></td>
+        </tr>
+        <tr>
+          <td>Cena</td>
+          <td><span class="rating r-low">●○○</span><span class="note">měsíčně 20–200 $</span></td>
+          <td><span class="rating r-mid">●●○</span><span class="note">per-use, často levnější</span></td>
+          <td><span class="rating r-high">●●●</span><span class="note">jednorázový hardware</span></td>
+        </tr>
+        <tr>
+          <td>Snadnost použití</td>
+          <td><span class="rating r-high">●●●</span><span class="note">funguje hned</span></td>
+          <td><span class="rating r-mid">●●○</span><span class="note">vyžaduje API klíče</span></td>
+          <td><span class="rating r-low">●○○</span><span class="note">vyžaduje setup</span></td>
+        </tr>
+        <tr>
+          <td>Knowledge cutoff</td>
+          <td><span class="rating r-mid">●●○</span><span class="note">obvykle s web search</span></td>
+          <td><span class="rating r-low">●○○</span><span class="note">bez web search</span></td>
+          <td><span class="rating r-low">●○○</span><span class="note">bez web search</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="reg-callout">
+      <strong>Pro práci s neveřejnými dokumenty:</strong> Dvě bezpečné cesty, ne jen jedna.<br><br>
+      ›&nbsp;<strong>Lokální provoz (Cesta&nbsp;3)</strong>: data fyzicky neopustí stroj. Nejvyšší kontrola, ale nižší schopnost než frontier modely a vlastní infrastruktura.<br>
+      ›&nbsp;<strong>Enterprise tarify</strong> (M365 Copilot, ChatGPT Enterprise/Team, Claude for Work, Azure OpenAI, AWS Bedrock): data putují do cloudu poskytovatele, ale smluvně se nepoužívají k tréninku, drží se ve vaší tenant nebo regionu a respektují existující oprávnění. Vysoká schopnost frontier modelů plus silné smluvní záruky.<br><br>
+      Spotřebitelské tarify (ChatGPT Plus, Claude Pro/Max, Copilot consumer) pro citlivá data nedoporučeno: trénink defaultně zapnut. Institucionální stránku tématu (interní pravidla, smlouvy, kompetence) rozvede 7. seminář.
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Hugging Face: výchozí místo otevřené AI</h2>
+    <p class="section-lead">
+      <strong>Hugging Face</strong> je největší veřejný katalog otevřené AI na světě. Sídlí v něm stovky tisíc modelů, desetitisíce datasetů a tisíce hostovaných demonstrací. Pro Cestu 2 (open cloud) i Cestu 3 (lokální provoz) je to typicky první místo, kam jít.
+    </p>
+
+    <div class="hf-cta">
+      <div>
+        <h3>Hugging Face Hub</h3>
+        <p>
+          Otevřená alternativa ke closed cloudům jako ChatGPT či Claude. Vidíte „pod kapotu": kdo model trénoval, na jakých datech, s jakou licencí, jak ho použít. U mnoha modelů přímo k dispozici samotné váhy a tréninkový kód. Tato transparentnost je klíčový rozdíl proti komerčním modelům.
+        </p>
+        <p style="margin-top: 6px;">
+          V dalších třech sekcích postupně rozebereme tři součásti Hubu: <strong>Models</strong> (samotné modely), <strong>Datasets</strong> (data, na kterých vznikly) a <strong>Spaces</strong> (živé demonstrace v prohlížeči).
+        </p>
+      </div>
+      <a class="btn" href="https://huggingface.co" target="_blank" rel="noopener">Otevřít huggingface.co ↗</a>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Tři součásti Hubu: Models, Datasets, Spaces</h2>
+    <p class="section-lead">
+      Než přejdeme ke konkrétním ukázkám, krátké rozlišení. Hugging Face má čtyři různé věci, které se snadno zamění. Jen <strong>Models</strong> jsou „stažení" (samotné soubory s váhami). <strong>Datasets</strong> jsou data, na kterých modely vznikají. <strong>Spaces</strong> jsou hostované aplikace v cloudu HF, podobně jako ChatGPT. Plus <strong>Inference API</strong> jako programové volání modelu z kódu.
+    </p>
+
+    <div class="hf-layers">
+      <div class="hf-layer is-warn">
+        <div class="hf-where">Cloud · cizí server</div>
+        <h5>Spaces</h5>
+        <p>
+          Webová aplikace běžící na serverech HF (nebo community compute). Otevřete URL, vložíte vstup, ten cestuje na cizí server, tam se zpracuje, odpověď přijde zpátky.
+        </p>
+        <div class="hf-priv">Stejné soukromí jako ChatGPT: data odjedou pryč.</div>
+      </div>
+      <div class="hf-layer is-ok">
+        <div class="hf-where">Soubor · ke stažení</div>
+        <h5>Models</h5>
+        <p>
+          Vlastní soubory s&nbsp;váhami modelu. Stáhnete je k&nbsp;sobě a pak spustíte lokálně (přes Ollama, LM Studio, Python). Data nikdy neopustí váš počítač.
+        </p>
+        <div class="hf-priv">Nejsoukromější varianta. Vyžaduje hardware a setup.</div>
+      </div>
+      <div class="hf-layer is-ok">
+        <div class="hf-where">Cloud katalog · prohlížitelný + stažení</div>
+        <h5>Datasets</h5>
+        <p>
+          Tréninková a evaluační data. Procházíte vzorky přímo v prohlížeči (Dataset Viewer), můžete stáhnout celý dataset pro vlastní experimenty. Otevírá pohled do toho, „co model viděl".
+        </p>
+        <div class="hf-priv">Veřejné datasety jsou OK prohlížet. Nahrávat vlastní citlivá data = stejné riziko jako Spaces.</div>
+      </div>
+      <div class="hf-layer is-warn">
+        <div class="hf-where">Cloud · API endpoint</div>
+        <h5>Inference API</h5>
+        <p>
+          Programové volání modelu přes HTTP. Pro vývojáře. Vstup posíláte JSONem na HF endpoint, odpověď dostanete stejně. Cloud, ne lokálně.
+        </p>
+        <div class="hf-priv">Stejné soukromí jako Spaces.</div>
+      </div>
+    </div>
+
+    <div class="hf-safety">
+      <h4>Pozor: do veřejných Spaces nedávejte citlivá data</h4>
+      <p>
+        Když do Space vložíte vstup (audio, text, dokument), ten jde na cizí server. <strong>Stejně jako u ChatGPT: pro citlivé interní dokumenty (hodnotící zprávy, registrační dokumentace, osobní údaje) to není vhodné.</strong> Pro učení principů a demonstrace na veřejných datech ano.
+      </p>
+      <div class="hf-do">
+        <div class="hf-do-cell yes">
+          <strong>OK pro Spaces</strong>
+          Ukázkový text z&nbsp;Wikipedie · vlastní hlasová zpráva · zveřejněná publikace · obecné dotazy · prompt s&nbsp;hodinkami v&nbsp;5:30
+        </div>
+        <div class="hf-do-cell no">
+          <strong>NE do Spaces</strong>
+          Interní e-maily · neveřejné hodnotící zprávy · komunikace se žadatelem · osobní údaje · nepublikované draft dokumenty
+        </div>
+      </div>
+      <p style="margin-top: 12px;">
+        Pro citlivou agendu je bezpečná volba <strong>lokální provoz</strong> (Cesta&nbsp;3) nebo <strong>Enterprise tarif</strong> u closed-cloud poskytovatele (smluvně bez tréninku, data v tenant organizace).
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Tři modely k&nbsp;prohlédnutí</h2>
+    <p class="section-lead">
+      Začněme samotnými modely. Tři kontrastní příklady: frontier open LLM, specializovaný jednoúčelový model a doménově dolazený model. U každého ukazujeme, kam se podívat na model card, abyste viděli transparentnost, která u closed modelů (ChatGPT, Claude) chybí.
+    </p>
+
+    <div class="spaces-grid">
+
+      <div class="space-card">
+        <div class="scat">FRONTIER OPEN LLM</div>
+        <h4>Mistral 7B Instruct</h4>
+        <div class="sauthor">mistralai · 7,3 mld. parametrů · Apache 2.0</div>
+        <p>
+          Open LLM od francouzské Mistral AI. Konkurent k Meta Llama, jen z Evropy. Generický chat model, který v mnoha benchmarcích dohání starší verze GPT-4. Stáhnete + spustíte lokálně nebo přes API.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že frontier-class LLM existují i mimo americké giganty. Apache 2.0 licence = lze používat komerčně. Velikost 7B = běží na běžném notebooku s 16 GB RAM (přes Ollama).
+        </div>
+        <details class="stry">
+          <summary>Co najít na model card</summary>
+          <div class="stry-body">
+            <ul>
+              <li><strong>Model details:</strong> architektura (sliding window attention), datum vydání, jazyky (primárně EN/FR).</li>
+              <li><strong>Files and versions:</strong> samotné váhy (cca 14 GB ve formátu safetensors). U closed modelů tohle neuvidíte nikdy.</li>
+              <li><strong>Use:</strong> tlačítka „Use this model" → Ollama / vLLM / Transformers. Návody na lokální spuštění.</li>
+              <li><strong>Community tab:</strong> diskuze, otázky, hlášené problémy. Transparentní vývoj.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3" target="_blank" rel="noopener">huggingface.co/mistralai/Mistral-7B-Instruct-v0.3 ↗</a>
+          <div class="sfallback">Podobné: <a href="https://huggingface.co/meta-llama" target="_blank" rel="noopener">Llama (Meta)</a> · <a href="https://huggingface.co/Qwen" target="_blank" rel="noopener">Qwen (Alibaba)</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">SPECIALIZOVANÝ · ŘEČ</div>
+        <h4>Whisper Large v3</h4>
+        <div class="sauthor">openai · 1,55 mld. parametrů · MIT licence</div>
+        <p>
+          OpenAI vydal Whisper jako otevřený model, na rozdíl od svých LLM. Trénovaný na 5 milionech hodin audia ve 100+ jazycích. Specializovaný pouze na řeč → text. Standard pro open-source transkripci.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že specializované modely jsou typicky menší než frontier LLM (1,5 mld. vs. stovky miliard), ale ve své úzké úloze přesnější. Vlastní fine-tuned varianty pro češtinu vznikly právě z této základní verze.
+        </div>
+        <details class="stry">
+          <summary>Co najít na model card</summary>
+          <div class="stry-body">
+            <ul>
+              <li><strong>Training data:</strong> 5 mil. hodin audia (multilingual). U closed modelů byste tuto informaci nedostali.</li>
+              <li><strong>Performance:</strong> tabulka WER (word error rate) napříč jazyky. Pro češtinu zhruba 10 %.</li>
+              <li><strong>Fine-tuned versions:</strong> najdete přes „Spaces using" a „Models trained or fine-tuned": dolazené verze pro češtinu, lékařskou doménu atd.</li>
+              <li><strong>Limitations:</strong> uvedeny v model card (halucinace na tichu, slabší výkon na málo zastoupených jazycích).</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/openai/whisper-large-v3" target="_blank" rel="noopener">huggingface.co/openai/whisper-large-v3 ↗</a>
+          <div class="sfallback">Podobné: <a href="https://huggingface.co/models?other=whisper" target="_blank" rel="noopener">další Whisper varianty</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">DOMÉNOVĚ DOLAZENÝ · BIOMEDICÍNA</div>
+        <h4>PubMedBERT</h4>
+        <div class="sauthor">microsoft · 110 mil. parametrů · MIT licence</div>
+        <p>
+          BERT model dolazený od nuly na biomedicínské texty (PubMed abstrakta + plné texty). Specializovaný pouze na medicínský text. Na rozdíl od generického BERTu rozumí termínům jako „pharmacokinetics" nebo „adverse drug reaction" jako celku.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že doménové fine-tuning má smysl: 110 milionů parametrů (zlomek velikosti LLM), ale v medicínském benchmarku překonává mnohonásobně větší generické modely. Pro veterinární a farmaceutickou regulaci přímo relevantní typ modelu.
+        </div>
+        <details class="stry">
+          <summary>Co najít na model card</summary>
+          <div class="stry-body">
+            <ul>
+              <li><strong>Training data:</strong> 14 mil. PubMed abstraktů + 3 mil. plných textů. Konkrétní čísla.</li>
+              <li><strong>Benchmarks:</strong> tabulka BLURB (biomedicínský NLP benchmark): porovnání s generickými modely v doméně.</li>
+              <li><strong>Citation:</strong> odkaz na akademický článek, kde je metodologie tréninku detailně popsaná. Reprodukovatelné.</li>
+              <li><strong>Spaces using this model:</strong> kdo a jak ho dál používá. Komunita kolem modelu.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract-fulltext" target="_blank" rel="noopener">huggingface.co/microsoft/BiomedNLP-BiomedBERT ↗</a>
+          <div class="sfallback">Podobné: <a href="https://huggingface.co/models?search=biomedical" target="_blank" rel="noopener">biomedicínské modely</a> · <a href="https://huggingface.co/models?search=clinical" target="_blank" rel="noopener">klinické</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 18px; font-size: 12.5px; color: var(--muted); font-style: italic; line-height: 1.6; max-width: 820px;">
+      Model card je <em>vizitka modelu</em>. U closed modelů (ChatGPT, Claude) je k dispozici jen marketingový popis a omezený technický náhled. U open modelů na HF je standardem detailní karta s tréninkovými daty, výkonem na benchmarcích, licencí, omezeními a způsoby použití. Tato transparentnost je důvod, proč open modely často preferují regulátoři, akademie i firmy s compliance nároky.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Tři ukázkové datasety k&nbsp;prohlédnutí</h2>
+    <p class="section-lead">
+      Než přejdeme k živým demonstracím modelů, ještě jeden krok zpět: <strong>k samotným datům</strong>. HF Datasets jsou veřejný katalog tréninkových a evaluačních korpusů. V prohlížeči si můžete přímo listovat řádky a vidět, co model dostal k učení. Tři příklady, které tematicky sedí na Setkání 2:
+    </p>
+
+    <div class="spaces-grid">
+
+      <div class="space-card">
+        <div class="scat">TEXTOVÝ KORPUS · ČEŠTINA</div>
+        <h4>Czech Wikipedia</h4>
+        <div class="sauthor">wikimedia/wikipedia · 540k+ článků</div>
+        <p>
+          Český zdroj, který je v trénovacích datech téměř každého LLM. Pro srovnání: anglická Wikipedia má 6,7 mil. článků (~12× víc). To je jeden z důvodů, proč modely lépe znají anglické reálie než české.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Konkrétní vzorek toho, co model „viděl" o češtině. Otevírá otázku jazykové asymetrie tréninkových dat.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>V <em>Subset</em> dropdownu vyberte <code>20231101.cs</code> (nebo aktuálnější verzi).</li>
+              <li>Dataset Viewer ukáže tabulku s články. Listujte stránkami, projděte si pár náhodných.</li>
+              <li>Vyhledejte konkrétní termín ve sloupci „title" (ÚSKVBL, farmakovigilance, veterinární léčivo) a porovnejte šířku informace s anglickou verzí.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/datasets/wikimedia/wikipedia" target="_blank" rel="noopener">huggingface.co/datasets/wikimedia/wikipedia ↗</a>
+          <div class="sfallback">Příbuzné: <a href="https://huggingface.co/datasets?search=czech" target="_blank" rel="noopener">další české datasety</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">HLASOVÝ KORPUS · DOBROVOLNÍCI</div>
+        <h4>Common Voice (Mozilla)</h4>
+        <div class="sauthor">mozilla-foundation/common_voice_17_0</div>
+        <p>
+          Otevřený korpus hlasových nahrávek ve 100+ jazycích, sbíraný dobrovolníky. Pro češtinu zhruba 60 hodin nahrávek. Toto jsou ta data, na kterých vznikají dolazené verze Whisperu pro češtinu.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Konkrétní vzorek hlasových tréninkových dat. Slyšíte, co model dostal k učení: různé hlasy, akcenty, věkové skupiny, kvalita nahrávky.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>V <em>Subset</em> vyberte <code>cs</code>, v <em>Split</em> <code>train</code>.</li>
+              <li>Dataset Viewer ukáže řádky s přepisem + přehrávatelným audiem. Pusťte si několik nahrávek.</li>
+              <li>Uvědomte si, čí hlasy chybí: pokud v dobrovolnících převažují muži středního věku ze středních Čech, tak se to projeví v tréninku; model bude mít horší přesnost na hlasy z menšin.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/datasets/mozilla-foundation/common_voice_17_0" target="_blank" rel="noopener">huggingface.co/datasets/mozilla-foundation/common_voice_17_0 ↗</a>
+          <div class="sfallback">Příbuzné: <a href="https://huggingface.co/datasets?search=speech+czech" target="_blank" rel="noopener">další česká hlasová data</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">BIOMEDICÍNA · ODBORNÉ TEXTY</div>
+        <h4>PubMed Q&amp;A</h4>
+        <div class="sauthor">qiaojin/PubMedQA · 273k abstraktů</div>
+        <p>
+          Otázky a odpovědi sestavené z biomedicínských abstraktů na PubMedu. Na podobných datech vznikají specializované modely typu BioGPT, PubMedBERT, ClinicalBERT. Pro farmaceutickou a veterinární regulaci přímo relevantní.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Konkrétní podobu tréninkových dat pro doménově specializovaný model. Vidíte, proč specializovaný model bude na medicínském textu typicky přesnější než generický LLM: má v sobě tisíckrát víc relevantních textů.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>Dataset Viewer ukáže trojice: <em>question</em>, <em>context</em> (úryvek z abstraktu), <em>long_answer</em>.</li>
+              <li>Projděte si pár řádků. Otázky jsou typu „Does X affect Y?" s konkrétními studiemi v kontextu.</li>
+              <li>Toto je struktura, ze které se model učí rozumět medicínskému textu. Porovnejte s obecným webem (Common Crawl).</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/datasets/qiaojin/PubMedQA" target="_blank" rel="noopener">huggingface.co/datasets/qiaojin/PubMedQA ↗</a>
+          <div class="sfallback">Příbuzné: <a href="https://huggingface.co/datasets?search=biomedical" target="_blank" rel="noopener">biomedicínské datasety</a> nebo <a href="https://huggingface.co/datasets?search=clinical" target="_blank" rel="noopener">klinické</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 18px; font-size: 12.5px; color: var(--muted); font-style: italic; line-height: 1.6; max-width: 820px;">
+      Datasety jsou stabilnější než Spaces (jsou to jen data, žádný kód, který by se rozbil dependency driftem). Můžete spoléhat, že odkazy zůstanou funkční déle. Některé datasety mají gating (přístup po souhlasu s podmínkami); je-li „Access this dataset" tlačítko, klikněte a odsouhlasíte podmínky autora.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Pět doporučených Spaces k&nbsp;vyzkoušení živě</h2>
+    <p class="section-lead">
+      Hugging Face Spaces jsou předem připravené modely běžící přímo v&nbsp;prohlížeči. Žádná instalace, žádný účet (u&nbsp;většiny). Pět demonstrací, které sedí na témata Setkání 2; každá s konkrétním vstupem na vyzkoušení a fallback odkazem, pokud konkrétní Space nefunguje:
+    </p>
+
+    <div class="spaces-grid">
+
+      <div class="space-card">
+        <div class="scat">ROZPOZNÁVÁNÍ ŘEČI · IN-BROWSER</div>
+        <h4>Whisper Web</h4>
+        <div class="sauthor">Xenova · openai/whisper</div>
+        <p>
+          Nahrajte zvukový soubor nebo namluvte do mikrofonu, dostanete přepis. Funguje v&nbsp;češtině i&nbsp;v&nbsp;90 dalších jazycích. Celé to běží přímo v&nbsp;prohlížeči (žádný server, žádné účty).
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že specializované modely (transkripce) mohou běžet i&nbsp;bez serveru. Praktický nástroj pro audio záznamy, hovory, schůzky. In-browser běh = data neopustí váš počítač.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>V dropdownu „Language" vyberte <code>czech</code> (nebo <code>auto-detect</code>).</li>
+              <li>Klikněte na mikrofon a řekněte: <em>„Dobrý den, dnes diskutujeme schvalovací proces pro veterinární vakcínu proti infekční laryngotracheitidě."</em></li>
+              <li>Alternativně nahrajte krátké MP3/WAV (např. úryvek z podcastu, hlasová poznámka).</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/spaces/Xenova/whisper-web" target="_blank" rel="noopener">huggingface.co/spaces/Xenova/whisper-web ↗</a>
+          <div class="sfallback">Pokud nefunguje: <a href="https://huggingface.co/spaces?search=whisper" target="_blank" rel="noopener">hledat „whisper" na HF Spaces</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">JAZYKOVÝ MODEL · OPEN SOURCE</div>
+        <h4>Mistral 7B Chat</h4>
+        <div class="sauthor">hysts · mistralai/Mistral-7B-Instruct</div>
+        <p>
+          Chat rozhraní s&nbsp;open-source modelem Mistral 7B (Mistral AI, Francie). Menší než ChatGPT, ale stále schopný. Vidíte alternativu k&nbsp;closed cloudům přímo v&nbsp;akci.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že open-source LLM existují a&nbsp;dají se zkusit zdarma. Ne všechno musí být Claude/ChatGPT. Při porovnání odpovědí vidíte i&nbsp;rozdíl v&nbsp;RLHF.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>Vložte prompt: <em>„Vysvětli farmakovigilanci jako studentovi prvního ročníku veterinární medicíny. Stručně, maximálně 3 odstavce."</em></li>
+              <li>Stejný prompt pošlete do Claude/ChatGPT. Srovnejte styl, hloubku, jistotu odpovědi (rozdíl v RLHF).</li>
+              <li>Alternativy: <em>„Co je rozdíl mezi GMP a GCP?"</em> nebo <em>„Sepiš stručný draft odpovědi žadateli, který nedoložil podklady."</em></li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/spaces/hysts/mistral-7b" target="_blank" rel="noopener">huggingface.co/spaces/hysts/mistral-7b ↗</a>
+          <div class="sfallback">Pokud nefunguje: <a href="https://huggingface.co/chat" target="_blank" rel="noopener">HuggingChat</a> nebo <a href="https://huggingface.co/spaces?search=mistral" target="_blank" rel="noopener">hledat „mistral"</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">BIOMEDICÍNA · ZERO-SHOT NER</div>
+        <h4>OpenBioNER v2</h4>
+        <div class="sauthor">disi-unibo-nlp · UniBO 2025</div>
+        <p>
+          Lightweight biomedicínský NER s podporou zero-shot: stačí popsat typ entity přirozeným jazykem a model ji v textu najde. Pro farmaceutickou a veterinární regulaci přímo relevantní.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že existují velmi specifické modely pro konkrétní úkoly, často přesnější než generický LLM. Strukturovaná extrakce informací z odborného textu.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>Vložte text (může být anglicky): <em>„Patient 65, hospitalized for acute gastritis after ibuprofen 400 mg three times daily. History of hypertension and ischemic heart disease."</em></li>
+              <li>Jako typy entit zadejte: <code>drug</code>, <code>dosage</code>, <code>condition</code>, <code>anatomy</code></li>
+              <li>Model vyznačí v textu, kde je léčivo, dávka, stav, anatomie. Vyzkoušejte i vlastní typ jako <code>adverse reaction</code>.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/spaces/disi-unibo-nlp/openbioner-v2-demo-ndr" target="_blank" rel="noopener">huggingface.co/spaces/disi-unibo-nlp/openbioner-v2-demo-ndr ↗</a>
+          <div class="sfallback">Pokud nefunguje: <a href="https://huggingface.co/spaces?search=biomedical+ner" target="_blank" rel="noopener">hledat „biomedical ner"</a> nebo <a href="https://huggingface.co/spaces?search=drug+ner" target="_blank" rel="noopener">„drug ner"</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">GENERÁTOR OBRÁZKŮ · BIAS DEMO</div>
+        <h4>FLUX.1 schnell</h4>
+        <div class="sauthor">black-forest-labs · open weights</div>
+        <p>
+          Open-source image generator od Black Forest Labs (tým, který původně vyrobil Stable Diffusion). Aktuální state-of-the-art mezi otevřenými modely, dobře udržovaný oficiální Space.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Bias z trénovacích dat naživo. Otevírá konverzaci o tom, proč AI nedělá to, co se zdá triviální: protože v datech to triviální nebylo.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li><em>„A wristwatch showing 5:30"</em>: sledujte, jestli místo 5:30 nakreslí 10:10 (bias z reklam)</li>
+              <li><em>„A nurse"</em> a <em>„A CEO"</em>: sledujte genderové a rasové stereotypy</li>
+              <li><em>„A veterinarian examining a horse"</em>: vidíte, jaký archetyp model nabídne (gender, věk, prostředí)</li>
+              <li><em>„A team of regulators reviewing pharmaceutical documents"</em>: porovnejte s reálnými kolegy</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/spaces/black-forest-labs/FLUX.1-schnell" target="_blank" rel="noopener">huggingface.co/spaces/black-forest-labs/FLUX.1-schnell ↗</a>
+          <div class="sfallback">Pokud nefunguje: <a href="https://huggingface.co/spaces?search=flux" target="_blank" rel="noopener">hledat „flux"</a> nebo <a href="https://huggingface.co/spaces?search=stable+diffusion" target="_blank" rel="noopener">„stable diffusion"</a></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <div class="scat">PŘEKLAD · 200 JAZYKŮ</div>
+        <h4>NLLB Translation</h4>
+        <div class="sauthor">facebook/nllb-200 · hostuje UNESCO</div>
+        <p>
+          „No Language Left Behind" od Mety. Specializovaný překladový model pro 200 jazyků včetně méně častých. Vidíte výhodu specializovaného modelu nad generickým LLM, zvlášť u jazyků mimo top 10.
+        </p>
+        <div class="swhy">
+          <strong>Co to ukáže</strong>
+          Že specializované modely mohou v úzké úloze předčít frontier LLM, zejména u méně častých jazyků. UNESCO hosting přidává kontext: tento model je výzkumný nástroj pro jazykovou inkluzi.
+        </div>
+        <details class="stry">
+          <summary>Zkuste s tímto vstupem</summary>
+          <div class="stry-body">
+            <ul>
+              <li>Source: <code>czech</code>. Vložte: <em>„Schvalovací proces pro nové veterinární léčivo trvá obvykle 12 měsíců včetně klinické fáze."</em></li>
+              <li>Target: zkuste <code>swahili</code>, <code>urdu</code>, <code>vietnamese</code>, jazyky, které frontier LLM často slabě podporují.</li>
+              <li>Tentýž text přeložte v ChatGPT/Claude. Pro málo zastoupené jazyky bývá NLLB přesnější.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="slink">
+          <a href="https://huggingface.co/spaces/UNESCO/nllb" target="_blank" rel="noopener">huggingface.co/spaces/UNESCO/nllb ↗</a>
+          <div class="sfallback">Pokud nefunguje: <a href="https://huggingface.co/spaces?search=nllb" target="_blank" rel="noopener">hledat „nllb"</a> nebo <a href="https://huggingface.co/spaces?search=translation" target="_blank" rel="noopener">„translation"</a></div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 18px; font-size: 12.5px; color: var(--muted); font-style: italic; line-height: 1.6; max-width: 820px;">
+      Realita HF Spaces: jsou hostované zdarma jednotlivci nebo malými týmy. Spaces občas „spí" (HF je probouzí on-demand, první otevření trvá), dependency drift je běžný, autoři ztratí čas na údržbě a Space přestane fungovat. Před setkáním projděte odkazy a u nefunkčních použijte fallback search; vždy existuje aktuální fungující alternativa.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si z toho odnést</h2>
+    <p class="section-lead">
+      Čtyři praktické důsledky pro výběr a používání AI nástrojů.
+    </p>
+
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Otevřené modely existují a&nbsp;často jsou specializované.</strong> Hugging Face je výchozí místo, kde je hledat. Pro úzkou doménu (biomedicína, čeština, právní text) je specializovaný model často přesnější než generický frontier LLM.
+      </div>
+      <div class="takeaway-card">
+        <strong>Spaces není „stažení modelu".</strong> Když do Space pošlete vstup, jde to na cizí server, podobně jako u&nbsp;ChatGPT, a navíc bez Enterprise smluvních záruk. Pro citlivá data je vhodný lokální provoz (Cesta&nbsp;3) nebo Enterprise tarif.
+      </div>
+      <div class="takeaway-card">
+        <strong>Tři cesty mají různé silné stránky.</strong> Closed cloud = nejvyšší schopnost a&nbsp;pohodlí, open cloud = transparentnost a&nbsp;výběr, lokální = nejlepší soukromí a&nbsp;kontrola. Volba závisí na úloze a&nbsp;typu dat.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pro neveřejné dokumenty dvě bezpečné cesty.</strong> Lokální provoz (data fyzicky neopustí stroj, nejvyšší kontrola) a Enterprise tarify (data ve vaší tenant nebo regionu, smluvně bez tréninku). Spotřebitelské tarify pro citlivá data nedoporučeno.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Prezenční listina · AI pro ÚSKVBL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #c8c3b6;
+    --line-soft: #e3e0d8;
+    --muted: #6b6f76;
+    --accent: #3d4451;
+    --accent-soft: #ecedef;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #eeece6;
+    color: var(--ink);
+    line-height: 1.5;
+    font-size: 13px;
+    padding: 24px 16px;
+  }
+
+  /* ── TOOLBAR (jen na obrazovce) ──────────────────────── */
+  .toolbar {
+    max-width: 210mm;
+    margin: 0 auto 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+  }
+
+  .toolbar-group { display: flex; gap: 12px; align-items: center; }
+
+  .toolbar label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .toolbar select {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 28px 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%236b6f76' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+  .toolbar button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .toolbar button:hover { background: var(--ink); border-color: var(--ink); }
+
+  .toolbar a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .toolbar a:hover { color: var(--ink); border-color: var(--muted); }
+
+  /* ── LISTINA (A4) ────────────────────────────────────── */
+  .sheet {
+    max-width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 22mm 18mm 18mm;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .sheet-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .sheet h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    margin-bottom: 18px;
+  }
+
+  .session-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  .session-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    max-width: 90%;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 22px;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .meta-cell {
+    padding: 10px 14px 10px 0;
+    border-right: 1px solid var(--line-soft);
+  }
+  .meta-cell:last-child { border-right: none; padding-left: 14px; }
+
+  .meta-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .meta-value {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ── TABULKA ─────────────────────────────────────────── */
+  .tables-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12mm;
+    margin-bottom: 24px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--ink);
+  }
+  thead th.col-num { width: 32px; text-align: center; }
+
+  tbody td {
+    border-bottom: 1px solid var(--line);
+    padding: 0;
+    height: 26px;
+  }
+  tbody td.col-num {
+    text-align: center;
+    width: 32px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    border-right: 1px solid var(--line-soft);
+  }
+
+  /* ── PATIČKA ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .footer-block .footer-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .footer-block .footer-value {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .footer-sign-line {
+    margin-top: 22px;
+    border-bottom: 1px solid var(--ink);
+    height: 1px;
+  }
+  .footer-sign-caption {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── CHYBA ───────────────────────────────────────────── */
+  .error-state {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 32px;
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-left: 3px solid #a04a4a;
+    text-align: center;
+  }
+  .error-state h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .error-state p { color: var(--ink-soft); font-size: 14px; }
+
+  /* ── TISK ────────────────────────────────────────────── */
+  @page { size: A4 portrait; margin: 0; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .toolbar { display: none; }
+    .sheet {
+      max-width: none;
+      box-shadow: none;
+      margin: 0;
+      width: 210mm;
+      min-height: 297mm;
+    }
+    tbody td { height: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-group">
+    <label for="session-select">Setkání:</label>
+    <select id="session-select" aria-label="Vybrat setkání"></select>
+    <button id="print-btn" type="button">Tisk</button>
+  </div>
+  <div class="toolbar-group">
+    <a href="index.html">← Zpět na program série</a>
+  </div>
+</div>
+
+<main id="sheet-root"></main>
+
+<script src="sessions.js"></script>
+<script>
+const months = [
+  'ledna','února','března','dubna','května','června',
+  'července','srpna','září','října','listopadu','prosince'
+];
+
+// Per-session paleta (sjednocená s index.html)
+const sessionPalette = {
+  1: { accent: '#3a6b4a', soft: '#e3eee6' },
+  2: { accent: '#2c5e6e', soft: '#e0eaed' },
+  3: { accent: '#1d3557', soft: '#eaeef5' },
+  4: { accent: '#5b3f7a', soft: '#ede5f3' },
+  5: { accent: '#a04a4a', soft: '#f5e6e6' },
+  6: { accent: '#b5651d', soft: '#fbf3e7' },
+  7: { accent: '#0d1b2a', soft: '#dde0e4' }
+};
+
+function decodeHtml(s) {
+  // sessions.js obsahuje &nbsp; (a další entity) jako literály ve stringu.
+  // Pro hlavičku tisknutelné listiny potřebujeme čistý text.
+  const tmp = document.createElement('div');
+  tmp.innerHTML = s;
+  return tmp.textContent || '';
+}
+
+function formatDate(iso) {
+  if (!iso) return 'Termín bude upřesněn';
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${d}. ${months[m - 1]} ${y}`;
+}
+
+function formatTime(timing) {
+  // V timingu je obvykle "11. května 2026, 13:00 · 90 minut" — vytáhneme čas.
+  const decoded = decodeHtml(timing);
+  const match = decoded.match(/(\d{1,2}:\d{2})/);
+  return match ? match[1] : '—';
+}
+
+function getSessionFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const n = parseInt(params.get('n') || '1', 10);
+  return sessions.find(s => s.n === n) || sessions[0];
+}
+
+function renderSheet(s) {
+  const p = sessionPalette[s.n] || sessionPalette[1];
+  document.documentElement.style.setProperty('--accent', p.accent);
+  document.documentElement.style.setProperty('--accent-soft', p.soft);
+
+  const rowsLeft = [];
+  const rowsRight = [];
+  for (let i = 1; i <= 20; i++) {
+    rowsLeft.push(`<tr><td class="col-num">${i}.</td><td></td></tr>`);
+    rowsRight.push(`<tr><td class="col-num">${i + 20}.</td><td></td></tr>`);
+  }
+
+  document.getElementById('sheet-root').innerHTML = `
+    <section class="sheet">
+      <div class="sheet-eyebrow">Ústav pro státní kontrolu veterinárních biopreparátů a léčiv</div>
+      <h1>Prezenční listina</h1>
+
+      <div class="session-tag">Seminář ${s.n} · ${decodeHtml(s.short)}</div>
+      <div class="session-title">${decodeHtml(s.title)}</div>
+
+      <div class="meta-grid">
+        <div class="meta-cell">
+          <div class="meta-label">Datum a čas</div>
+          <div class="meta-value">${formatDate(s.date)} · ${formatTime(s.timing)}</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">Místo</div>
+          <div class="meta-value">Sídlo ÚSKVBL, Brno · zasedací místnost ústavu</div>
+        </div>
+      </div>
+
+      <div class="tables-grid">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-num">Č.</th>
+              <th>Jméno a příjmení</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsLeft.join('')}
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-num">Č.</th>
+              <th>Jméno a příjmení</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsRight.join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <div class="footer-block">
+          <div class="footer-label">Lektor</div>
+          <div class="footer-value">Vojtěch Velísek</div>
+        </div>
+        <div class="footer-block">
+          <div class="footer-label">Podpis pořadatele</div>
+          <div class="footer-sign-line"></div>
+          <div class="footer-sign-caption">datum a podpis</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function buildSelector() {
+  const sel = document.getElementById('session-select');
+  sessions.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = String(s.n);
+    opt.textContent = `Seminář ${s.n} · ${decodeHtml(s.short)} · ${formatDate(s.date)}`;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', e => {
+    const n = e.target.value;
+    const url = new URL(window.location);
+    url.searchParams.set('n', n);
+    window.history.replaceState(null, '', url);
+    renderSheet(sessions.find(x => x.n === parseInt(n, 10)));
+  });
+}
+
+function init() {
+  if (typeof sessions === 'undefined' || !Array.isArray(sessions)) {
+    document.getElementById('sheet-root').innerHTML = `
+      <div class="error-state">
+        <h2>Data o setkáních se nepodařilo načíst</h2>
+        <p>Soubor <code>sessions.js</code> chybí nebo není dostupný.</p>
+      </div>`;
+    return;
+  }
+  buildSelector();
+  const s = getSessionFromUrl();
+  document.getElementById('session-select').value = String(s.n);
+  renderSheet(s);
+}
+
+document.getElementById('print-btn').addEventListener('click', () => window.print());
+init();
+</script>
+
+</body>
+</html>

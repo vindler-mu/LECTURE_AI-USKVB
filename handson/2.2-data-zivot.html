@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Život dat v AI – od trénování po vaše prompty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #2c5e6e;
+    --accent-hover: #1f4a58;
+    --accent-soft: #e0eaed;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --radius: 4px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── DIKW INVERTED PYRAMID (left-aligned) ─────────────── */
+  .dikw {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .dikw-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dikw-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 20px;
+    align-items: center;
+  }
+  .bar-track {
+    height: 44px;
+    display: flex;
+    align-items: stretch;
+  }
+  .bar {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent);
+    transition: all 0.15s;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .dikw-row:hover .bar { background: var(--accent); color: #fff; }
+  .bar.b-data { width: 100%; }
+  .bar.b-info { width: 76%; }
+  .bar.b-know { width: 52%; }
+  .bar.b-wis  { width: 28%; }
+  .row-text { min-width: 0; }
+  .row-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  @media (max-width: 720px) {
+    .dikw-row { grid-template-columns: 1fr; gap: 6px; }
+    .bar-track { height: 38px; }
+    .bar { font-size: 14px; padding: 0 12px; }
+  }
+  .flatten-callout {
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .flatten-callout strong { color: var(--warm); }
+  .flatten-callout em { color: var(--ink-soft); font-style: italic; }
+
+  /* ── TIMELINE ─────────────────────────────────────────── */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    position: relative;
+  }
+  @media (max-width: 880px) {
+    .timeline { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 540px) {
+    .timeline { grid-template-columns: 1fr; }
+  }
+  .tl-step {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    padding: 16px 16px 18px;
+    position: relative;
+  }
+  .tl-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    letter-spacing: 1.6px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .tl-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .tl-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .tl-desc strong { color: var(--accent); font-weight: 600; }
+
+  /* ── BIAS GALLERY ─────────────────────────────────────── */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+  }
+  .gcard {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gcard .gtag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--red);
+    letter-spacing: 1.6px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .gcard h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .gcard .gsub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+  }
+  .gcard p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .gcard .gwhy {
+    background: var(--red-soft);
+    border-left: 3px solid var(--red);
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .gcard .gwhy strong { color: var(--red); }
+  .gcard .gsrc {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .gcard .gsrc a { color: var(--accent); }
+
+  /* ── WATCHES MINI-GALLERY ─────────────────────────────── */
+  .watches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .watch {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .watch-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 6px 0;
+  }
+  .watch.expected .watch-time { color: var(--green); }
+  .watch.actual .watch-time { color: var(--red); }
+  .watch-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .watch-tool {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  /* ── USER DATA FLOW ───────────────────────────────────── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .flow-row {
+    display: grid;
+    grid-template-columns: 56px 200px 1fr;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .flow-row:last-child { border-bottom: none; }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1.6px;
+  }
+  .flow-stage {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .flow-detail {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .flow-detail strong { color: var(--accent); }
+  @media (max-width: 720px) {
+    .flow-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ── LICENSE TABS ─────────────────────────────────────── */
+  .lic-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+  .lic-tab {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 12px 22px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .lic-tab:hover { color: var(--ink); }
+  .lic-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+  .lic-panel {
+    border: 1px solid var(--line);
+    border-top: none;
+    background: var(--bg);
+    padding: 22px 26px;
+  }
+  .lic-panel h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .lic-panel .lic-line {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 720px) { .lic-panel .lic-line { grid-template-columns: 1fr; } }
+  .lic-line .lic-cell {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+  }
+  .lic-cell h5 {
+    font-size: 10.5px;
+    color: var(--ink);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .lic-cell .tier {
+    border-left: 3px solid var(--line);
+    background: var(--bg);
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .lic-cell .tier:first-of-type { margin-top: 0; }
+  .lic-cell .tier-name {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: var(--ink);
+  }
+  .lic-cell .tier-text { color: var(--ink-soft); }
+  .lic-cell .tier.tier-warn { border-left-color: var(--red); }
+  .lic-cell .tier.tier-ok { border-left-color: var(--green); }
+  .lic-cell .tier.tier-warn .tier-name { color: var(--red); }
+  .lic-cell .tier.tier-ok .tier-name { color: var(--green); }
+
+  /* ── TAKEAWAYS ────────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 18px 60px; }
+  }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ──────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block;
+    width: 36px; height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <h1>Život dat: kde <em>vznikla</em> a kam <em>mizí</em></h1>
+    <p class="hero-subtitle">
+      AI nástroj má dvojí vztah k datům. Z jedné strany ho zformovala trénovací data; z druhé strany s ním sdílíte vlastní vstupní data, kdykoliv napíšete prompt nebo nahrajete dokument. Tato stránka prochází obě strany: odkud data pocházejí, co se s nimi děje a co z toho plyne pro vás.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="1.2-strojove-uceni.html">Životní cyklus modelu</a> ze Setkání 1 (fáze 1 = Data). Tehdy jsme jen řekli „data se sbírají, čistí, rozdělují". Teď: <em>jaká</em> data, <em>odkud</em>, s jakou licencí a co se děje s tím, co modelu pošlete vy.
+    </p>
+    <div class="definition">
+      <strong>Trénovací data</strong> = data, která zformovala model. Konečný uživatel je neovlivní. <strong>Vstupní data</strong> = to, co modelu pošlete v provozu (prompty, soubory). Tady už záleží na vás.
+    </div>
+    <p style="margin-top: 14px; font-size: 12.5px; color: var(--muted); font-style: italic; max-width: 760px;">
+      Licenční podmínky a politiky poskytovatelů (záložky v sekci 5) se mění; údaje odrážejí stav začátku roku 2026. Před závazným použitím v instituci vždy ověřte přímo u OpenAI, Anthropic a Microsoft.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Co AI vidí pod slovem „data"</h2>
+    <p class="section-lead">
+      V běžné řeči rozlišujeme data, informace, znalost a moudrost. AI dostává data a informace. Protože ale nemá zkušenost se světem kolem nás, znalost ani moudrost mít nemůže; pouze je dokáže simulovat na základě dat. A tato data navíc tvoří jen omezenou, selektivní reprezentaci světa, ve kterém žijeme.
+    </p>
+
+    <div class="dikw">
+      <div class="dikw-rows">
+        <div class="dikw-row">
+          <div class="bar-track"><div class="bar b-data">Data</div></div>
+          <div class="row-text">
+            <div class="row-desc">Fakta bez kontextu. „30 °C"</div>
+          </div>
+        </div>
+        <div class="dikw-row">
+          <div class="bar-track"><div class="bar b-info">Informace</div></div>
+          <div class="row-text">
+            <div class="row-desc">Data s kontextem a strukturou. „V Brně 1. dubna je 30 °C."</div>
+          </div>
+        </div>
+        <div class="dikw-row">
+          <div class="bar-track"><div class="bar b-know">Znalost</div></div>
+          <div class="row-text">
+            <div class="row-desc">Informace s pochopením. „Pokud je v Brně 1. dubna 30 °C, je to hodně."</div>
+          </div>
+        </div>
+        <div class="dikw-row">
+          <div class="bar-track"><div class="bar b-wis">Moudrost</div></div>
+          <div class="row-text">
+            <div class="row-desc">Znalost se zkušeností. „Pokud je v Brně 1. dubna 30 °C, neobleču si péřovou bundu."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flatten-callout">
+        <strong>Problém zploštění.</strong> AI nemá smysly ani vlastní zkušenost se světem. Data a informace si do trénování přinést dokáže, jsou v ní ale rozložené v miliardách čísel, která nemají fixní sémantický význam: jeden pojem leží přes mnoho čísel, jedno číslo se podílí na mnoha pojmech. Konkrétní hodnoty vznikají v průběhu trénování a u jiného trénovacího běhu by vypadaly jinak. Znalost a moudrost tudy projít nemohou. Co model nakonec „ví", je proto jen <em>kvaziznalost</em> a <em>kvazimoudrost</em>: statistická simulace toho, jak takové výroky vypadají, ne pochopení toho, co znamenají.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Cesta trénovacích dat</h2>
+    <p class="section-lead">
+      Jak vzniká model od nuly. Pět kroků, které předcházejí tomu, než vám AI odpoví. Klíčové: kroky 1–4 dělá výrobce modelu, vy do toho nevidíte.
+    </p>
+
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="tl-num">01 · ZDROJE</div>
+        <div class="tl-title">Sběr</div>
+        <div class="tl-desc">
+          <strong>Velký archiv webových stránek</strong> (Common Crawl) tvoří základ: petabyty stránek z desetiletí, filtrované a vyčištěné. K tomu <strong>vybrané kvalitnější zdroje</strong>: Wikipedia, digitalizované knihy, vědecké články (arXiv), open-source kód (GitHub), diskuze (Reddit, StackExchange). U novějších modelů přibývá <strong>licencovaný obsah</strong> (smlouvy s vydavateli, agenturami) a <strong>syntetická data</strong> generovaná jinými modely.
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">02 · ČIŠTĚNÍ</div>
+        <div class="tl-title">Filtrace</div>
+        <div class="tl-desc">
+          Odstraňují se <strong>duplikáty a near-duplikáty</strong> (model by jinak některé sekvence viděl tisíckrát a memorizoval je doslova), <strong>spam, SEO šum a automaticky generovaný obsah</strong>. <strong>Osobní údaje</strong> (telefony, e-maily, ID) se hledají a maskují (nedokonale). <strong>Klasifikátor kvality</strong> váhuje text podle podobnosti s Wikipedií nebo knihami; nekvalitní web jde dolů. Vyřazuje se <strong>škodlivý obsah</strong> (CSAM, návody na zbraně, extremní násilí) a také <strong>testovací benchmarky</strong>, aby model „neznal zkoušku" předem (kontaminace dat). <strong>Tady firma rozhoduje, co model „nikdy neuvidí"; a tím i co pro něj bude „obvyklé".</strong>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">03 · TOKENIZACE</div>
+        <div class="tl-title">Převod na čísla</div>
+        <div class="tl-desc">
+          Texty se rozsekají na <strong>tokeny</strong>: malé kousky textu (algoritmus BPE), ne nutně celá slova. Anglické „regulator" je jeden token; české „regulátor" se rozpadne na 3–5 tokenů, protože většina modelů byla na češtinu tokenizačně optimalizována málo. <strong>Praktický důsledek pro češtinu:</strong> stejně dlouhá věta spotřebuje 2–3× víc tokenů než v angličtině, což znamená vyšší cenu (API se účtuje per token), pomalejší odpovědi a méně textu do kontextového okna. Od této chvíle AI vidí jen čísla.
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">04 · TRÉNINK</div>
+        <div class="tl-title">Výpočet vah a doladění</div>
+        <div class="tl-desc">
+          Stovky GPU týdny až měsíce počítají, jaké váhy nejlépe předpovídají další token (<strong>pre-training</strong>). Pak menší fáze <strong>doladění</strong> (fine-tuning, RLHF), kde model získává styl, který znáte z chatu. Cena: <strong>desítky milionů dolarů</strong> u velkých modelů.
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">05 · PO TRÉNINKU</div>
+        <div class="tl-title">Otisk dat v modelu</div>
+        <div class="tl-desc">
+          Data se v modelu <strong>nedrží jako kopie</strong>; jsou rozložená do miliard vah jako statistické vzory. Originální datasety zůstávají u výrobce (pro další retrain, audit, debugging). Model výjimečně dokáže reprodukovat části tréninkových dat doslova (<strong>memorizace</strong>); od <strong>cutoff datumu</strong> se už další data do něj nedostanou, dokud nevyjde nová verze.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co se v trénovacích datech skrývá</h2>
+    <p class="section-lead">
+      Devět známých incidentů ukazuje, jak různorodě může bias proniknout do modelu: od reklamních zvyklostí přes vizuální a jazykové stereotypy, firemní historii, věkovou diskriminaci, proxy proměnné, algoritmické rozhodování v soudnictví i veřejné správě až po toxický internet.
+    </p>
+
+    <div class="gallery">
+      <div class="gcard">
+        <div class="gtag">BIAS Z REKLAM</div>
+        <h4>AI nakreslí hodinky vždy v 10:10</h4>
+        <div class="gsub">Canva, Gemini, Copilot, 2025</div>
+        <p>
+          Když požádáte AI generátor obrázků o náramkové hodinky ukazující půl šesté (5:30), nakreslí vám hodinky s ručičkami na 10:10. Vždy. Ve všech systémech.
+        </p>
+        <div class="watches">
+          <div class="watch expected">
+            <div class="watch-label">Zadáno</div>
+            <div class="watch-time">5:30</div>
+            <div class="watch-tool">váš prompt</div>
+          </div>
+          <div class="watch actual">
+            <div class="watch-label">Výstup</div>
+            <div class="watch-time">10:10</div>
+            <div class="watch-tool">Canva AI</div>
+          </div>
+          <div class="watch actual">
+            <div class="watch-label">Výstup</div>
+            <div class="watch-time">10:10</div>
+            <div class="watch-tool">Gemini</div>
+          </div>
+          <div class="watch actual">
+            <div class="watch-label">Výstup</div>
+            <div class="watch-time">10:10</div>
+            <div class="watch-tool">Copilot</div>
+          </div>
+        </div>
+        <div class="gwhy">
+          <strong>Proč:</strong> reklamní fotografie hodinek skoro vždy ukazují 10:10. Vypadá to esteticky, ručičky vytvářejí „úsměv" pod logem. AI tisíce takových obrázků viděla a naučila se: „hodinky = ručičky v 10:10". Pojem půl šesté pro ni neexistuje jako čas; je to jen jeden ze vzorů, který nikdy v datech neviděla.
+        </div>
+        <div class="gsrc">Vyzkoušejte sami u libovolného generátoru obrázků.</div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS V GENEROVÁNÍ OBRAZU</div>
+        <h4>Stable Diffusion: profese viděné stereotypně</h4>
+        <div class="gsub">Bloomberg, červen 2023</div>
+        <p>
+          Analýza 5000 obrázků generovaných Stable Diffusion XL ukázala systematické stereotypy. Pro <em>nurse</em>, <em>social worker</em> a <em>housekeeper</em> generoval téměř výhradně ženy. Pro <em>CEO</em>, <em>lawyer</em> a <em>engineer</em> převážně muže se světlou pletí. Lidé s tmavší pletí dominovali u zadání jako <em>fast food worker</em> nebo <em>dishwasher</em>. Model šel ve stereotypech dál než reálná statistika US Bureau of Labor Statistics.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> trénovací datasety obsahují páry obrázek + popisek z webu (alt texty, podpisky). Online obsah dlouhodobě reprodukuje stereotypní spojení mezi profesí a vzhledem. Model se nejen naučil tato spojení, ale ještě je <strong>zesílil</strong>; generuje jejich „čistší" verzi, než jaká byla v původních datech.
+        </div>
+        <div class="gsrc"><a href="https://www.bloomberg.com/graphics/2023-generative-ai-bias/" target="_blank" rel="noopener">Bloomberg: Humans are biased. Generative AI is even worse ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS V PŘEKLADU · GENDER</div>
+        <h4>Google Translate: „doktor je on, sestra je ona"</h4>
+        <div class="gsub">Dokumentováno od 2017, opraveno částečně 2018</div>
+        <p>
+          Při překladu z jazyků bez gramatického rodu (turečtina, maďarština, finština) Google Translate přiřazoval profesím konkrétní gender podle stereotypů. „O bir doktor" (turkecky „on/ona je doktor") přeložil „He is a doctor". „O bir hemşire" („on/ona je sestra") přeložil „She is a nurse". Google to v roce 2018 částečně opravil tím, že u dvojznačných překladů nabízí mužskou i ženskou variantu.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> překladový model se učil z paralelních textů, kde profese jako „doktor" nejčastěji byly mužského rodu a „sestra" ženského. Statisticky vzal nejpravděpodobnější variantu, aniž by „věděl", že jde o stereotyp. Vyzkoušejte sami: vložte do Translate „O bir [profese]" z turečtiny a sledujte gender voleb pro různé profese.
+        </div>
+        <div class="gsrc"><a href="https://research.google/blog/providing-gender-specific-translations-in-google-translate/" target="_blank" rel="noopener">Google Research: Gender-specific translations ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS Z HISTORIE</div>
+        <h4>Amazon přestal používat svůj AI náborový nástroj</h4>
+        <div class="gsub">Reuters, 2018</div>
+        <p>
+          Amazon vyvíjel interní AI nástroj na předvýběr životopisů. Zjistilo se, že systematicky diskriminuje uchazečky. Slovo „women's" (jako v „women's chess club captain") snižovalo skóre kandidátky. Amazon projekt po čtyřech letech zrušil.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> nástroj se učil z desetiletí životopisů, které Amazon přijal v minulosti. V technických rolích historicky převažovali muži, takže model se naučil: „úspěšný kandidát ≈ mužský životopis". Bias nebyl v kódu; byl v historických rozhodnutích firmy, která se data odrážela.
+        </div>
+        <div class="gsrc"><a href="https://www.reuters.com/article/world/insight-amazon-scraps-secret-ai-recruiting-tool-that-showed-bias-against-women-idUSKCN1MK0AG/" target="_blank" rel="noopener">Reuters: Amazon scraps secret AI recruiting tool ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS Z VĚKU · PRÁVNÍ PRECEDENT</div>
+        <h4>iTutor Group: AI automaticky odmítl starší uchazeče</h4>
+        <div class="gsub">EEOC settlement, USA, 2023</div>
+        <p>
+          Online tutoringová společnost iTutor Group používala AI software pro automatický předvýběr uchazečů o pozici lektora. Software automaticky odmítal ženy starší 55 let a muže starší 60 let. EEOC (americká komise proti diskriminaci v zaměstnávání) podala žalobu; firma zaplatila settlement 365 000 dolarů. <strong>První dokončený EEOC případ proti AI nástroji.</strong>
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> přesné technické důvody firma nezveřejnila, ale typický mechanismus je proxy. Model optimalizuje, jak trénovací data spojují „úspěšný lektor" s vlastnostmi kandidáta. Pokud v trénovacích datech převažovali mladší úspěšní lektoři, model se naučil věk používat jako prediktor. Podobné jako Amazon recruiting: historická data nesou diskriminaci, kterou model přejímá.
+        </div>
+        <div class="gsrc"><a href="https://www.eeoc.gov/newsroom/itutorgroup-pay-365000-settle-eeoc-discriminatory-hiring-suit" target="_blank" rel="noopener">EEOC: iTutorGroup to Pay $365,000 ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS Z PROXY PROMĚNNÉ</div>
+        <h4>Zdravotní algoritmus podcenil potřeby lidí barvy pleti</h4>
+        <div class="gsub">Science, Obermeyer et al., 2019</div>
+        <p>
+          Algoritmus používaný v amerických nemocnicích doporučoval, kterým pacientům poskytnout rozšířenou péči. Mezi pacienty se stejně závažným zdravotním stavem doporučoval péči lidem barvy pleti výrazně méně často než pacientům světlé pleti. Týkalo se to odhadem 200 milionů Američanů ročně.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> algoritmus neměl přímo „rasu" ve vstupu. Místo toho odhadoval potřebu péče podle <em>historických zdravotních výdajů</em>. Jenže u lidí barvy pleti se historicky utratilo méně (kvůli horšímu přístupu k péči), takže model dospěl k závěru, že potřebují méně péče. Bias se dovnitř dostal přes <strong>proxy proměnnou</strong>.
+        </div>
+        <div class="gsrc"><a href="https://www.science.org/doi/10.1126/science.aax2342" target="_blank" rel="noopener">Science: Dissecting racial bias in an algorithm ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS V SOUDNICTVÍ</div>
+        <h4>COMPAS: algoritmus pro odhad recidivy</h4>
+        <div class="gsub">ProPublica, 2016</div>
+        <p>
+          COMPAS je software, který v amerických soudech odhaduje pravděpodobnost, že obžalovaný spáchá další trestný čin. Investigativní analýza ProPublica zjistila, že u obžalovaných barvy pleti systém téměř dvojnásobně častěji nesprávně označil obžalovaného za vysoké riziko (false positive). U obžalovaných světlé pleti byl častější opačný omyl: model je nesprávně označil za bezpečné.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> model se učil na historických datech amerického trestního systému, kde lidé barvy pleti historicky čelí vyšším mírám zatýkání, soudních stíhání i odsuzování, částečně kvůli reálné kriminalitě, převážně kvůli systémové diskriminaci. Model nedokázal oba zdroje oddělit, takže výsledek diskriminace přenesl dál.
+        </div>
+        <div class="gsrc"><a href="https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing" target="_blank" rel="noopener">ProPublica: Machine Bias ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS VE VEŘEJNÉ SPRÁVĚ</div>
+        <h4>Nizozemská aféra dětských dávek</h4>
+        <div class="gsub">Toeslagenaffaire, 2019–2021</div>
+        <p>
+          Nizozemská daňová správa používala algoritmus k odhalování podvodů u žádostí o dětské dávky. Systém označil za podezřelé tisíce rodin, nepoměrně často s dvojím občanstvím (turecké, marocké původu). Rodiny musely vracet dávky, mnoho z nich přišlo o domov, některé děti byly odebrány do ústavní péče. V lednu 2021 podala kvůli aféře demisi celá Rutteho vláda.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> algoritmus mezi rizikovými faktory zohlednil i národnost a dvojí občanství. Historicky vyšší kontroly těchto skupin produkovaly více „podezření", ze kterých se model naučil generovat další podezření. Klasická spirála: model věří, co viděl, a co vidí, je produkt předchozí diskriminace.
+        </div>
+        <div class="gsrc"><a href="https://www.amnesty.org/en/latest/news/2021/10/xenophobic-machines-dutch-child-benefit-scandal/" target="_blank" rel="noopener">Amnesty International: Xenophobic machines ↗</a></div>
+      </div>
+
+      <div class="gcard">
+        <div class="gtag">BIAS Z INTERNETU</div>
+        <h4>Microsoft Tay: rasistický chatbot za den</h4>
+        <div class="gsub">The Verge, 2016</div>
+        <p>
+          Microsoft spustil na Twitteru chatbota Tay, který se měl učit z konverzací s uživateli. Po 16 hodinách začala Tay šířit rasistické a urážlivé příspěvky. Microsoft ji ten samý den stáhl.
+        </p>
+        <div class="gwhy">
+          <strong>Proč:</strong> Tay neměla dostatečné filtry, učila se „live" ze všech příchozích zpráv. Skupina uživatelů zjistila, že stačí ji zaplavit toxickým obsahem. Tay nedělala nic jiného, než co jí trénink zadal: napodobovala vzory v datech. Data byla otrávená záměrně.
+        </div>
+        <div class="gsrc"><a href="https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist" target="_blank" rel="noopener">The Verge: Twitter taught Microsoft's AI chatbot to be a racist asshole ↗</a></div>
+      </div>
+    </div>
+
+    <p style="margin-top: 22px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 780px;">
+      Devět typů bias, jedno společné: <strong>data jsou zrcadlem světa</strong>, ze kterého pocházejí. Když svět obsahuje stereotypy, historicky nerovný přístup nebo systémovou diskriminaci, model je v sobě absorbuje a často je ještě zesílí. Bias není chyba v kódu; je to věrné zrcadlo toho, co se modelu dostalo do trénování.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Cesta vašich dat: co se stane, když napíšete prompt</h2>
+    <p class="section-lead">
+      Druhá strana mince. Když do AI nahrajete dokument nebo napíšete dotaz, vaše data putují řadou kroků. Některé jsou nutné, jiné se liší podle aplikace a podle toho, jestli máte zadarmo, Plus, nebo Enterprise.
+    </p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-num">01</div>
+        <div class="flow-stage">Odeslání ze zařízení</div>
+        <div class="flow-detail">
+          Když stisknete „Odeslat", váš prompt opouští váš počítač. Šifrovaně (HTTPS) cestuje na servery poskytovatele AI. <strong>Lokální AI (například modely běžící přímo ve vašem počítači) je výjimkou.</strong>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">02</div>
+        <div class="flow-stage">Příjem na serveru</div>
+        <div class="flow-detail">
+          Server přijme dotaz, předá ho ke zpracování. <strong>Tady už jsou vaše data fyzicky u poskytovatele.</strong> U cloudových služeb (ChatGPT, Claude, Gemini) jde o datacentra v USA nebo EU; u Microsoft Copilot pro Enterprise lze region vybrat. <strong>K datům se technicky může dostat víc skupin než jen vy:</strong> zaměstnanci poskytovatele (admini, týmy proti zneužití), subdodavatelé (hosting, anotační firmy), a v případě soudního příkazu i státní orgány; v USA například podle <strong>CLOUD Actu</strong>, který platí bez ohledu na fyzickou lokaci datacentra. Obvykle pod interními kontrolami a šifrováním, ne automaticky, ale technicky možné.
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">03</div>
+        <div class="flow-stage">Zpracování modelem</div>
+        <div class="flow-detail">
+          Prompt projde stejnou tokenizací jako trénovací data, model spočítá odpověď. <strong>Trvá jednotky sekund.</strong> Odpověď cestuje zpátky.
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">04</div>
+        <div class="flow-stage">Uložení v historii</div>
+        <div class="flow-detail">
+          Většina aplikací si váš prompt i odpověď uloží ve vaší historii chatů, abyste se k nim mohli vrátit. <strong>Tato historie zůstává u poskytovatele, dokud ji aktivně nesmažete.</strong> Některé Enterprise verze mají nastavitelnou retenci (například 30 dnů).
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">05</div>
+        <div class="flow-stage">Možné použití k trénování</div>
+        <div class="flow-detail">
+          Zda vaše prompty může poskytovatel použít k dalšímu trénování modelu, určují <strong>licenční podmínky</strong>. Liší se podle úrovně účtu (free / Plus / Enterprise) a podle aplikace. Některé umožňují opt-out, některé garantují, že se trénovat nebudou (typicky Enterprise tarify).
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co říkají licenční podmínky</h2>
+    <p class="section-lead">
+      Zjednodušený přehled, jak tři rozšířené aplikace zacházejí s daty uživatelů. Jde o stav začátku roku 2026; podmínky se mění, vždy si ověřte přímo na stránce poskytovatele.
+    </p>
+
+    <div class="lic-tabs" id="lic-tabs">
+      <button class="lic-tab active" data-lic="chatgpt">ChatGPT</button>
+      <button class="lic-tab" data-lic="claude">Claude</button>
+      <button class="lic-tab" data-lic="copilot">Microsoft Copilot</button>
+    </div>
+
+    <div class="lic-panel" id="lic-panel">
+      <!-- Filled by JS -->
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Data drift: model stárne, i&nbsp;když ho nesáhnete</h2>
+    <p class="section-lead">
+      I když se model po trénování nemění, svět kolem ano. <strong>Data drift</strong> je rozpor mezi tím, na čem byl model trénován, a tím, s čím se setkává v provozu. Čím déle je model v provozu, tím větší drift.
+    </p>
+
+    <div style="background: var(--paper); border: 1px solid var(--line); padding: 22px 26px; max-width: 880px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1.6px; color: var(--accent); font-weight: 600; margin-bottom: 8px;">PŘÍKLAD</div>
+      <h4 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-bottom: 10px;">Knowledge cutoff a co po něm</h4>
+      <p style="font-size: 14px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 12px;">
+        Každý model má <strong>knowledge cutoff</strong>: datum, do kterého má informace z trénovacích dat. Claude Opus 4.7 má cutoff <strong>leden 2026</strong> (Opus 4.6 měl květen 2025). Vše, co se ve světě stalo poté, model nezná, pokud mu to neřeknete v promptu nebo pokud nemá k dispozici web search.
+      </p>
+      <p style="font-size: 14px; color: var(--ink-soft); line-height: 1.65;">
+        <strong>Praktický důsledek:</strong> ptáte-li se na čerstvé novely předpisů, aktuální cenové úrovně, nedávné události, model může s naprostou jistotou produkovat zastaralé informace. <em>Sebevědomý tón</em> není zárukou aktuálnosti.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si z toho odnést</h2>
+    <p class="section-lead">
+      Čtyři důsledky pro každodenní rozhodování při práci s AI.
+    </p>
+
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Vaše data fyzicky opouštějí počítač.</strong> Pokud pracujete s neveřejnými dokumenty, je to nutné vědět. Není to nutně problém (Enterprise verze mají garance), ale není to ani zanedbatelné.
+      </div>
+      <div class="takeaway-card">
+        <strong>Čtěte licenční podmínky.</strong> Jednou. Liší se Free / Pro / Enterprise. U Free verzí typicky platíte za nástroj svými daty (trénují na nich); u Enterprise jsou data oddělená. Bezpečnost dat je téma 7. semináře.
+      </div>
+      <div class="takeaway-card">
+        <strong>Bias v modelu = bias v datech.</strong> Když model dává nečekané nebo problematické odpovědi, hledejte to v trénovacích datech. Hodinky v 10:10, Amazon recruiting, Tay; vždy zrcadlo světa, ze kterého data pocházela.
+      </div>
+      <div class="takeaway-card">
+        <strong>Model nezná dnešek.</strong> Knowledge cutoff je tvrdý strop. Pro aktuální informace potřebuje web search nebo váš prompt. Bez nich může s naprostou jistotou tvrdit zastaralá fakta.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   LICENSE TAB DATA
+   ────────────────────────────────────────────────────────── */
+
+const LIC = {
+  "chatgpt": {
+    title: "ChatGPT (OpenAI)",
+    desc: "Spotřebitelské i firemní tarify ChatGPT a OpenAI API.",
+    cells: [
+      {
+        label: "Trénování na vašich datech",
+        tiers: [
+          { name: "Free / Plus / Pro", type: "warn", text: "Ve výchozím nastavení ANO. Prompty a odpovědi mohou být použity k trénování budoucích modelů. Opt-out: Settings → Data Controls → Improve the model. Alternativa: Temporary Chat (bez historie, bez tréninku)." },
+          { name: "Team / Enterprise / API", type: "ok", text: "Smluvně garantováno, že NE." }
+        ]
+      },
+      {
+        label: "Doba uchovávání dat",
+        tiers: [
+          { name: "Free / Plus / Pro", type: "warn", text: "Konverzace <strong>drží do ručního smazání</strong>; po smazání 30 dní v backendu, pak smazáno. Pozn.: od 4/2025 do 26. 9. 2025 OpenAI dočasně uchovával všechny logy bez ohledu na smazání kvůli soudnímu mandátu v kauze NYT vs. OpenAI; mandát skončil a OpenAI se vrátil ke standardu." },
+          { name: "Team / Enterprise", type: "ok", text: "Konverzace <strong>drží do smazání</strong> uživatelem nebo podle politiky; po smazání 30 dní v backendu. Administrátor workspace konfiguruje retenci a oprávnění." }
+        ]
+      },
+      {
+        label: "Šifrování a region",
+        tiers: [
+          { name: "Všechny tarify", type: "ok", text: "HTTPS v přenosu, AES at-rest. SOC 2 Type 2 pro Enterprise; GDPR-compliant DPA k dispozici." }
+        ]
+      },
+      {
+        label: "Sdílení s třetími stranami",
+        tiers: [
+          { name: "Všechny tarify", type: "ok", text: "Vybraní subdodavatelé (cloud, podpora, moderace). Bez sdílení k reklamě." }
+        ]
+      }
+    ]
+  },
+  "claude": {
+    title: "Claude (Anthropic)",
+    desc: "Spotřebitelské a firemní tarify Claude.ai a Anthropic API. Pravidla pro spotřebitelské tarify se výrazně změnila 28. září 2025.",
+    cells: [
+      {
+        label: "Trénování na vašich datech",
+        tiers: [
+          { name: "Free / Pro / Max", type: "warn", text: "Od 28. 9. 2025 ve výchozím ANO. Před tímto datem Anthropic na spotřebitelských datech netrénoval. Opt-out: Privacy Settings → Help improve Claude." },
+          { name: "Claude for Work / API / Bedrock", type: "ok", text: "Smluvně garantováno, že NE." }
+        ]
+      },
+      {
+        label: "Doba uchovávání dat",
+        tiers: [
+          { name: "Free / Pro / Max (všichni)", type: "ok", text: "Konverzace <strong>drží v UI do ručního smazání</strong>. Po smazání 30 dní v backendu, pak pryč." },
+          { name: "Free / Pro / Max (trénink ZAPNUT)", type: "warn", text: "Navíc: data mohou být uchovávána <strong>až 5 let v de-identifikovaných tréninkových pipelinech</strong> pro účely tréninku. Týká se nových nebo obnovených chatů od 28. 9. 2025." },
+          { name: "Claude for Work", type: "ok", text: "Konverzace <strong>drží do smazání</strong> uživatelem nebo administrátorem. Administrátor konfiguruje retenci." }
+        ]
+      },
+      {
+        label: "Šifrování a region",
+        tiers: [
+          { name: "Všechny tarify", type: "ok", text: "HTTPS v přenosu, šifrování at-rest u AWS. SOC 2 Type 2; HIPAA dostupné pro Enterprise." }
+        ]
+      },
+      {
+        label: "Sdílení s třetími stranami",
+        tiers: [
+          { name: "Všechny tarify", type: "ok", text: "Primárně AWS jako infrastrukturní partner. Bez sdílení k reklamě." }
+        ]
+      }
+    ]
+  },
+  "copilot": {
+    title: "Microsoft Copilot",
+    desc: "Spotřebitelské, M365 a Enterprise tarify Microsoft Copilot.",
+    cells: [
+      {
+        label: "Trénování na vašich datech",
+        tiers: [
+          { name: "Copilot Free / Pro (spotřebitelské)", type: "warn", text: "Ve výchozím se Microsoft může učit z konverzací pro zlepšování služby. Opt-out v účtu Microsoft." },
+          { name: "M365 Copilot (Business / Enterprise)", type: "ok", text: "Smluvně NE. Prompty, odpovědi ani data z Microsoft Graph se nepoužívají k trénování." }
+        ]
+      },
+      {
+        label: "Doba uchovávání dat",
+        tiers: [
+          { name: "Copilot Free / Pro", type: "warn", text: "Konverzace uloženy v účtu Microsoft <strong>do smazání</strong>; backupy po smazání podle politik Microsoft účtu." },
+          { name: "M365 Copilot", type: "ok", text: "Prompty a odpovědi uchovávány <strong>až 30 dní</strong> pro účely zlepšování služby, pak smazány (pokud není delší retence nutná z právních důvodů). Administrátor může přes Microsoft Purview nastavit separátní retenční politiku." }
+        ]
+      },
+      {
+        label: "Šifrování, region, compliance",
+        tiers: [
+          { name: "M365 Copilot", type: "ok", text: "GDPR, EU Data Boundary, ISO/IEC 27018. Region volitelný (EU / USA)." }
+        ]
+      },
+      {
+        label: "Sdílení s třetími stranami a copyright",
+        tiers: [
+          { name: "M365 Copilot", type: "ok", text: "Subprocesory uvedené v DPA (od 1/2026 i Anthropic Claude jako modelový poskytovatel). Customer Copyright Commitment: Microsoft přebírá právní odpovědnost za výstupy placených Copilot služeb (mimo Copilot Studio a free)." }
+        ]
+      }
+    ]
+  }
+};
+
+const licTabs = document.getElementById('lic-tabs');
+const licPanel = document.getElementById('lic-panel');
+
+function renderLic(key) {
+  const data = LIC[key];
+  if (!data) return;
+  const cellsHtml = data.cells.map(c => {
+    const tiersHtml = c.tiers.map(t => `
+      <div class="tier tier-${t.type}">
+        <span class="tier-name">${t.name}</span>
+        <span class="tier-text">${t.text}</span>
+      </div>
+    `).join('');
+    return `
+      <div class="lic-cell">
+        <h5>${c.label}</h5>
+        ${tiersHtml}
+      </div>
+    `;
+  }).join('');
+  licPanel.innerHTML = `
+    <h4>${data.title}</h4>
+    <p style="font-size: 13.5px; color: var(--muted); line-height: 1.6;">${data.desc}</p>
+    <div class="lic-line">${cellsHtml}</div>
+  `;
+}
+
+licTabs.addEventListener('click', (e) => {
+  const btn = e.target.closest('.lic-tab');
+  if (!btn) return;
+  licTabs.querySelectorAll('.lic-tab').forEach(b => b.classList.toggle('active', b === btn));
+  renderLic(btn.dataset.lic);
+});
+
+renderLic('chatgpt');
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

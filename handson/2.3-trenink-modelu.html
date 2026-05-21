@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Trénink modelů – RLHF a rozdíly mezi typy modelů</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #2c5e6e;
+    --accent-hover: #1f4a58;
+    --accent-soft: #e0eaed;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+    --purple: #5b3f7a;
+    --purple-soft: #ede5f3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TRAIN VS USE TABLE ───────────────────────────────── */
+  .twostate {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 13.8px;
+  }
+  .twostate th, .twostate td {
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.55;
+    border-bottom: 1px solid var(--line);
+  }
+  .twostate tr:last-child td { border-bottom: none; }
+  .twostate th {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 14px;
+  }
+  .twostate th:first-child {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .twostate th.train { color: var(--accent); }
+  .twostate th.use { color: var(--warm); }
+  .twostate td:first-child {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    width: 140px;
+  }
+  .twostate td.fixed {
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .twostate td.changing { color: var(--accent); font-weight: 500; }
+  .twostate td.usecol { color: var(--warm); font-weight: 500; }
+
+  /* ── 4 APPROACHES ─────────────────────────────────────── */
+  .app-picker {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .app-btn {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 10px 18px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .app-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .app-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+  .app-detail {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 22px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 24px 28px;
+    border-left: 3px solid var(--accent);
+  }
+  @media (max-width: 880px) { .app-detail { grid-template-columns: 1fr; } }
+  .app-detail h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .app-detail p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+  .app-detail .meta-list {
+    list-style: none;
+    padding: 0;
+    font-size: 13px;
+  }
+  .app-detail .meta-list li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+  }
+  .app-detail .meta-list li:last-child { border-bottom: none; }
+  .app-detail .meta-list .meta-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .app-detail .meta-list .meta-val {
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .app-detail .example-box {
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .app-detail .example-box strong { color: var(--accent); }
+
+  /* ── PIPELINE FLOW ────────────────────────────────────── */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 4px;
+  }
+  @media (max-width: 880px) {
+    .pipeline { grid-template-columns: 1fr; }
+  }
+  .pp-step {
+    background: var(--bg);
+    padding: 22px 22px 24px;
+    border: 1px solid var(--line);
+    margin: 4px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pp-step .pp-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    letter-spacing: 1.6px;
+    font-weight: 600;
+  }
+  .pp-step .pp-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .pp-step .pp-method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--warm);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .pp-step .pp-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .pp-step .pp-data {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .pp-step .pp-data strong { color: var(--accent); font-style: normal; }
+  /* Pipeline arrow between steps */
+  .pp-step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: monospace;
+    font-size: 22px;
+    color: var(--accent);
+    font-weight: 600;
+    z-index: 1;
+  }
+  @media (max-width: 880px) {
+    .pp-step:not(:last-child)::after {
+      content: "↓";
+      right: 50%;
+      top: auto;
+      bottom: -18px;
+      transform: translateX(50%);
+    }
+  }
+
+  /* ── MODEL TYPE COMPARE ───────────────────────────────── */
+  .mtype-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .mtype-tab {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 12px 22px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 500;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .mtype-tab:hover { color: var(--ink); }
+  .mtype-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+  .mtype-panel {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: none;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 880px) { .mtype-panel { grid-template-columns: 1fr; } }
+  .mtype-panel h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .mtype-panel .mtype-task {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+  .mtype-panel p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+  .mtype-panel .mtype-list {
+    list-style: none;
+    padding: 0;
+    font-size: 13px;
+  }
+  .mtype-panel .mtype-list li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+  }
+  .mtype-panel .mtype-list li:last-child { border-bottom: none; }
+  .mtype-panel .mtype-list .key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .mtype-panel .mtype-list .val {
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .mtype-panel .mtype-examples {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .mtype-panel .mtype-examples strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── RLHF FINGERPRINT ─────────────────────────────────── */
+  .rlhf-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 720px) { .rlhf-compare { grid-template-columns: 1fr; } }
+  .rlhf-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    padding: 20px 22px;
+  }
+  .rlhf-card.anthropic { border-top-color: var(--accent); }
+  .rlhf-card.openai { border-top-color: var(--purple); }
+  .rlhf-card .ctitle {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .rlhf-card .csub {
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .rlhf-card.anthropic .csub { color: var(--accent); }
+  .rlhf-card.openai .csub { color: var(--purple); }
+  .rlhf-card ul {
+    list-style: none;
+    padding: 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .rlhf-card ul li {
+    padding: 6px 0 6px 20px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .rlhf-card ul li::before {
+    content: "›";
+    position: absolute;
+    left: 4px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .rlhf-card.anthropic ul li::before { color: var(--accent); }
+  .rlhf-card.openai ul li::before { color: var(--purple); }
+
+  /* ── HF CTA ───────────────────────────────────────────── */
+  .hf-cta {
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    padding: 22px 26px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+  @media (max-width: 720px) { .hf-cta { grid-template-columns: 1fr; } }
+  .hf-cta h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .hf-cta p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .hf-cta a.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--warm);
+    color: white;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .hf-cta a.btn:hover { background: #8e4a18; color: white; text-decoration: none; }
+
+  /* ── HF LAYERS EXPLAINER ──────────────────────────────── */
+  .hf-layers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 18px 0 18px;
+  }
+  @media (max-width: 880px) { .hf-layers { grid-template-columns: 1fr; } }
+  .hf-layer {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    border-top: 3px solid var(--accent);
+  }
+  .hf-layer h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .hf-layer .hf-where {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .hf-layer p {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .hf-layer .hf-priv {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .hf-layer.is-warn { border-top-color: var(--warm); }
+  .hf-layer.is-warn .hf-where { color: var(--warm); }
+  .hf-layer.is-ok { border-top-color: var(--green); }
+  .hf-layer.is-ok .hf-where { color: var(--green); }
+
+  .hf-safety {
+    background: var(--red-soft);
+    border-left: 3px solid var(--red);
+    padding: 18px 22px;
+    margin-bottom: 24px;
+  }
+  .hf-safety h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .hf-safety p {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .hf-safety p:last-child { margin-bottom: 0; }
+  .hf-safety strong { color: var(--red); }
+  .hf-safety .hf-do {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) { .hf-safety .hf-do { grid-template-columns: 1fr; } }
+  .hf-safety .hf-do-cell {
+    background: var(--bg);
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .hf-safety .hf-do-cell.yes { border-left: 2px solid var(--green); }
+  .hf-safety .hf-do-cell.no { border-left: 2px solid var(--red); }
+  .hf-safety .hf-do-cell strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .hf-safety .hf-do-cell.yes strong { color: var(--green); }
+  .hf-safety .hf-do-cell.no strong { color: var(--red); }
+
+  /* ── HF SPACES GRID ───────────────────────────────────── */
+  .spaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .space-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .space-card .scat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--warm);
+    font-weight: 600;
+  }
+  .space-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .space-card .sauthor {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: -6px;
+  }
+  .space-card p {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .space-card .swhy {
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .space-card .swhy strong {
+    color: var(--accent);
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .space-card .slink {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .space-card .slink a {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── THREE PATHS (closed / open / local) ──────────────── */
+  .three-paths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 880px) { .three-paths { grid-template-columns: 1fr; } }
+  .path-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .path-card.closed { border-top-color: var(--purple); }
+  .path-card.open { border-top-color: var(--warm); }
+  .path-card.local { border-top-color: var(--green); }
+  .path-card .ptag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .path-card.closed .ptag { color: var(--purple); }
+  .path-card.open .ptag { color: var(--warm); }
+  .path-card.local .ptag { color: var(--green); }
+  .path-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .path-card .pdesc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .path-card .pros, .path-card .cons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12.5px;
+  }
+  .path-card .pros li, .path-card .cons li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .path-card .pros li::before { content: "+"; position: absolute; left: 4px; color: var(--green); font-weight: 700; }
+  .path-card .cons li::before { content: "−"; position: absolute; left: 4px; color: var(--red); font-weight: 700; }
+  .path-card .ptools {
+    background: var(--paper);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.55;
+    margin-top: auto;
+    border-left: 2px solid var(--line-strong);
+  }
+  .path-card.closed .ptools { border-left-color: var(--purple); }
+  .path-card.open .ptools { border-left-color: var(--warm); }
+  .path-card.local .ptools { border-left-color: var(--green); }
+  .path-card .ptools strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .path-card .pwhen {
+    background: var(--accent-soft);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .path-card .pwhen strong {
+    color: var(--accent);
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  /* ── TRADEOFF MATRIX ──────────────────────────────────── */
+  .tradeoff {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  .tradeoff th, .tradeoff td {
+    padding: 12px 14px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--line);
+  }
+  .tradeoff tr:last-child td { border-bottom: none; }
+  .tradeoff th {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 12px;
+    background: var(--paper);
+  }
+  .tradeoff td:first-child {
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 180px;
+  }
+  .tradeoff th.closed { color: var(--purple); }
+  .tradeoff th.open { color: var(--warm); }
+  .tradeoff th.local { color: var(--green); }
+  .tradeoff .rating {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .tradeoff .r-high { color: var(--green); }
+  .tradeoff .r-mid { color: var(--warm); }
+  .tradeoff .r-low { color: var(--red); }
+  .tradeoff td .note {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── REGULATORY CALLOUT ───────────────────────────────── */
+  .reg-callout {
+    background: var(--green-soft);
+    border-left: 3px solid var(--green);
+    padding: 18px 22px;
+    margin-top: 22px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+    max-width: 880px;
+  }
+  .reg-callout strong { color: var(--green); }
+
+  /* ── TAKEAWAYS ────────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ──────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <h1>Jak vzniká model: <em>trénink</em>, RLHF a&nbsp;rozdíly mezi typy</h1>
+    <p class="hero-subtitle">
+      LLM, klasifikátor obrázků, generátor obrázků a šachová AI vypadají jako varianty téhož. Ve skutečnosti se trénují zcela odlišně, na odlišných datech, s jiným zapojením člověka. Stránka prochází čtyři základní přístupy učení, ukazuje LLM pipeline (pre-training → fine-tuning → RLHF) a porovnává trénink několika konkrétních typů modelů.
+    </p>
+    <div class="definition">
+      <strong>Trénování</strong> je proces, ve kterém model získává své parametry (váhy) z dat. <strong>RLHF</strong> (Reinforcement Learning from Human Feedback) je závěrečná fáze tréninku LLM, ve které lidé hodnotí výstupy modelu a tím mu dávají „osobnost", styl a hodnoty.
+    </div>
+    <p style="margin-top: 14px; font-size: 12.5px; color: var(--muted); font-style: italic; max-width: 760px;">
+      Konkrétní příklady tréninkových dat a velikostí (počty tokenů, GPU-hodin, anotátorů) jsou ilustrativní. Přesné hodnoty firmy obvykle nezveřejňují; uvedené řádové odhady čerpají z veřejných výzkumných článků a technických zpráv.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Navazujeme: model existuje ve dvou stavech</h2>
+    <p class="section-lead">
+      V Setkání 1 jsme v <a href="1.2-strojove-uceni.html">Životním cyklu modelu</a> viděli, že stejný model existuje ve dvou stavech: <strong>trénování</strong> (váhy se mění) a <strong>používání</strong> (váhy jsou zamknuté). Tato stránka navazuje na fázi tréninku a otevírá to, co předchozí přehled jen naznačil: <strong>tréninků není jen jeden druh</strong>. Ukáže čtyři přístupy učení, LLM pipeline (pre-training → fine-tuning → RLHF) a porovná, jak se trénují různé typy modelů.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Čtyři základní přístupy učení</h2>
+    <p class="section-lead">
+      Většina dnešní AI patří do jedné nebo kombinace těchto čtyř kategorií. Liší se v tom, jestli jsou data předem označená a kde do procesu vstupuje člověk. Vyberte přístup pro detail.
+    </p>
+
+    <div class="app-picker" id="app-picker">
+      <button class="app-btn active" data-app="unsupervised">Unsupervised</button>
+      <button class="app-btn" data-app="supervised">Supervised</button>
+      <button class="app-btn" data-app="rl">Reinforcement Learning</button>
+      <button class="app-btn" data-app="rlhf">RL with Human Feedback (RLHF)</button>
+    </div>
+
+    <div class="app-detail" id="app-detail"></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">LLM pipeline: jak vznikl Claude a ChatGPT</h2>
+    <p class="section-lead">
+      Velký jazykový model se nevyrobí jedním tréninkem. Vzniká ve třech navazujících fázích, každá s jiným cílem, jiným typem dat a jinou rolí člověka. Tato pipeline platí pro Claude, ChatGPT, Gemini i open-source modely jako Llama.
+    </p>
+
+    <div class="pipeline">
+      <div class="pp-step">
+        <div class="pp-num">FÁZE 01</div>
+        <div class="pp-name">Pre-training</div>
+        <div class="pp-method">unsupervised</div>
+        <div class="pp-desc">
+          Model dostane biliony tokenů z internetu (Wikipedia, knihy, kód, fóra). Učí se předpovídat další token. Bez označených dat. <strong>Tady model získává jazyk a obecné informace o&nbsp;světě</strong>, zprostředkované přes texty, ne ze zkušenosti. (Podrobněji <a href="2.4-porozumeni.html">Slova bez zkušenosti</a>.)
+        </div>
+        <div class="pp-data"><strong>Data:</strong> řádově biliony tokenů textu<br><strong>Trvání:</strong> týdny až měsíce na tisících GPU<br><strong>Cena:</strong> desítky až stovky milionů dolarů</div>
+      </div>
+      <div class="pp-step">
+        <div class="pp-num">FÁZE 02</div>
+        <div class="pp-name">Supervised Fine-Tuning</div>
+        <div class="pp-method">supervised</div>
+        <div class="pp-desc">
+          Lidé píší kvalitní příklady „takto se má model chovat": příklady správných odpovědí, formátování, odmítnutí citlivých dotazů. Model se učí napodobovat tento styl. <strong>Tady model získává „instruct" chování: odpovídá místo aby pokračoval v textu.</strong>
+        </div>
+        <div class="pp-data"><strong>Data:</strong> desetitisíce ručně psaných příkladů<br><strong>Trvání:</strong> dny až týdny<br><strong>Anotátoři:</strong> stovky lidí, často s odborným profilem</div>
+      </div>
+      <div class="pp-step">
+        <div class="pp-num">FÁZE 03</div>
+        <div class="pp-name">RLHF</div>
+        <div class="pp-method">reinforcement (lidská zpětná vazba)</div>
+        <div class="pp-desc">
+          Model vygeneruje několik variant odpovědi, lidé je seřadí podle kvality. Z tohoto „žebříčku preferencí" se model učí preferovat lepší odpovědi. <strong>Tady model získává „osobnost", hodnoty, jemné nuance: to, co odlišuje Claude od ChatGPT.</strong>
+        </div>
+        <div class="pp-data"><strong>Data:</strong> miliony porovnávacích hodnocení<br><strong>Trvání:</strong> průběžné (model se dál vylaďuje po vydání)<br><strong>Anotátoři:</strong> placení reviewers + interní výzkumníci</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 880px;">
+      <strong>Klíčový důsledek:</strong> Většinu „znalostí o světě" má model z pre-trainingu. Většinu „jak se chovat" má z RLHF. Když se Claude liší od ChatGPT, není to obvykle proto, že by věděl něco jiného. Liší se proto, že byl jinak naučen, jak odpovídat: jinou skupinou lidí, podle jiných instrukcí, s jinými cíli.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Různé modely, různé tréninky</h2>
+    <p class="section-lead">
+      LLM pipeline (pre-training → SFT → RLHF) je specifická pro jazykové modely. Jiné typy AI se trénují úplně jinak. Vyberte typ modelu pro porovnání.
+    </p>
+
+    <div class="mtype-tabs" id="mtype-tabs">
+      <button class="mtype-tab active" data-m="llm">LLM</button>
+      <button class="mtype-tab" data-m="classifier">Klasifikátor obrázků</button>
+      <button class="mtype-tab" data-m="diffusion">Diffusion (generátor obrázků)</button>
+      <button class="mtype-tab" data-m="alphago">AlphaGo / hry</button>
+      <button class="mtype-tab" data-m="spam">Spam filtr</button>
+    </div>
+
+    <div class="mtype-panel" id="mtype-panel"></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Proč Claude a ChatGPT mluví jinak</h2>
+    <p class="section-lead">
+      Oba mají podobnou architekturu (transformer), oba jsou pre-trénované na podobném korpusu (velká část otevřeného internetu). Rozdíl, který cítíte jako uživatel, vzniká hlavně ve fázi <strong>RLHF</strong>: kdo modelu řekl, co je „dobrá odpověď". RLHF je „kulturní DNA" modelu.
+    </p>
+
+    <div class="rlhf-compare">
+      <div class="rlhf-card anthropic">
+        <div class="ctitle">Claude</div>
+        <div class="csub">Anthropic · constitutional AI</div>
+        <ul>
+          <li>Anotátoři pracují podle veřejné <em>Constitution</em> (sada principů, co model má dělat a nedělat)</li>
+          <li>Důraz na bezpečnost, vyhýbání se přehnaným tvrzením, přiznání nejistoty</li>
+          <li>Někdy explicitní formulace: „Toto bych si nedovolil tvrdit s jistotou, protože..."</li>
+          <li>Méně náchylný k „people-pleasing" lichocení uživateli</li>
+          <li>Helpful, harmless, honest: tři pilíře tréninkové filozofie</li>
+        </ul>
+      </div>
+      <div class="rlhf-card openai">
+        <div class="ctitle">ChatGPT</div>
+        <div class="csub">OpenAI · human feedback</div>
+        <ul>
+          <li>Anotátoři pracují podle vnitřních OpenAI guidelines (které jsou částečně zveřejněné v Model Spec)</li>
+          <li>Důraz na užitečnost, plynulost, schopnost dokončit úkol</li>
+          <li>Historicky náchylnější ke „glazing" (přehnaná souhlasnost); OpenAI tento problém aktivně řeší</li>
+          <li>Více kreativnější ve volném tónu, méně formálních upozornění</li>
+          <li>Helpful, truthful, safe (formulováno jinak než Anthropic)</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top: 18px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 880px;">
+      <strong>Co si z toho odnést pro vlastní použití:</strong> když model „mluví jinak", je to obvykle stopa po jeho RLHF tréninku. Pokud potřebujete <strong>druhou verzi</strong> textu, jiný tón nebo jinou strukturu, dává smysl zeptat se více modelů; odlišný RLHF vám tu nabídne reálnou alternativu. <strong>Pozor ale: k&nbsp;ověřování informací to neslouží.</strong> Modely sdílejí pre-training data, takže pokud se v&nbsp;těchto datech vyskytuje nepřesnost nebo mezera, omyl se objeví u&nbsp;všech najednou. Souhlas dvou modelů není potvrzení faktu, je to jen společná stopa po stejných trénovacích datech. Ověřování patří k&nbsp;primárním zdrojům, ne k&nbsp;druhému chatbotovi.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Pokračování: kde modely najít a jak je zkusit</h2>
+    <p class="section-lead">
+      Teorií o tom, jak modely vznikají, končíme. Praktickou stranou (kde tyto modely najdete, jak je zkusit živě v&nbsp;prohlížeči, jaké jsou možnosti od cloudu po lokální provoz) se zabývá samostatný materiál <a href="2.5-svet-modelu.html"><strong>Svět modelů: tři cesty k&nbsp;AI</strong></a>. Najdete tam Hugging Face Hub, šest doporučených Spaces a srovnání tří cest (closed cloud, open cloud, lokální provoz).
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si z toho odnést</h2>
+    <p class="section-lead">
+      Čtyři důsledky pro každodenní úvahy o AI.
+    </p>
+
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Většina znalostí přichází z pre-trainingu, většina chování z RLHF.</strong> Když AI dává plynulou nesmyslnou odpověď, je to obvykle RLHF („buď užitečný"), který přebíjí honest („přiznej, že nevíš").
+      </div>
+      <div class="takeaway-card">
+        <strong>Cutoff knowledge = konec pre-trainingu.</strong> Co se ve světě stalo po cutoffu, model nezná, pokud mu to neřeknete nebo nemá web search. RLHF dolaďování tuto hranici neposouvá.
+      </div>
+      <div class="takeaway-card">
+        <strong>Druhý názor ≠ stejný prompt znovu.</strong> Stejný model dá podobnou odpověď. Pro skutečný druhý názor použijte jiný model (Claude vs ChatGPT vs Gemini); mají různé RLHF, různé pohledy.
+      </div>
+      <div class="takeaway-card">
+        <strong>Specializovaný model může překonat frontier LLM v&nbsp;úzkém úkolu.</strong> Trénink na cílených datech (například VetBERT na 15 milionech veterinárních záznamů) udělá model přesnější v&nbsp;doméně, byť mnohem menší a&nbsp;slabší v&nbsp;obecných úlohách. Kde takové modely hledat, ukazuje navazující materiál <a href="2.5-svet-modelu.html">Svět modelů</a>.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   4 APPROACHES DATA
+   ────────────────────────────────────────────────────────── */
+
+const APPROACHES = {
+  unsupervised: {
+    name: "Unsupervised learning",
+    cz: "Učení bez učitele",
+    desc: "Model dostane velkou hromadu nezpracovaných dat a hledá v nich vzorce sám. Nikdo mu neříká, co je správně. Pomocí statistik objevuje, co je obvyklé a co výjimečné.",
+    meta: {
+      "Data označená": "Ne (žádné anotace)",
+      "Role člověka": "Jen příprava dat (sběr, čištění)",
+      "Cíl": "Najít strukturu, vzorce, distribuce",
+      "Jak měříme úspěch": "Schopnost rekonstruovat / predikovat data"
+    },
+    example: "<strong>Pre-training LLM:</strong> miliardy textů z webu, model se učí predikovat další token. Nikdo neoznačuje, který token je „správný”; každý token v reálném textu je jeho vlastní cíl."
+  },
+  supervised: {
+    name: "Supervised learning",
+    cz: "Učení s učitelem",
+    desc: "Pro každý vstup model dostane správnou odpověď. Učí se vstup → výstup mapování tak, aby pro nové vstupy dával stejně dobré odpovědi.",
+    meta: {
+      "Data označená": "Ano (člověk každý záznam označil)",
+      "Role člověka": "Anotace dat předem (často hodně práce)",
+      "Cíl": "Naučit se predikovat anotovaný výstup",
+      "Jak měříme úspěch": "Přesnost na testovacích datech"
+    },
+    example: "<strong>Klasifikátor obrázků:</strong> milion fotek, ke každé ručně přiřazený label („kočka”, „pes”, „auto”). Model se učí mapování obraz → label. Klasický příklad je ImageNet dataset."
+  },
+  rl: {
+    name: "Reinforcement Learning",
+    cz: "Učení posilováním",
+    desc: "Model („agent”) zkouší různé akce v nějakém prostředí a po každé dostane jednoduchý signál: <strong>+1 (uspěl)</strong> nebo <strong>−1 (selhal)</strong>. Cíl: objevit postup, který tento součet dlouhodobě maximalizuje. Nikdo modelu neřekne, jak má jednat; musí to najít sám, milionkrát.",
+    meta: {
+      "Data označená": "Ne (žádné anotace)",
+      "Role člověka": "Pouze před tréninkem: rozhodne, co se má počítat jako úspěch (například „dáš mat = +1”). Pak ustoupí. Během tréninku člověk do procesu nezasahuje.",
+      "Cíl": "Najít strategii, která maximalizuje odměnu",
+      "Jak měříme úspěch": "Kolik bodů model získává v daném prostředí"
+    },
+    example: "<strong>AlphaGo:</strong> hraje milióny partií Go sám proti sobě. Člověk před tréninkem řekl jen jedno: „výhra = +1, prohra = −1”. Pak model po milionech her objevil strategie, které lidský hráč nedokázal vymyslet.<br><br><strong>Stejný princip dnes pohání i&nbsp;LLM:</strong> tzv. reasoning modely (Claude s&nbsp;thinking módem, GPT-5, Gemini 2.5 Pro thinking) dostávají odměnu za <em>správné řešení matematické nebo logické úlohy</em>. Model si zkusí různé postupy uvažování; ty, které vedou ke správné odpovědi, se posílí, ostatní ne. Po milionech takových pokusů se naučí <em>myslet krok za krokem</em>, ne jen plynule mluvit. Proto v matematice najednou skočí o desítky procentních bodů. Souvisí s&nbsp;RLHF v&nbsp;sousední záložce, ale liší se v&nbsp;tom, kdo dává odměnu: tam člověk, zde objektivně ověřitelná správnost."
+  },
+  rlhf: {
+    name: "RL from Human Feedback (RLHF)",
+    cz: "Učení s lidskou zpětnou vazbou",
+    desc: "Speciální varianta RL, kde odměnu nedává prostředí, ale lidé. Pro každý výstup modelu lidé říkají „tento je lepší než ten”. Z těchto preferencí se model učí, co je „dobrá” odpověď podle lidských kritérií.",
+    meta: {
+      "Data označená": "Ne přímo (lidé hodnotí, porovnávají)",
+      "Role člověka": "Aktivní zapojení během tréninku (anotátoři)",
+      "Cíl": "Sladit chování modelu s lidskými preferencemi",
+      "Jak měříme úspěch": "Win-rate proti baseline + lidské hodnocení"
+    },
+    example: "<strong>Finální vrstva tréninku LLM:</strong> Claude i ChatGPT vygenerují 4 verze odpovědi, anotátor je seřadí. Po milionech takových porovnání model „ví”, jaké odpovědi lidé preferují. <em>To je důvod, proč zní jako asistent, ne jako sběratel textu.</em>"
+  }
+};
+
+const appPicker = document.getElementById('app-picker');
+const appDetail = document.getElementById('app-detail');
+
+function renderApproach(key) {
+  const a = APPROACHES[key];
+  if (!a) return;
+  const metaHtml = Object.entries(a.meta).map(([k, v]) => `
+    <li><span class="meta-key">${k}</span><span class="meta-val">${v}</span></li>
+  `).join('');
+  appDetail.innerHTML = `
+    <div>
+      <h3>${a.name}</h3>
+      <p style="font-size: 12.5px; color: var(--muted); font-style: italic; margin-bottom: 14px;">${a.cz}</p>
+      <p>${a.desc}</p>
+      <ul class="meta-list">${metaHtml}</ul>
+    </div>
+    <div>
+      <div class="example-box">${a.example}</div>
+    </div>
+  `;
+}
+
+appPicker.addEventListener('click', (e) => {
+  const btn = e.target.closest('.app-btn');
+  if (!btn) return;
+  appPicker.querySelectorAll('.app-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderApproach(btn.dataset.app);
+});
+
+renderApproach('unsupervised');
+
+/* ──────────────────────────────────────────────────────────
+   MODEL TYPES DATA
+   ────────────────────────────────────────────────────────── */
+
+const MTYPES = {
+  llm: {
+    name: "Velký jazykový model (LLM)",
+    task: "Generovat text na základě textového promptu",
+    desc: "Pipeline pre-training → supervised fine-tuning → RLHF. Pre-training na biliónech tokenů z webu, knih a kódu. SFT na desítkách tisíc ručně psaných příkladů. RLHF na milionech lidských porovnávacích hodnocení.",
+    meta: {
+      "Architektura": "Transformer",
+      "Trénovací data": "Texty (web, knihy, kód, fóra)",
+      "Typ učení": "Unsupervised → supervised → RLHF",
+      "Velikost": "Stovky miliard parametrů",
+      "Cena tréninku": "Desítky až stovky milionů $"
+    },
+    examples: "Konkrétní modely: <strong>Claude Opus 4.7, GPT-5, Gemini 2.5, Llama 4, Mistral Large, Qwen 3.</strong> Některé jsou open-source (Llama, Mistral, Qwen), některé closed (Claude, GPT)."
+  },
+  classifier: {
+    name: "Klasifikátor obrázků (CNN)",
+    task: "Pro daný obrázek vrátit kategorii (label)",
+    desc: "Čistě supervised learning. Trénovací set: miliony obrázků, každý s ručně přiřazeným labelem. Model (typicky Convolutional Neural Network) se učí mapování obraz → kategorie. Žádný RLHF, žádné pre-training na nezačnačených datech.",
+    meta: {
+      "Architektura": "CNN, Vision Transformer",
+      "Trénovací data": "Obrázky s labely (ImageNet, COCO)",
+      "Typ učení": "Supervised",
+      "Velikost": "Miliony až desítky milionů parametrů",
+      "Cena tréninku": "Tisíce až desítky tisíc $"
+    },
+    examples: "Konkrétní modely: <strong>ResNet, EfficientNet, YOLO, MediaPipe</strong>. Aplikace: rozpoznávání obličejů na telefonu, detekce dopravních značek, lékařské zobrazování (rentgen, MRI), kontrola kvality ve výrobě."
+  },
+  diffusion: {
+    name: "Diffusion model (generátor obrázků)",
+    task: "Vygenerovat obrázek na základě textového popisu",
+    desc: "Unikátní tréninková logika: model se učí postupně odstraňovat šum z obrazu. Pre-trénovaný na párech (obrázek, popis). Učení: vezme čistý obrázek, postupně do něj přidává šum, učí se zpětný proces. V generaci pak začne s čistým šumem a krok po kroku ho mění v obraz podle textu.",
+    meta: {
+      "Architektura": "U-Net + cross-attention na text",
+      "Trénovací data": "Páry (obrázek, popis); LAION, internal",
+      "Typ učení": "Self-supervised (denoising)",
+      "Velikost": "Miliardy parametrů",
+      "Cena tréninku": "Miliony $"
+    },
+    examples: "Konkrétní modely: <strong>Stable Diffusion 3, DALL-E 3, Midjourney, Flux, Imagen 3</strong>. Diffusion modely jsou tím, čím LLM je text: dominantní paradigma generování obrázků poslední roky."
+  },
+  alphago: {
+    name: "AlphaGo / herní AI",
+    task: "Hrát hru tak, aby vyhrála",
+    desc: "Pure reinforcement learning. AlphaGo Zero začal s nulovou znalostí Go, naučil se hrát čistě self-play (sám proti sobě miliony her). Odměna: výhra = +1, prohra = -1. Po milionech her objevil strategie, které lidský hráč po staletí nepoužíval.",
+    meta: {
+      "Architektura": "Deep neural net + Monte Carlo tree search",
+      "Trénovací data": "Žádná lidská, jen vlastní hry",
+      "Typ učení": "Reinforcement learning (self-play)",
+      "Velikost": "Desítky milionů parametrů",
+      "Cena tréninku": "Miliony $ (specialized hardware)"
+    },
+    examples: "Konkrétní systémy: <strong>AlphaGo, AlphaZero, MuZero (DeepMind); Pluribus (poker, Facebook), OpenAI Five (Dota 2)</strong>. Šachové enginy nové generace (Leela Chess Zero) používají stejný princip."
+  },
+  spam: {
+    name: "Spam filtr",
+    task: "Pro daný e-mail rozhodnout: spam nebo ne-spam",
+    desc: "Klasická supervised learning úloha. Trénovací data: miliony e-mailů, každý označený uživateli jako spam nebo ham (legitimní). Tradiční algoritmy: Naive Bayes, SVM, rozhodovací stromy. Moderní filtry: kombinace ML modelů a pravidel.",
+    meta: {
+      "Architektura": "Naive Bayes, SVM, decision trees, někdy neural net",
+      "Trénovací data": "Anotované e-maily (spam / ham)",
+      "Typ učení": "Supervised",
+      "Velikost": "Tisíce až miliony parametrů",
+      "Cena tréninku": "Hodiny na běžném serveru"
+    },
+    examples: "Aplikace: <strong>Gmail, Outlook, Apple Mail</strong>. Také: detekce podvodných transakcí, detekce malware, klasifikace tickets na zákaznické podpoře. Spam filtr je „dospělý” use-case ML: funguje desítky let a tiše."
+  }
+};
+
+const mtypeTabs = document.getElementById('mtype-tabs');
+const mtypePanel = document.getElementById('mtype-panel');
+
+function renderMtype(key) {
+  const m = MTYPES[key];
+  if (!m) return;
+  const metaHtml = Object.entries(m.meta).map(([k, v]) => `
+    <li><span class="key">${k}</span><span class="val">${v}</span></li>
+  `).join('');
+  mtypePanel.innerHTML = `
+    <div>
+      <h3>${m.name}</h3>
+      <div class="mtype-task">${m.task}</div>
+      <p>${m.desc}</p>
+      <ul class="mtype-list">${metaHtml}</ul>
+    </div>
+    <div>
+      <div class="mtype-examples">${m.examples}</div>
+    </div>
+  `;
+}
+
+mtypeTabs.addEventListener('click', (e) => {
+  const btn = e.target.closest('.mtype-tab');
+  if (!btn) return;
+  mtypeTabs.querySelectorAll('.mtype-tab').forEach(b => b.classList.toggle('active', b === btn));
+  renderMtype(btn.dataset.m);
+});
+
+renderMtype('llm');
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

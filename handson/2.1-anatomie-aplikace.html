@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Anatomie AI aplikace – model vs. systém | aplikace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #2c5e6e;
+    --accent-hover: #1f4a58;
+    --accent-soft: #e0eaed;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero {
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.6px;
+    margin-bottom: 18px;
+    max-width: 880px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 760px;
+  }
+  .definition {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    font-size: 14.5px;
+    color: var(--ink);
+    max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 820px;
+    margin-bottom: 28px;
+  }
+
+  section { margin-bottom: 56px; }
+
+  /* ── TWO-LAYER (model vs. systém) ─────────────────────── */
+  .two-layer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 16px;
+  }
+  .layer-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--line-strong);
+    padding: 22px 24px;
+  }
+  .layer-card.model-card { border-top-color: var(--accent); }
+  .layer-card.system-card { border-top-color: var(--warm); }
+  .layer-card .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .layer-card.model-card .badge { color: var(--accent); }
+  .layer-card.system-card .badge { color: var(--warm); }
+  .layer-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .layer-card p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .layer-card ul {
+    list-style: none;
+    padding: 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .layer-card ul li {
+    padding: 5px 0 5px 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .layer-card ul li::before {
+    content: "›";
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  @media (max-width: 720px) {
+    .two-layer { grid-template-columns: 1fr; }
+  }
+
+  /* ── APP TABS ─────────────────────────────────────────── */
+  .app-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .app-tab {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 12px 22px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 500;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .app-tab:hover { color: var(--ink); }
+  .app-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── ANATOMY DIAGRAM ──────────────────────────────────── */
+  .anatomy {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 28px;
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .anatomy { grid-template-columns: 1fr; }
+  }
+  .anatomy-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .layer {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .layer:hover { border-color: var(--accent); background: var(--paper); }
+  .layer.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .layer-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .layer-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .layer.active .layer-tag { color: var(--accent); }
+
+  /* core layer (the model itself) is visually distinct */
+  .layer.is-core {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+  .layer.is-core .layer-title { color: white; }
+  .layer.is-core .layer-tag { color: rgba(255,255,255,0.65); }
+  .layer.is-core:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .layer.is-core.active {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .layer-detail {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+    min-height: 240px;
+  }
+  .layer-detail .detail-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .layer-detail h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .layer-detail p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+  .layer-detail .example {
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-top: 12px;
+    white-space: pre-wrap;
+  }
+  .layer-detail .example strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .layer-detail .meta-row {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line-strong);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .layer-detail .meta-row strong {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  /* ── SAME MODEL, DIFFERENT RESULTS ────────────────────── */
+  .compare-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 720px) {
+    .compare-two { grid-template-columns: 1fr; }
+  }
+  .compare-box {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+  }
+  .compare-box .ctitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .compare-box .cmodel {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .compare-box .cmodel strong { color: var(--ink-soft); }
+  .compare-box .coutput {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 14px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .prompt-bar {
+    background: var(--ink);
+    color: white;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+  }
+  .prompt-bar::before {
+    content: "Stejný prompt: ";
+    color: rgba(255,255,255,0.55);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-right: 8px;
+  }
+
+  /* ── SYSTEM TABLE ─────────────────────────────────────── */
+  .systable {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  .systable th, .systable td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--line);
+  }
+  .systable tr:last-child td { border-bottom: none; }
+  .systable th {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 12px;
+  }
+  .systable td:first-child {
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .systable .ex {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 12.5px;
+  }
+  .systable tr.is-llm td:first-child { color: var(--warm); }
+  .systable tr.is-llm { background: var(--warm-soft); }
+
+  /* ── TAKEAWAYS ────────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .takeaways { grid-template-columns: 1fr; }
+  }
+  .takeaway-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 18px 60px; }
+  }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ──────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <h1>AI nástroj je <em>systém</em>, ne jenom model</h1>
+    <p class="hero-subtitle">
+      Když napíšete dotaz do ChatGPT nebo Claude, neodpovídá vám samotný „model". Odpovídá vám celá aplikace: model uprostřed, kolem něj uživatelské rozhraní, systémový prompt, bezpečnostní filtry, nástroje a integrace. Tato vrstva určuje, co model uvidí a co ne. Proto stejný model v různých aplikacích dává jiné výsledky.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="1.1-paradigmata-ai.html">tři paradigmata</a> ze Setkání 1: víme, že současná AI je adaptivní systém. Teď se podíváme, co je <em>kolem modelu</em>, aby fungoval jako aplikace, se kterou se dá mluvit.
+    </p>
+    <div class="definition">
+      <strong>Model</strong> je jádro s matematickými výpočty (architektura plus parametry). <strong>Systém | aplikace</strong> je všechno kolem: rozhraní, pravidla, nástroje, integrace.
+    </div>
+    <p style="margin-top: 14px; font-size: 12.5px; color: var(--muted); font-style: italic; max-width: 760px;">
+      Některé příklady (zkrácené systémové prompty, ukázky odpovědí, srovnávací výstupy ChatGPT vs. Copilot) jsou ilustrativní pro pedagogické účely. Konkrétní licenční podmínky, kompozici modelů a aktuální dostupnost služeb vždy ověřte přímo u poskytovatele.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Dvě vrstvy, které se snadno zamění</h2>
+    <p class="section-lead">
+      Lidé běžně říkají „GPT-4 mi odpověděl" nebo „ChatGPT je hloupý". Obojí je nepřesné: GPT-4 je model, ChatGPT je aplikace. To, co vidíte v okně chatu, prošlo mnoha mezivrstvami, než se k vám dostalo.
+    </p>
+
+    <div class="two-layer">
+      <div class="layer-card model-card">
+        <span class="badge">Vrstva 1 · Jádro</span>
+        <h3>Model</h3>
+        <p>
+          Matematická konstrukce. Posloupnost výpočtů (architektura) s miliardami číselných parametrů (váhami), které vznikly trénováním. Sám o sobě neumí mluvit; umí pro daný vstup spočítat pravděpodobné pokračování.
+        </p>
+        <ul>
+          <li>Konkrétní příklady: GPT-5, Claude Opus 4.7, Gemini 2.5, Llama 3</li>
+          <li>Typ architektury: transformer, CNN, diffusion</li>
+          <li>Vyvinutý a trénovaný firmou nebo výzkumnou skupinou</li>
+          <li>Volně přístupný API i pro nezávislé aplikace</li>
+        </ul>
+      </div>
+
+      <div class="layer-card system-card">
+        <span class="badge">Vrstva 2 · Obal</span>
+        <h3>Systém | aplikace</h3>
+        <p>
+          Celá služba, se kterou interagujete jako uživatel. Obsahuje model, ale taky všechno ostatní, co určuje, jak se model chová. Stejný model v různých systémech se chová různě, protože ho různé systémy „obalují" jinak.
+        </p>
+        <ul>
+          <li>Uživatelské rozhraní (chat, dokumenty, hlasový vstup)</li>
+          <li>Systémový prompt (skryté instrukce před vaším dotazem)</li>
+          <li>Bezpečnostní filtry a omezení</li>
+          <li>Nástroje (vyhledávání, soubory, generování obrázků)</li>
+          <li>Integrace na externí systémy (kalendář, Office, MCP)</li>
+          <li>Paměť, historie, personalizace</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Anatomie tří aplikací</h2>
+    <p class="section-lead">
+      Vyberte si jednu ze tří nejrozšířenějších aplikací a podívejte se, z čeho se skládá. Klikněte na kteroukoliv vrstvu pro detail. Modelové jádro je tmavé, ostatní vrstvy jsou systémová „slupka".
+    </p>
+
+    <div class="app-tabs" id="app-tabs">
+      <button class="app-tab active" data-app="claude">Claude.ai</button>
+      <button class="app-tab" data-app="chatgpt">ChatGPT</button>
+      <button class="app-tab" data-app="copilot">Microsoft Copilot</button>
+    </div>
+
+    <div class="anatomy">
+      <div class="anatomy-stack" id="anatomy-stack"></div>
+      <div class="layer-detail" id="layer-detail"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Stejný model, různé výsledky</h2>
+    <p class="section-lead">
+      Microsoft Copilot a ChatGPT používají model GPT-4 (resp. GPT-4o) od OpenAI. Přesto na stejný dotaz odpovídají odlišně. Důvod: nejsou to dva modely, jsou to dva systémy s různým obalem.
+    </p>
+
+    <div class="prompt-bar">„Jak se mám teď v 23:00 cítit, když nemám hotový report?"</div>
+
+    <div class="compare-two">
+      <div class="compare-box">
+        <div class="ctitle">ChatGPT (OpenAI)</div>
+        <div class="cmodel">Model: <strong>GPT-4o</strong> · systémový prompt OpenAI · web search dostupný</div>
+        <div class="coutput">
+          „Je to úplně normální pocit. Když končíte tak pozdě a něco vás tlačí, tělo i hlava reagují. Pojďme si rychle ujasnit, co je hotové a co ne, abyste věděl/a, jestli to opravdu musí být dnes nebo počká..."
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="ctitle">Microsoft Copilot (M365)</div>
+        <div class="cmodel">Model: <strong>GPT-4o</strong> · systémový prompt Microsoft · Office integrace · stručnější styl</div>
+        <div class="coutput">
+          „Pomohu vám report dokončit. Vidím ve vašem OneDrive soubor Report_Q1_draft.docx (poslední úprava 18:42). Chcete, abych shrnul, co v něm chybí oproti šabloně?"
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 760px;">
+      Ilustrativní příklad. Stejné jádro, různé instrukce ze systémové vrstvy, různé dostupné nástroje, jiný výsledek. Když se AI „chová jinak" v jiné aplikaci, není to změna inteligence; je to změna obalu.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">AI jako komplexní systém</h2>
+    <p class="section-lead">
+      Ne všechno, čemu se říká „AI", funguje stejně. Tato tabulka rozkládá různé typy AI systémů podle čtyř hledisek: jak reprezentují znalost, jak ji zpracovávají, jaký dávají výstup. LLM (ChatGPT, Claude, Gemini) jsou jen jeden z řádků; rozhodovací stromy a expertní systémy se stále používají v bankách, pojišťovnách i nemocnicích.
+    </p>
+
+    <table class="systable">
+      <thead>
+        <tr>
+          <th>Systém</th>
+          <th>Reprezentace</th>
+          <th>Zpracování</th>
+          <th>Výstup</th>
+          <th>Příklad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Běžný program</td>
+          <td>–</td>
+          <td>–</td>
+          <td>deterministický</td>
+          <td class="ex">kalkulačka, účetní software</td>
+        </tr>
+        <tr>
+          <td>GOFAI / expertní systém</td>
+          <td>symbolická</td>
+          <td>sémantické (člověkem definované)</td>
+          <td>deterministický</td>
+          <td class="ex">diagnostický systém, šachový engine</td>
+        </tr>
+        <tr>
+          <td>Rozhodovací strom</td>
+          <td>symbolická</td>
+          <td>syntaktické</td>
+          <td>deterministický</td>
+          <td class="ex">schvalování úvěrů, triáž</td>
+        </tr>
+        <tr>
+          <td>Bayesovská síť</td>
+          <td>symbolická</td>
+          <td>sémantické</td>
+          <td>probabilistický</td>
+          <td class="ex">lékařská diagnostika, risk analýza</td>
+        </tr>
+        <tr>
+          <td>Klasifikátor (neuronová síť)</td>
+          <td>subsymbolická</td>
+          <td>syntaktické</td>
+          <td>probabilistický</td>
+          <td class="ex">rozpoznávání obličejů, spam filtr</td>
+        </tr>
+        <tr class="is-llm">
+          <td>LLM</td>
+          <td>subsymbolická</td>
+          <td>syntaktické</td>
+          <td>probabilistický</td>
+          <td class="ex">Claude, ChatGPT, Gemini</td>
+        </tr>
+        <tr>
+          <td>Neurosymbolická AI</td>
+          <td>obojí</td>
+          <td>snaží se o sémantické</td>
+          <td>různé</td>
+          <td class="ex">výzkumné systémy kombinující učení s logickým usuzováním</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si z toho odnést</h2>
+    <p class="section-lead">
+      Tři důsledky, které se hodí mít na paměti při každodenním používání.
+    </p>
+
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Když AI „selže", podívejte se na obal.</strong> Často není problém v modelu, ale v systémovém promptu, filtru, nebo v tom, že aplikace neměla přístup k potřebnému nástroji (vyhledávání, soubory, kalendář).
+      </div>
+      <div class="takeaway-card">
+        <strong>Stejný model, jiný výsledek.</strong> Když porovnáváte ChatGPT, Claude a Copilot, neporovnáváte modely. Porovnáváte aplikace. Volba závisí na tom, co potřebujete: dlouhý kontext, integraci s Office, hlasový vstup, soukromí.
+      </div>
+      <div class="takeaway-card">
+        <strong>Verze modelu se mění.</strong> Aplikace s modelem mění bez toho, abyste o tom věděl/a. Co fungovalo minulý týden, dnes může fungovat trochu jinak. Nejsou to chyby; jsou to upgrady „za scénou".
+      </div>
+      <div class="takeaway-card">
+        <strong>Ne všechno, co umí AI, umí každá aplikace.</strong> Jedna umí číst soubory, jiná ne. Jedna má přístup na web, druhá ne. Než řeknete „tohle AI nezvládne", zkontrolujte, jestli to neumí jiná aplikace s tím samým (nebo srovnatelným) modelem.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   ANATOMY DATA: 3 applications, each with layered structure
+   ────────────────────────────────────────────────────────── */
+
+const APPS = {
+  claude: {
+    name: "Claude.ai",
+    company: "Anthropic",
+    layers: [
+      {
+        id: "ui",
+        tag: "UI",
+        title: "Uživatelské rozhraní",
+        h4: "Co vidíte v okně",
+        desc: "Webový chat, mobilní aplikace, Claude Code v terminálu, rozšíření do prohlížeče. Pro každý kanál může být UI jiné, ale model uvnitř je stejný.",
+        example: "Web: claude.ai · Desktop: claude-app · CLI: claude code\nKaždý kanál má jinou interakci, ale stejný model.",
+        meta: { Kanály: "Web, desktop, mobil, CLI", Jazyk: "Více než 100 jazyků" }
+      },
+      {
+        id: "memory",
+        tag: "PAMĚŤ",
+        title: "Paměť · projekty · historie",
+        h4: "Kontext mimo aktuální chat",
+        desc: "Claude si pamatuje konverzace v rámci projektu. Projekty umožňují přidat dokumenty a instrukce, které platí pro všechny chaty v projektu. Bez projektu je každý chat čistý list.",
+        example: "Projekt „Hodnotící zprávy 2026”:\n• sdílené dokumenty (šablona, glosář)\n• vlastní instrukce („používej formální tón”)\n• historie všech chatů v projektu",
+        meta: { Persistence: "Pouze v rámci projektu", Sdílení: "Tým může sdílet projekt" }
+      },
+      {
+        id: "sysprompt",
+        tag: "SYSTEM PROMPT",
+        title: "Systémový prompt",
+        h4: "Skryté instrukce před vaším dotazem",
+        desc: "Před tím, než model uvidí váš dotaz, dostane sadu instrukcí od Anthropic: kdo je, jak má reagovat, čeho se vyvarovat. Vy tento text nevidíte; je vždy přítomný. Pokud Claude odmítne odpověď nebo formuluje něco specificky, často je důvod tady.",
+        example: "(Zjednodušený výňatek)\nYou are Claude, made by Anthropic.\nThe current date is...\nBe helpful, harmless, honest.\nWhen uncertain, say so.",
+        meta: { Délka: "Tisíce slov", Aktualizace: "Mění se s každou verzí" }
+      },
+      {
+        id: "filters",
+        tag: "FILTRY",
+        title: "Bezpečnostní filtry",
+        h4: "Pravidla pro to, na co nesmí odpovědět",
+        desc: "Vrstvy, které kontrolují vstup i výstup. Anthropic používá přístup „constitutional AI”: model je trénován podle sady zásad, které dodržuje. Citlivá témata (zdraví, právo, sebepoškození) procházejí dodatečnou kontrolou.",
+        example: "Vstup → filtr (obsahuje něco nebezpečného?) →\nmodel → filtr (je odpověď v pořádku?) → vám",
+        meta: { "Citlivá témata": "Eskalace na bezpečnější odpověď", Zneužití: "Odmítnutí + vysvětlení" }
+      },
+      {
+        id: "tools",
+        tag: "NÁSTROJE",
+        title: "Nástroje",
+        h4: "Co kromě generování textu Claude umí",
+        desc: "Model sám pouze generuje text. Aby mohl prohledat web, otevřít soubor nebo spustit kód, musí volat externí nástroje. Tato vrstva určuje, jaké nástroje má k dispozici a kdy je smí použít.",
+        example: "Dostupné nástroje (v claude.ai):\n• Web search (vyhledávání na internetu)\n• File upload (čtení nahraných souborů)\n• Artifacts (živá náhleda kódu/textu)\n• Computer use (klikání v prohlížeči)",
+        meta: { Nutnost: "Bez nástrojů žádný internet, žádné soubory", MCP: "Otevřený protokol pro připojení dalších" }
+      },
+      {
+        id: "model",
+        tag: "JÁDRO · MODEL",
+        title: "Claude Opus 4.7 / Sonnet 4.6",
+        h4: "Matematický model uvnitř",
+        desc: "Vlastní jazykový model, který pro daný vstup generuje pravděpodobné pokračování. Architektura: transformer s attention mechanismem. Parametry: řádově stovky miliard vah (Anthropic přesné číslo nezveřejňuje), fixované po trénování. Sám nemá paměť, nepřipojuje se na internet, neumí číst soubory; jenom generuje text.",
+        example: "Vstup: tokeny (slova, kousky slov)\nVýstup: pravděpodobnostní rozdělení dalšího tokenu\n(Vybere se jeden, přidá se do vstupu, opakuje se.)",
+        meta: { Architektura: "Transformer", "Trénovací data": "Veřejný internet + kurátorované zdroje", "Knowledge cutoff": "leden 2026 (Opus 4.7)" },
+        isCore: true
+      },
+      {
+        id: "infra",
+        tag: "INFRASTRUKTURA",
+        title: "Servery, GPU, datacentra",
+        h4: "Kde model fyzicky běží",
+        desc: "Model nevoláte na svém počítači. Vaše dotaz cestuje na servery Anthropic (resp. cloudového partnera jako AWS), tam se zpracuje na GPU (graphics processing unit), odpověď cestuje zpátky. Vaše dotaz tedy „opouští” váš počítač. Detaily v licenčních podmínkách.",
+        example: "Váš počítač → internet → AWS US-West (datacentrum) →\nGPU cluster (Trainium nebo NVIDIA H100) →\ngenerace odpovědi → zpátky k vám",
+        meta: { "Kde běží": "AWS, Google Cloud (oblast: USA, EU)", Latence: "Stovky milisekund až sekundy" }
+      }
+    ]
+  },
+  chatgpt: {
+    name: "ChatGPT",
+    company: "OpenAI",
+    layers: [
+      {
+        id: "ui",
+        tag: "UI",
+        title: "Uživatelské rozhraní",
+        h4: "Co vidíte v okně",
+        desc: "Chat na chat.openai.com nebo v mobilní aplikaci. Hlasový režim s mikrofonem. Custom GPTs umožňují udělat vlastní variantu pro konkrétní úlohy.",
+        example: "Web: chat.openai.com · Mobil: ChatGPT app\nDesktop: ChatGPT for macOS/Windows\nHlas: ChatGPT Advanced Voice",
+        meta: { Kanály: "Web, mobil, desktop, hlas", "Custom GPTs": "Sdílené varianty s vlastním systémovým promptem" }
+      },
+      {
+        id: "memory",
+        tag: "PAMĚŤ",
+        title: "Paměť · vlákna",
+        h4: "Kontext napříč chaty",
+        desc: "ChatGPT má funkci „Memory”, která si pamatuje vaše preference napříč všemi chaty. Můžete ji zapnout/vypnout v nastavení. Bez ní je každý chat oddělený.",
+        example: "Memory (ukázka uložených faktů):\n• Pracuje v regulatorní oblasti\n• Preferuje formální češtinu\n• Vždy chce číselné příklady",
+        meta: { "Paměť": "Volitelná, lze kdykoliv smazat", Vlákna: "Historie chatů zůstává" }
+      },
+      {
+        id: "sysprompt",
+        tag: "SYSTEM PROMPT",
+        title: "Systémový prompt",
+        h4: "Skryté instrukce před vaším dotazem",
+        desc: "OpenAI před každým dotazem přidává systémovou instrukci, která definuje chování ChatGPT. Mění se s každou verzí. Custom GPTs mají navíc vlastní systémový prompt nahoře.",
+        example: "(Zjednodušený výňatek)\nYou are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: ...\nCurrent date: ...\nUser is interacting with you...",
+        meta: { "Custom GPTs": "Mohou mít vlastní system prompt", Aktualizace: "OpenAI mění průběžně" }
+      },
+      {
+        id: "filters",
+        tag: "FILTRY",
+        title: "Content policy filtry",
+        h4: "Pravidla pro to, na co neodpoví",
+        desc: "OpenAI Content Policy: zakázané jsou témata jako násilí, sebepoškození, nelegální aktivita, sexuální obsah dětí. ChatGPT některé dotazy odmítne, jiné zodpoví, ale s upozorněním (zdraví, právo).",
+        example: "Vstup → moderation API (skóre toxicity) →\nmodel → výstupní filtr →\nbuď odpověď, nebo zamítnutí typu: omlouvám se, s tímto nemohu pomoci.",
+        meta: { "Moderation API": "Veřejně dostupné samostatně", "Jailbreaky": "OpenAI aktivně opravuje" }
+      },
+      {
+        id: "tools",
+        tag: "NÁSTROJE",
+        title: "Nástroje",
+        h4: "Co kromě generování textu ChatGPT umí",
+        desc: "ChatGPT má nejširší škálu integrovaných nástrojů: vyhledávání na webu, čtení souborů, generování obrázků (DALL-E), spouštění Pythonu (Code Interpreter), připojené aplikace přes Connectors.",
+        example: "Dostupné nástroje (Plus/Team/Enterprise):\n• Web browsing (vyhledávání)\n• File upload (PDF, Excel, obrázky)\n• DALL-E 3 (generování obrázků)\n• Code Interpreter (Python sandbox)\n• Connectors (Google Drive, GitHub...)",
+        meta: { Free: "Omezené nástroje", Plus: "Plný přístup ke všem", "Custom GPTs": "Mohou volat vlastní API" }
+      },
+      {
+        id: "model",
+        tag: "JÁDRO · MODEL",
+        title: "GPT-5 / GPT-4o / o3",
+        h4: "Matematický model uvnitř",
+        desc: "ChatGPT používá modely rodiny GPT. Aktuálně jsou v rotaci GPT-5 (nejnovější), GPT-4o (multimodální, rychlý), o3 (reasoning, „přemýšlí” před odpovědí). OpenAI je dynamicky střídá podle plánu, ceny a typu dotazu. Uživatel často neví, který model konkrétně odpovídá.",
+        example: "Vstup: tokeny\nVýstup: pravděpodobnostní rozdělení dalšího tokenu\n(Stejně jako Claude, ale s jinými vahami.)",
+        meta: { Architektura: "Transformer", Velikost: "Stovky miliard parametrů (přesné číslo OpenAI tají)", "Switch": "ChatGPT si vybírá model za vás" },
+        isCore: true
+      },
+      {
+        id: "infra",
+        tag: "INFRASTRUKTURA",
+        title: "Microsoft Azure datacentra",
+        h4: "Kde model fyzicky běží",
+        desc: "OpenAI běží primárně na Microsoft Azure (USA, EU, několik dalších regionů). Vaše dotazy cestují na Azure server, tam se zpracují na GPU, odpověď cestuje zpátky. Stejně jako u Claude data fyzicky opouštějí váš počítač.",
+        example: "Váš počítač → internet → Azure datacentrum (region) →\nNVIDIA H100/H200 GPU cluster →\ngenerace → zpátky k vám",
+        meta: { "Kde běží": "Azure (USA + EU regiony)", "Enterprise": "Lze vybrat region" }
+      }
+    ]
+  },
+  copilot: {
+    name: "Microsoft Copilot",
+    company: "Microsoft (s modelem od OpenAI)",
+    layers: [
+      {
+        id: "ui",
+        tag: "UI",
+        title: "Uživatelské rozhraní",
+        h4: "Kde Copilot žije",
+        desc: "Copilot není jedna aplikace; je to rodina aplikací integrovaných do produktů Microsoftu. Copilot v Office (Word, Excel, Outlook), v Teams, ve Windows, na copilot.microsoft.com a v Microsoft 365 Copilot Chat.",
+        example: "Word: pomáhá s psaním v dokumentu\nExcel: analyzuje data v tabulce\nTeams: sumarizuje schůzku\nOutlook: navrhuje e-maily\nM365 Chat: ptáte se napříč všemi dokumenty firmy",
+        meta: { Kontext: "Vždy uvnitř konkrétní aplikace", Vstup: "Aplikace ví, na čem pracujete" }
+      },
+      {
+        id: "memory",
+        tag: "DATA",
+        title: "Microsoft Graph",
+        h4: "Přístup k vašim firemním datům",
+        desc: "Klíčová odlišnost Copilot oproti ChatGPT a Claude: má přístup k vašim souborům v OneDrive, e-mailům v Outlook, schůzkám v kalendáři, zprávám v Teams (pokud jste přihlášeni do firemního Microsoft 365). Pracuje s vaším skutečným kontextem.",
+        example: "Otázka: „Co jsme na poslední schůzce o registraci probrali?”\nCopilot najde v Teams záznam schůzky → najde návazné e-maily v Outlook → spojí s draftem v Word → odpoví.",
+        meta: { Bezpečnost: "Respektuje Microsoft 365 oprávnění", Soukromí: "Data zůstávají v rámci Microsoft 365 tenantu" }
+      },
+      {
+        id: "sysprompt",
+        tag: "SYSTEM PROMPT",
+        title: "Systémový prompt Microsoft",
+        h4: "Skryté instrukce před vaším dotazem",
+        desc: "Microsoft přidává vlastní systémové instrukce: bezpečnější tón, větší stručnost, odkaz na zdroje, integrace s Office. Proto stejný model GPT-4o v Copilot a v ChatGPT „píše jinak”.",
+        example: "(Zjednodušený výňatek)\nYou are Microsoft Copilot. Be concise. Cite sources.\nWhen working with documents, refer to them by file name.\nDo not generate harmful content...",
+        meta: { Tón: "Stručnější, méně rozvitý než ChatGPT", Cite: "Odkazy na zdroje povinné" }
+      },
+      {
+        id: "filters",
+        tag: "FILTRY",
+        title: "Microsoft Responsible AI",
+        h4: "Pravidla podle Microsoft AI Principles",
+        desc: "Microsoft přidává vlastní vrstvu „Responsible AI”: filtry proti generování dezinformací, předpojatosti, ochranu duševního vlastnictví. Pro Enterprise je dostupné Customer Copyright Commitment (Microsoft převezme právní odpovědnost za výstup).",
+        example: "Vstup → Azure Content Safety →\nGPT-4o (s Microsoft systémovým promptem) →\nvýstupní filtr → vám",
+        meta: { "Responsible AI": "Sada principů Microsoftu", "Customer Copyright Commitment": "Pro Enterprise zákazníky" }
+      },
+      {
+        id: "tools",
+        tag: "NÁSTROJE",
+        title: "Office integrace",
+        h4: "Co Copilot umí navíc",
+        desc: "Hlavní síla Copilot: nemusíte ho „učit” o svých datech, sám se napojí na vaše Office aplikace. Umí vyhledávat ve vašich souborech, mazat e-maily, vytvářet schůzky, generovat slidy z dokumentu. Vyžaduje to ale, abyste byl/a přihlášen/a do M365 účtu.",
+        example: "Dostupné akce v Copilot for M365:\n• Číst dokumenty v OneDrive/SharePoint\n• Posílat e-maily v Outlook\n• Vytvářet schůzky\n• Sumarizovat Teams meetings\n• Generovat slides v PowerPoint\n• Web search (Bing)",
+        meta: { "Předpoklad": "Microsoft 365 účet", "MCP": "Plánovaná podpora otevřeného protokolu" }
+      },
+      {
+        id: "model",
+        tag: "JÁDRO · MODEL",
+        title: "OpenAI modely (Azure OpenAI)",
+        h4: "Stejný model jako ChatGPT",
+        desc: "Copilot používá modely OpenAI (GPT-4o, GPT-5) přes Azure. Klíčový rozdíl oproti ChatGPT: Microsoft 365 data nejsou používána k trénování žádného z těchto modelů.",
+        example: "Stejné jádro jako ChatGPT.\nJiná vrstva: jiné výsledky.",
+        meta: { "Modely": "GPT-4o, GPT-5", "Trénování s vašimi daty": "Ne (Enterprise garance)" },
+        isCore: true
+      },
+      {
+        id: "infra",
+        tag: "INFRASTRUKTURA",
+        title: "Azure datacentra Microsoft",
+        h4: "Vlastní Azure cloud",
+        desc: "Microsoft 365 Copilot běží v Microsoft Azure datacentrech. Pro Enterprise zákazníky lze vybrat geografický region (EU pro evropské zákazníky). Data zůstávají v rámci Microsoft 365 tenantu zákazníka.",
+        example: "Vaše Office data → Microsoft Graph (váš tenant) →\nGPT-4o (na Azure OpenAI ve vybraném regionu) →\nzpátky do Office aplikace",
+        meta: { Region: "Volitelný (EU, USA, ...)", "Customer data": "Zůstává v M365 tenantu" }
+      }
+    ]
+  }
+};
+
+/* ──────────────────────────────────────────────────────────
+   RENDER LOGIC
+   ────────────────────────────────────────────────────────── */
+
+const appTabsEl = document.getElementById('app-tabs');
+const stackEl = document.getElementById('anatomy-stack');
+const detailEl = document.getElementById('layer-detail');
+
+let currentApp = 'claude';
+let currentLayer = null;
+
+function renderApp(appKey) {
+  const app = APPS[appKey];
+  stackEl.innerHTML = '';
+  app.layers.forEach(layer => {
+    const div = document.createElement('div');
+    div.className = 'layer' + (layer.isCore ? ' is-core' : '');
+    div.dataset.layer = layer.id;
+    div.innerHTML = `
+      <span class="layer-title">${layer.title}</span>
+      <span class="layer-tag">${layer.tag}</span>
+    `;
+    div.addEventListener('click', () => selectLayer(layer.id));
+    stackEl.appendChild(div);
+  });
+  // Default: select the core (model) layer
+  const coreLayer = app.layers.find(l => l.isCore) || app.layers[0];
+  selectLayer(coreLayer.id);
+}
+
+function selectLayer(layerId) {
+  currentLayer = layerId;
+  const app = APPS[currentApp];
+  const layer = app.layers.find(l => l.id === layerId);
+  if (!layer) return;
+
+  // Update active state in stack
+  stackEl.querySelectorAll('.layer').forEach(el => {
+    el.classList.toggle('active', el.dataset.layer === layerId);
+  });
+
+  // Render detail
+  let metaHtml = '';
+  if (layer.meta) {
+    const items = Object.entries(layer.meta).map(([k, v]) => `<span><strong>${k}:</strong> ${v}</span>`).join('');
+    metaHtml = `<div class="meta-row">${items}</div>`;
+  }
+
+  detailEl.innerHTML = `
+    <div class="detail-tag">${app.name} · ${layer.tag}</div>
+    <h4>${layer.h4}</h4>
+    <p>${layer.desc}</p>
+    ${layer.example ? `<div class="example">${layer.example.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</div>` : ''}
+    ${metaHtml}
+  `;
+}
+
+appTabsEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('.app-tab');
+  if (!btn) return;
+  appTabsEl.querySelectorAll('.app-tab').forEach(b => b.classList.toggle('active', b === btn));
+  currentApp = btn.dataset.app;
+  renderApp(currentApp);
+});
+
+renderApp('claude');
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>
