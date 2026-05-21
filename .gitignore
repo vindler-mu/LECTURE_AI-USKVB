@@ -1,0 +1,30 @@
+# Prezentace (binární PDF, nepatří do repa)
+handson/prezentace/
+*.pdf
+
+# Pracovní složky a koncepty
+*Nová složka*/
+**/draft/
+**/tmp/
+**/temp/
+*.draft.*
+*.tmp.*
+*.bak
+
+# OS metadata
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Citlivé / lokální nastavení
+.env
+.env.local
+*.secret
