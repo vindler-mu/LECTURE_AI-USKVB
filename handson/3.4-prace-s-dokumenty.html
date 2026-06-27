@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Práce s vlastními dokumenty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #4575b5;
+    --accent-hover: #355e91;
+    --accent-soft: #e9f0f8;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TASK PICKER ────────────────────────────────────── */
+  .task-picker-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 26px 28px;
+  }
+  .task-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .task-tab {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 9px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.2px;
+  }
+  .task-tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .task-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .task-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 880px) {
+    .task-grid { grid-template-columns: 1fr; }
+  }
+  .task-panel {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    min-height: 360px;
+  }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .task-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .prompt-pattern {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .output-text {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .output-text h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .output-text p { margin-bottom: 8px; }
+  .output-text ul { margin-left: 20px; margin-bottom: 8px; }
+  .output-text li { margin-bottom: 4px; }
+  .output-text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+  }
+  .output-text th, .output-text td {
+    border: 1px solid var(--line);
+    padding: 6px 9px;
+    text-align: left;
+  }
+  .output-text th {
+    background: var(--paper);
+    font-weight: 600;
+  }
+  .output-pitfall {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .output-pitfall strong { color: var(--warm); }
+
+  /* ── CONTEXT WINDOW VIZ ─────────────────────────────── */
+  .windows {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 26px 28px;
+  }
+  .window-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 110px;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .window-row:last-child { border-bottom: none; }
+  .window-name {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .window-name small {
+    display: block;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 11.5px;
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .window-bar-wrap {
+    height: 22px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .window-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.6s ease-out;
+  }
+  .window-bar.small { background: var(--warm); }
+  .window-size {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink);
+    text-align: right;
+  }
+  .window-size small {
+    display: block;
+    color: var(--muted);
+    font-size: 10.5px;
+    margin-top: 2px;
+  }
+  @media (max-width: 720px) {
+    .window-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .window-size { text-align: left; }
+  }
+
+  .scale-ref {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .scale-ref strong { color: var(--accent); }
+
+  /* ── KONTEXT TABLE / WAYS ─────────────────────────── */
+  .ways {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .ways { grid-template-columns: 1fr; } }
+  .way-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    padding: 18px 20px;
+  }
+  .way-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .way-card .when {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 10px;
+    letter-spacing: 0.2px;
+  }
+  .way-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ── LIMITS TABLE ───────────────────────────────────── */
+  .limits-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 13px;
+    margin-top: 20px;
+  }
+  .limits-table th, .limits-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .limits-table th {
+    background: var(--paper);
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+  .limits-table td strong { color: var(--ink); }
+  .limits-table tr:nth-child(even) td { background: var(--paper); }
+  .limits-table .src {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 6px;
+  }
+
+  /* ── PRACTICES ──────────────────────────────────────── */
+  .practices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .practices { grid-template-columns: 1fr; } }
+  .practice-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .practice-card h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .practice-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .tip-toggle summary {
+    padding: 12px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+";
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .tip-body {
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: var(--paper);
+    padding: 1px 5px;
+    border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 3 · Hands-on</p>
+    <h1>Práce s vlastními <em>dokumenty</em>: sumarizace, extrakce, porovnání</h1>
+    <p class="hero-subtitle">
+      Nejčastější profesní použití AI: dáte AI dokument a chcete s ním něco udělat. Shrnout, vytáhnout konkrétní údaje, porovnat dvě verze, doptat se na obsah. Tato stránka ukazuje, jak takové úkoly zadávat, jak velký dokument se ještě vejde a co dělat, když nevejde.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="3.2-anatomie-promptu.html">anatomii promptu</a>: přiložený dokument je jeden ze tří způsobů, jak dodat AI kontext. Tady se díváme detailněji na to, co se s dokumentem dá dělat a kde leží praktické hranice.
+    </p>
+    <div class="definition">
+      <strong>Kontextové okno</strong> = maximální množství textu (měřené v <em>tokenech</em>), které model umí najednou „vidět". Vejde se do něj váš dotaz, předchozí zprávy v konverzaci a celý obsah přiložených dokumentů. Když je toho dohromady moc, část obsahu se do okna nevejde.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Čtyři typické úkoly nad dokumentem</h2>
+    <p class="section-lead">
+      Práce s vlastním dokumentem v AI se obvykle dá zařadit do jednoho ze čtyř typů úkolů. Pro každý existuje vzor zadání, který se osvědčil. Klikněte na úkol a podívejte se na vzor promptu a typický výstup. Vše ukazujeme na jedné pojistné smlouvě, kterou si každý umí představit.
+    </p>
+
+    <div class="task-picker-wrap">
+      <div class="task-tabs" id="task-tabs">
+        <button class="task-tab active" data-task="summary">Sumarizace</button>
+        <button class="task-tab" data-task="extract">Extrakce údajů</button>
+        <button class="task-tab" data-task="compare">Porovnání</button>
+        <button class="task-tab" data-task="qa">Otázky a odpovědi</button>
+      </div>
+
+      <div class="task-grid">
+        <div class="task-panel">
+          <p class="panel-label">Vzor promptu</p>
+          <p class="task-desc" id="task-desc"></p>
+          <div class="prompt-pattern" id="prompt-pattern"></div>
+        </div>
+        <div class="task-panel">
+          <p class="panel-label">Typický výstup</p>
+          <div class="output-text" id="output-text"></div>
+          <div class="output-pitfall" id="output-pitfall"></div>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> Jak to vypadá v praxi</summary>
+      <div class="tip-body">
+        <p>Tyto vzory jsou zjednodušené. V reálné práci s vlastními dokumenty narazíte na drobnosti, které ukázka neukazuje:</p>
+        <p><strong>První pokus málokdy stačí.</strong> Obvykle potřebujete dvě až tři iterace, než se dostanete k použitelnému výstupu (viz <a href="3.3-iterace-a-dialog.html">3.3</a>). Ukázka výše ukazuje cílový stav, ne první odpověď.</p>
+        <p><strong>Naskenované PDF bývají problém.</strong> Pokud dokument neprošel OCR (rozpoznáním textu), AI „vidí" jen obrázky a obsah nečte. Před nahráním zkontrolujte, jestli v PDF jde text označit a zkopírovat. Pokud ne, projděte dokument přes OCR (Adobe Acrobat, online nástroje), nebo ho AI nahrajte jako obrázky a nechte ji nejprve přepsat.</p>
+        <p><strong>Tabulky a grafy AI čte nestabilně.</strong> Některé tabulky přečte přesně, jiné s chybami v řádcích nebo posunutými sloupci. U klíčových čísel z tabulek vždy ověřujte.</p>
+        <p><strong>Občas je rychlejší dokument předzpracovat.</strong> Vyjmout jen relevantní část, převést PDF na text, sjednotit formát. Pak je práce s AI rychlejší a přesnější, než když ji necháte zápasit s velkým rozházeným vstupem.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kontextové okno: jak velký dokument se vejde</h2>
+    <p class="section-lead">
+      Kontextové okno udává, kolik tokenů model umí najednou zpracovat. <strong>Token</strong> je nejmenší jednotka, na kterou tokenizer dělí vstupní text: někdy je tokenem celé slovo, jindy jen jeho část (v češtině časté kvůli skloňování a předponám), nebo jednotlivý znak. Jedno české slovo se obvykle rozpadne na 3 až 5 tokenů, takže česká věta spotřebuje zhruba 2–3× víc tokenů než anglická věta o stejném významu (detailněji v <a href="2.2-data-zivot.html">2.2</a>). Současné nástroje mají okna od desítek tisíc do milionů tokenů. Vejde se do nich dlouhý dokument, někdy i několik najednou.
+    </p>
+
+    <div class="windows">
+      <div class="window-row">
+        <div class="window-name">
+          ChatGPT Free
+          <small>aktuální stav 5/2026</small>
+        </div>
+        <div class="window-bar-wrap"><div class="window-bar small" style="width: 1.6%;"></div></div>
+        <div class="window-size">16k tokenů<small>≈ 10 stran textu</small></div>
+      </div>
+      <div class="window-row">
+        <div class="window-name">
+          ChatGPT Plus / Business
+          <small>placené plány</small>
+        </div>
+        <div class="window-bar-wrap"><div class="window-bar small" style="width: 3.2%;"></div></div>
+        <div class="window-size">32k tokenů<small>≈ 20 stran textu</small></div>
+      </div>
+      <div class="window-row">
+        <div class="window-name">
+          ChatGPT Pro / Enterprise
+          <small>nejvyšší placené plány</small>
+        </div>
+        <div class="window-bar-wrap"><div class="window-bar" style="width: 12.8%;"></div></div>
+        <div class="window-size">128k tokenů<small>≈ 100 stran textu</small></div>
+      </div>
+      <div class="window-row">
+        <div class="window-name">
+          Claude Haiku 4.5
+          <small>nejmenší aktuální Claude</small>
+        </div>
+        <div class="window-bar-wrap"><div class="window-bar" style="width: 20%;"></div></div>
+        <div class="window-size">200k tokenů<small>≈ 150 stran textu</small></div>
+      </div>
+      <div class="window-row">
+        <div class="window-name">
+          Claude Opus 4.7 / Sonnet 4.6
+          <small>aktuální placené modely</small>
+        </div>
+        <div class="window-bar-wrap"><div class="window-bar" style="width: 100%;"></div></div>
+        <div class="window-size">1M tokenů<small>≈ 750 stran textu</small></div>
+      </div>
+      <div class="window-row">
+        <div class="window-name">
+          Gemini 2.5 (Apps)
+          <small>placené plány</small>
+        </div>
+        <div class="window-bar-wrap"><div class="window-bar" style="width: 100%;"></div></div>
+        <div class="window-size">1M tokenů<small>≈ 1 500 stran textu</small></div>
+      </div>
+    </div>
+
+    <p style="font-size: 11px; color: var(--muted); margin-top: 10px; font-family: 'JetBrains Mono', monospace;">
+      Zdroje: docs.anthropic.com (Claude), pozorovaný stav ChatGPT GPT-5.5 (5/2026), support.google.com (Gemini). Okna i nabízené modely se mění, takže pro citlivé výpočty raději ověřte aktuální stav.
+    </p>
+
+    <div class="scale-ref">
+      <strong>Co to znamená pro reálné dokumenty:</strong> 200 tisíc tokenů zhruba odpovídá kratší knize nebo desítkám stran smluv. 1 milion tokenů odpovídá rozsahem několika knihám nebo stovkám stran dokumentace. Běžné kancelářské dokumenty se obvykle vejdou i do nejmenších oken. Pro objemné rešerše nebo dlouhé spisy se hodí ta největší.
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Proč to není „kolik si toho AI pamatuje"</summary>
+      <div class="tip-body">
+        <p>Kontextové okno je pracovní paměť pro jednu odpověď, ne dlouhodobá paměť. AI si po zavření chatu nepamatuje, co jste tam měli, pokud to nemáte uložené v trvalém nastavení (<a href="3.2-anatomie-promptu.html">popsané v 3.2</a>).</p>
+        <p>Praktický důsledek: <em>v jedné konverzaci</em> může AI číst stovky stran. <em>Mezi konverzacemi</em> ale nic nepřenáší. Když chcete pracovat se stejným dokumentem dlouhodobě, je lepší si ho uložit do Projektu (Claude) nebo do Custom GPT (ChatGPT). Pak ho má AI k dispozici, aniž byste ho museli pokaždé znovu nahrávat.</p>
+      </div>
+    </details>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> „Kontextové okno" má víc variant</summary>
+      <div class="tip-body">
+        <p>V dokumentaci, článcích a marketingu nástrojů narazíte na různé varianty toho pojmu. Stojí za to je rozlišovat, protože každá znamená v praxi něco jiného.</p>
+
+        <p><strong>Vstupní okno × výstupní limit.</strong> Modely mívají velký vstup (čtou stovky stran), ale výrazně menší výstup. Jedna odpověď bývá omezena na řády jednotek tisíc tokenů (typicky 4 až 8 tisíc, tedy zhruba 4 až 6 stran textu). Pokud potřebujete dlouhý výstup (celá dokumentace, dlouhá zpráva), je třeba si ho nechat vygenerovat po částech, nebo se ptát opakovaně.</p>
+
+        <p><strong>Nominální okno × efektivní využití.</strong> Když model „má 1 milion tokenů", neznamená to, že je všechny využívá stejně dobře. Výzkum (známý jako fenomén „lost in the middle") ukazuje, že modely si nejspolehlivěji pamatují začátek a konec dlouhého kontextu; přesnost v prostřední části klesá. Praktický důsledek: klíčové instrukce a otázky raději umisťujte na začátek nebo konec promptu, ne někam doprostřed nahraného dokumentu.</p>
+
+        <p><strong>Klouzavé (sliding) okno.</strong> Když konverzace přeroste limit modelu, některé aplikace nechají kontext „klouzat": odhodí nejstarší zprávy a místo nich přidají nové. Jiné si starší zprávy nejdřív shrnou a místo původního textu uchovají jen toto shrnutí. Praktický důsledek: v dlouhé konverzaci může model „zapomenout", co jste mu řekli na začátku, aniž by vás na to upozornil (viz <a href="3.2-anatomie-promptu.html">3.2</a>, „Práce s kontextem v průběhu konverzace").</p>
+
+        <p><strong>Okno modelu × limit aplikace.</strong> Chatová aplikace si někdy nastaví vlastní limity, které jsou nižší než limit samotného modelu (typicky per zprávu, per den, podle plánu). Když narazíte na hlášku „příliš dlouhý vstup", ne vždy je to vina modelu, často je to nastavení aplikace.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Tři způsoby, jak dát AI dokument</h2>
+    <p class="section-lead">
+      Existují tři praktické cesty. Volba mezi nimi určuje, jak dlouho dokument v nástroji „leží" a jak často s ním budete pracovat.
+    </p>
+
+    <div class="ways">
+      <div class="way-card">
+        <h4>Vložit text do promptu</h4>
+        <div class="when">Kdy: jednorázový krátký dokument</div>
+        <p>Zkopírujete obsah dokumentu a vložíte ho rovnou do zprávy. Funguje pro krátké texty (e-mail, jedna stránka, výňatek z PDF). Pro delší dokumenty je to nepraktické: ztrácí se formátování a kopírování ručně zabere víc času, než se vyplatí.</p>
+      </div>
+      <div class="way-card">
+        <h4>Nahrát soubor do chatu</h4>
+        <div class="when">Kdy: PDF, DOCX, XLSX a další běžné formáty</div>
+        <p>Přetáhnete soubor do okna chatu (drag &amp; drop) nebo kliknete na ikonu sponky. AI ho přečte a zařadí do kontextu konverzace. Funguje pro běžné typy dokumentů, platí ale limity na velikost (níže v tabulce).</p>
+      </div>
+      <div class="way-card">
+        <h4>Uložit do projektu</h4>
+        <div class="when">Kdy: opakovaná práce se stejným dokumentem</div>
+        <p>Claude Projects, Custom GPTs v ChatGPT. Dokument se uloží trvale a každá konverzace v projektu ho má k dispozici. Hodí se, když na stejný dokument odkazujete dlouhodobě.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 10px;">Limity nahrávání souborů</h3>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 6px;">Údaje ověřené v 5/2026 na oficiálních stránkách. Limity se ale často mění, takže při větších objemech raději zkontrolujte aktuální stav.</p>
+
+    <table class="limits-table">
+      <thead>
+        <tr>
+          <th>Nástroj</th>
+          <th>Velikost / soubor</th>
+          <th>Počet souborů</th>
+          <th>Frekvence</th>
+          <th>Formáty</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Claude (claude.ai)</strong></td>
+          <td>500 MB</td>
+          <td>20 / chat</td>
+          <td>Standardní použití</td>
+          <td>PDF, DOCX, XLSX, CSV, TXT, HTML, ODT, RTF, EPUB, JSON + obrázky (JPEG, PNG, GIF, WebP)</td>
+        </tr>
+        <tr>
+          <td><strong>ChatGPT</strong></td>
+          <td>512 MB (cap 2M tokenů textu)<br>Tabulky 50 MB, obrázky 20 MB</td>
+          <td>Bez tvrdého limitu (jen na frekvenci)</td>
+          <td>Free: 3 / den<br>Plus: 80 / 3 h<br>Pro: bez limitu</td>
+          <td>PDF, DOCX, XLSX, CSV, TXT, běžný kód, obrázky. Bez audia, videa a zaheslovaných souborů.</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini Apps</strong></td>
+          <td>100 MB (běžné soubory)<br>2 GB (video)</td>
+          <td>Závisí na plánu</td>
+          <td>Závisí na plánu</td>
+          <td>Dokumenty, tabulky, obrázky, audio, video, NotebookLM zápisníky</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: 'JetBrains Mono', monospace;">
+      Zdroje: support.claude.com (Claude), help.openai.com (ChatGPT), support.google.com (Gemini). Ověřeno 5/2026.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Velikost souboru není totéž co kontextové okno</summary>
+      <div class="tip-body">
+        <p>Můžete narazit na zdánlivý paradox: nahrajete 80 MB PDF, který AI „přijme", ale v odpovědích se chová, jako by viděla jen část. Skutečně to tak je. Velikost souboru měří, co server přijme. Kontextové okno měří, kolik z toho model najednou „čte" při tvorbě odpovědi.</p>
+        <p>U velkých souborů nástroj často použije techniku RAG (Retrieval-Augmented Generation): rozdělí dokument na části, podle vašeho dotazu vybere ty nejrelevantnější a do okna pošle jen je. Funguje to dobře pro otázky typu „najdi mi v tom…". Pro úkoly, kde je potřeba znát <em>celý</em> dokument zároveň (porovnání dvou verzí, celkové shrnutí), spolehlivé to není.</p>
+        <p>Praktické pravidlo: pokud chcete celkový pohled na dokument, ověřte v odpovědi, že AI cituje nebo zmiňuje různé části. Když cituje jen jeden úsek, část obsahu nejspíš zůstala mimo okno.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Praktiky pro dlouhé dokumenty</h2>
+    <p class="section-lead">
+      Když je dokument blízko hranice kontextového okna, nebo ji přesahuje, vyplatí se rozdělit práci na kroky. Tady jsou čtyři osvědčené postupy.
+    </p>
+
+    <div class="practices">
+      <div class="practice-card">
+        <h5>Po kapitolách, ne celé najednou</h5>
+        <p>Pošlete AI dokument postupně po sekcích a po každé požádejte o krátké shrnutí. Na konci si vyžádejte shrnutí všech shrnutí. Funguje to i pro dokumenty o stovkách stran, ale vyžaduje to ruční práci a pozornost: shrnutí každé části je ovlivněno tím, jak ji vymezíte.</p>
+      </div>
+      <div class="practice-card">
+        <h5>Stejný dotaz dvakrát</h5>
+        <p>U extrakce čísel a údajů z velkých dokumentů má smysl položit stejný dotaz dvakrát ve dvou různých konverzacích. Pokud se výsledky shodují, většinou jsou v pořádku. Když se liší, je čas otevřít původní dokument a porovnat.</p>
+      </div>
+      <div class="practice-card">
+        <h5>Citaci si nechte ukázat</h5>
+        <p>Při extrakci dat („v dokumentu se píše X") explicitně požádejte AI, ať uvede přesnou pasáž, ze které tvrzení pochází. „Cituj větu, kde se píše o výpovědní lhůtě." Tím se omezuje konfabulace: AI buď cituje, nebo přiznává, že příslušnou pasáž nenašla.</p>
+      </div>
+      <div class="practice-card">
+        <h5>U právních a finančních věcí zůstává lidská kontrola</h5>
+        <p>Pro rozhodnutí s reálnými důsledky (smlouvy, finance, regulace) je shrnutí od AI pomocník, ne náhrada čtení. Použijte ho k orientaci a k tomu, abyste věděl, na co se zaměřit. Závěrečné rozhodnutí a kontrolu detailu dělá člověk. Tomuto tématu věnujeme víc prostoru v <a href="../index.html#s5">Setkání 5 (Kritika)</a>.</p>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Co je RAG, jak ho rozeznáte</summary>
+      <div class="tip-body">
+        <p>RAG (Retrieval-Augmented Generation) je technika, kdy nástroj dokument předzpracuje na malé části a podle vašeho dotazu vybere relevantní úseky. Model pak generuje odpověď nad těmito úseky, ne nad celým dokumentem.</p>
+        <p>Jak ho v praxi poznáte: dlouhý dokument je v nástroji jako vyhledávatelná knihovna, ale když se zeptáte na něco mimo úzký dotaz („jaká je hlavní myšlenka celé zprávy"), odpověď je obecná nebo opisná. RAG je optimalizovaný na bodové dotazy. Pro celkové pohledy je lepší kratší dokument, který se vejde celý.</p>
+        <p>Claude Projects automaticky používá RAG, když uložený obsah překročí kontextové okno. ChatGPT to dělá u Custom GPTs a u velkých nahraných souborů. Gemini i NotebookLM s tím pracují v pozadí. Jako uživatel to nijak nenastavíte, ale je dobré vědět, kdy se to děje.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Práce s dokumenty je jedno z nejčastějších profesních použití AI. Dobře zadané úkoly přinášejí podstatně užitečnější výsledky. Špatně zadané dávají vágní opisy.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Čtyři vzory úkolů.</strong> Sumarizace, extrakce, porovnání, otázky a odpovědi. Pro každý se hodí jiný typ promptu. Vágní „shrň mi to" obvykle dává vágní opis.
+      </div>
+      <div class="takeaway-card">
+        <strong>Běžné dokumenty se obvykle vejdou.</strong> 1 milion tokenů odpovídá stovkám stran. Pro běžnou kancelářskou práci stačí i 200 tisíc tokenů. Jen u velmi dlouhých rešerší má smysl vybírat modely s největším oknem.
+      </div>
+      <div class="takeaway-card">
+        <strong>Tři cesty, jak vložit dokument.</strong> Text v promptu pro krátké úryvky. Nahrání souboru pro běžnou práci. Projekt nebo Custom GPT pro opakovanou práci se stejným dokumentem.
+      </div>
+      <div class="takeaway-card">
+        <strong>U extrakce vždy „cituj větu".</strong> AI obvykle dobře cituje, výrazně hůř interpretuje. Když chcete data, žádejte přesnou pasáž a u kritických údajů ji ověřte v originálu.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 3 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   TASK PICKER: 4 task types over a single document
+   ────────────────────────────────────────────────────────── */
+
+const tasks = {
+  summary: {
+    desc: 'Krátký celkový pohled na dokument. AI má vybírat to podstatné, ne opisovat. V zadání proto musí být, pro koho je shrnutí určené a jak má vypadat.',
+    prompt: `Shrň přiloženou pojistnou smlouvu pro pojištěnce,
+který si chce za 5 minut udělat obrázek o tom,
+co mu pojistka pokrývá a co ne.
+
+Struktura výstupu:
+- 2 věty úvod: o jakou pojistku jde
+- 3 odrážky: co je hlavní krytí
+- 3 odrážky: na co si dát pozor (výluky, spoluúčast)
+- 1 věta závěr: doporučení, čemu věnovat pozornost
+
+Vyhni se pojišťovacímu žargonu, vysvětluj
+jednoduše.`,
+    output: `
+      <h5>Pojistná smlouva: rychlý přehled</h5>
+      <p>Jde o životní pojištění s krytím rizika smrti a invalidity. Pojistná doba 20 let, měsíční pojistné 850 Kč.</p>
+      <p><strong>Co je kryté:</strong></p>
+      <ul>
+        <li>Smrt z jakékoliv příčiny: 500 000 Kč</li>
+        <li>Invalidita 3. stupně z úrazu: 300 000 Kč</li>
+        <li>Hospitalizace nad 7 dní: 500 Kč/den</li>
+      </ul>
+      <p><strong>Na co si dát pozor:</strong></p>
+      <ul>
+        <li>Spoluúčast u úrazu 5 000 Kč</li>
+        <li>Výluka: rizikové sporty bez příplatku</li>
+        <li>Čekací doba 12 měsíců u onemocnění</li>
+      </ul>
+      <p>Doporučuji projít článek 6 (výluky) a článek 9 (povinnosti pojištěnce).</p>`,
+    pitfall: '<strong>Pozor:</strong> AI má tendenci opisovat obtížné pasáže slovo od slova. Když narazíte na odstavec, který zní jako pojišťovací žargon, je to často signál, že AI tu část neuměla shrnout a opsala originál. V takových místech doplňte zadání: „přepiš jednodušším jazykem".'
+  },
+  extract: {
+    desc: 'Vytáhnout konkrétní strukturované údaje z dokumentu. Funguje nejlépe, když řeknete přesně, co chcete, a v jakém formátu.',
+    prompt: `Z přiložené pojistné smlouvy vytáhni následující
+údaje. Pro každý uveď přesnou pasáž, kde se to
+v dokumentu píše.
+
+Údaje:
+- Měsíční pojistné (Kč)
+- Pojistná doba (roky)
+- Pojistná částka pro smrt (Kč)
+- Spoluúčast u úrazu (Kč)
+- Čekací doba u onemocnění (měsíce)
+- Datum vstupu v platnost
+
+Výstup ve formátu tabulky:
+| Údaj | Hodnota | Citace z dokumentu |`,
+    output: `
+      <h5>Extrahované údaje</h5>
+      <table>
+        <thead>
+          <tr><th>Údaj</th><th>Hodnota</th><th>Citace</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Měsíční pojistné</td><td>850 Kč</td><td>„Pojistné činí 850 Kč měsíčně" (čl. 3.1)</td></tr>
+          <tr><td>Pojistná doba</td><td>20 let</td><td>„Doba trvání pojištění je 20 let" (čl. 2.2)</td></tr>
+          <tr><td>Krytí: smrt</td><td>500 000 Kč</td><td>„Plnění pro případ smrti činí 500 000 Kč" (čl. 4.1.a)</td></tr>
+          <tr><td>Spoluúčast u úrazu</td><td>5 000 Kč</td><td>„Pojištěný se podílí na úrazové škodě částkou 5 000 Kč" (čl. 5.3)</td></tr>
+          <tr><td>Čekací doba</td><td>12 měsíců</td><td>„U onemocnění platí čekací doba 12 měsíců" (čl. 6.2)</td></tr>
+          <tr><td>Datum platnosti</td><td>1. 6. 2026</td><td>„Pojištění nabývá účinnosti dne 1. 6. 2026" (čl. 2.1)</td></tr>
+        </tbody>
+      </table>`,
+    pitfall: '<strong>Pozor:</strong> AI při extrakci občas doplní hodnotu, která v dokumentu přímo není („to by tam mělo být"). Pravidlo „cituj přesnou pasáž" tomu výrazně brání, ale ne stoprocentně. U finančních a smluvních údajů jeden údaj namátkou ověřte v originálu.'
+  },
+  compare: {
+    desc: 'Porovnání dvou verzí dokumentu nebo dvou různých dokumentů. Funguje dobře, když má AI oba dokumenty celé najednou. U velmi dlouhých textů je třeba postupovat po částech.',
+    prompt: `Porovnej přiložené dvě verze pojistné smlouvy
+(verze 2024 a verze 2026).
+
+Najdi všechny rozdíly v:
+- výši pojistného
+- pojistných částkách
+- výlukách
+- čekacích dobách
+
+Pro každý rozdíl uveď: článek, verze 2024,
+verze 2026, dopad pro pojištěnce (pozitivní/negativní/neutrální).
+
+Na konci shrň: stojí změna z pohledu pojištěnce
+za zvážení?`,
+    output: `
+      <h5>Rozdíly mezi verzemi</h5>
+      <table>
+        <thead>
+          <tr><th>Článek</th><th>2024</th><th>2026</th><th>Dopad</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3.1 Pojistné</td><td>790 Kč/měs</td><td>850 Kč/měs</td><td>Negativní (+8 %)</td></tr>
+          <tr><td>4.1.a Smrt</td><td>500 000 Kč</td><td>500 000 Kč</td><td>Neutrální</td></tr>
+          <tr><td>5.3 Spoluúčast úraz</td><td>3 000 Kč</td><td>5 000 Kč</td><td>Negativní</td></tr>
+          <tr><td>6.2 Čekací doba</td><td>9 měsíců</td><td>12 měsíců</td><td>Negativní</td></tr>
+          <tr><td>4.1.b Invalidita</td><td>250 000 Kč</td><td>300 000 Kč</td><td>Pozitivní</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Závěr:</strong> Verze 2026 je celkově nevýhodnější. Vyšší pojistné, vyšší spoluúčast, delší čekací doba. Zlepšení u krytí invalidity to nevyrovná.</p>`,
+    pitfall: '<strong>Pozor:</strong> AI při porovnání občas „vyrobí" neexistující rozdíl tím, že stejnou pasáž zformuluje v každé verzi trochu jinak a vyhodnotí to jako změnu. Zvlášť u dlouhých dokumentů proto žádejte konkrétní citace v obou sloupcích.'
+  },
+  qa: {
+    desc: 'Konverzace nad dokumentem. Pokládáte otázky, AI odpovídá podle obsahu dokumentu. Hodí se na orientaci v rozsáhlém textu.',
+    prompt: `Mám tady pojistnou smlouvu jako přílohu.
+Budu se ptát na konkrétní situace a chci, abys
+odpověděl podle obsahu smlouvy.
+
+Otázka 1: Pokud si při lyžování zlomím ruku
+a budu hospitalizován 5 dní, na jaké plnění
+mám nárok?
+
+Pokud odpověď není ve smlouvě jasně, napiš to
+otevřeně a navrhni, kde se zeptat.`,
+    output: `
+      <h5>Odpověď podle smlouvy</h5>
+      <p>Plnění závisí na tom, jestli je úraz krytý a zda už uplynula čekací doba.</p>
+      <p><strong>Lyžování:</strong> Smlouva v čl. 6.4 uvádí „rizikové sporty bez příplatku jsou vyloučeny". Sjezdové lyžování není ve smlouvě výslovně uvedeno jako rizikový sport, ale ani jako pojištěný úraz. <em>Tady bych se přímo zeptal pojišťovny, ať se to vyjasní písemně.</em></p>
+      <p><strong>Hospitalizace 5 dní:</strong> Čl. 4.3 říká „plnění za hospitalizaci se vyplácí od 7. dne". Pět dní leží pod tímto prahem, takže nárok na plnění za hospitalizaci nevzniká.</p>
+      <p><strong>Plnění za úraz (zlomeninu):</strong> Pokud by lyžování spadalo do krytého úrazu (čl. 5.1), uplatnila by se spoluúčast 5 000 Kč. Konkrétní částka za zlomeninu ruky závisí na tabulce v příloze B, kterou nemám v textu k dispozici.</p>`,
+    pitfall: '<strong>Pozor:</strong> AI při Q&amp;A někdy „dovysvětluje" obecnou pojišťovací praxí, když ve smlouvě odpověď chybí. Kvalitní odpověď je proto typu „ve smlouvě se píše X, ale tato situace tam přímo pokrytá není". Když odpověď tvrdí jistotu bez citace, máte důvod si ji ověřit.'
+  }
+};
+
+const taskTabs = document.querySelectorAll('.task-tab');
+const taskDesc = document.getElementById('task-desc');
+const promptPattern = document.getElementById('prompt-pattern');
+const outputText = document.getElementById('output-text');
+const outputPitfall = document.getElementById('output-pitfall');
+
+function renderTask(key) {
+  const t = tasks[key];
+  taskDesc.textContent = t.desc;
+  promptPattern.textContent = t.prompt;
+  outputText.innerHTML = t.output;
+  outputPitfall.innerHTML = t.pitfall;
+  taskTabs.forEach(b => b.classList.toggle('active', b.dataset.task === key));
+}
+
+taskTabs.forEach(btn => {
+  btn.addEventListener('click', () => renderTask(btn.dataset.task));
+});
+
+renderTask('summary');
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

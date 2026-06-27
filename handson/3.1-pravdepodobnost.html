@@ -17,9 +17,9 @@
     --line: #e3e0d8;
     --line-strong: #c8c3b6;
     --muted: #6b6f76;
-    --accent: #2c5e6e;
-    --accent-hover: #1f4a58;
-    --accent-soft: #e0eaed;
+    --accent: #4575b5;
+    --accent-hover: #355e91;
+    --accent-soft: #e9f0f8;
     --det: #4a7c59;
     --det-soft: #e7f0ea;
     --prob: #b5651d;
@@ -226,10 +226,11 @@
   }
   .temp-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 14px;
   }
-  @media (max-width: 880px) { .temp-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 1080px) { .temp-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .temp-grid { grid-template-columns: 1fr; } }
   .temp-col {
     background: var(--paper);
     border: 1px solid var(--line);
@@ -283,9 +284,11 @@
   .temp-col { counter-reset: samp; }
 
   .temp-col.cold { border-left: 3px solid var(--det); }
+  .temp-col.cool { border-left: 3px solid #5d9aa5; }
   .temp-col.mid { border-left: 3px solid var(--accent); }
   .temp-col.hot { border-left: 3px solid var(--prob); }
   .temp-col.cold .temp-val { color: var(--det); }
+  .temp-col.cool .temp-val { color: #5d9aa5; }
   .temp-col.mid .temp-val { color: var(--accent); }
   .temp-col.hot .temp-val { color: var(--prob); }
 
@@ -465,7 +468,7 @@
   <a class="back" href="../index.html">← Zpět na přehled série</a>
 
   <header class="hero">
-    <p class="hero-eyebrow">Setkání 2 · Hands-on</p>
+    <p class="hero-eyebrow">Setkání 3 · Hands-on</p>
     <h1>AI není databáze. Je to <em>pravděpodobnostní</em> generátor</h1>
     <p class="hero-subtitle">
       Když napíšete dotaz do AI, neptáte se na uložené fakto. Žádáte model, aby vám vygeneroval nejpravděpodobnější pokračování. Pokaždé znova, slovo po slovu. Tato stránka ukazuje, jak takové generování vypadá uvnitř, proč stejný dotaz může dát různé odpovědi a proč halucinace nejsou porucha, ale logický důsledek.
@@ -501,6 +504,9 @@
     <p style="margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 880px;">
       <strong>Klíčová věc:</strong> model nevybírá z hotových vět, ale staví větu po slovech. Při každém kroku má desítky možných tokenů, jeden vybere, pokračuje. Pokaždé může vybrat jinak. Z toho plyne i to, proč halucinace vznikají: stačí jediná chybná volba v řetězci a věta se odchýlí od pravdy.
     </p>
+    <p style="margin-top: 10px; font-size: 12.5px; color: var(--muted); line-height: 1.55; max-width: 880px; font-style: italic;">
+      Tlačítko „Vždy nejpravděpodobnější (T = 0)" ukazuje princip greedy decoding jako didaktický extrém. Reálné nasazení v API obvykle používá T ≈ 0,1–0,3, aby model neuvízl ve smyčkách. V chatových rozhraních (Claude.ai, ChatGPT.com) teplotu jako uživatel nenastavujete vůbec; tu kontroluje vývojář aplikace.
+    </p>
   </section>
 
   <section>
@@ -512,18 +518,28 @@
     <div class="temp-grid">
       <div class="temp-col cold">
         <h4>Studeno</h4>
-        <div class="temp-val">T = 0</div>
-        <div class="temp-desc">Vždy nejpravděpodobnější token. Stejný vstup dá vždy stejný výstup. Vhodné pro shrnutí, klasifikaci, jednoduché otázky.</div>
+        <div class="temp-val">T blízko 0 (≈ 0,1–0,3)</div>
+        <div class="temp-desc">Skoro vždy nejpravděpodobnější token. Stejný vstup dá téměř stejný výstup. Používá se v API pro extrakci údajů, klasifikaci a strukturované výstupy. Nastavuje to vývojář, ne koncový uživatel. Čisté T = 0 je teoretický extrém (greedy decoding); v praxi se volí spíš 0,1–0,3, aby model neuvízl v opakování.</div>
         <div class="temp-samples">
           <div class="temp-sample">Kočka spí na gauči.</div>
           <div class="temp-sample">Kočka spí na gauči.</div>
           <div class="temp-sample">Kočka spí na gauči.</div>
         </div>
       </div>
+      <div class="temp-col cool">
+        <h4>Vlažno</h4>
+        <div class="temp-val">T ≈ 0,4–0,6</div>
+        <div class="temp-desc">Většinou bere nejlepší, někdy druhou. Drobná variabilita ve volbě slov při zachování stejné věcné odpovědi. Vhodné pro analytické úlohy, kde malá pružnost pomáhá: shrnutí, formulace, návrh struktury textu.</div>
+        <div class="temp-samples">
+          <div class="temp-sample">Kočka spí na gauči.</div>
+          <div class="temp-sample">Kočka spí na pohovce.</div>
+          <div class="temp-sample">Kočka odpočívá na gauči.</div>
+        </div>
+      </div>
       <div class="temp-col mid">
-        <h4>Vlažně</h4>
-        <div class="temp-val">T ≈ 0,7 (default)</div>
-        <div class="temp-desc">Většinou bere nejlepší, občas druhou. Trochu variabilní. Defaultní nastavení ChatGPT, Claude a podobně.</div>
+        <h4>Teplo</h4>
+        <div class="temp-val">T ≈ 0,7–1,0</div>
+        <div class="temp-desc">Bere i méně pravděpodobné, ale stále smysluplné varianty. Rozmanitější odpovědi při zachované koherenci.</div>
         <div class="temp-samples">
           <div class="temp-sample">Kočka spí na gauči.</div>
           <div class="temp-sample">Kočka loví myši na zahradě.</div>
@@ -532,8 +548,8 @@
       </div>
       <div class="temp-col hot">
         <h4>Horko</h4>
-        <div class="temp-val">T = 1,5+</div>
-        <div class="temp-desc">Pravděpodobnostní rozdělení se zploští, model bere i málo pravděpodobné možnosti. Kreativní, ale taky často nesmyslné nebo halucinatorní.</div>
+        <div class="temp-val">T &gt; 1,0 (až ~1,5)</div>
+        <div class="temp-desc">Pravděpodobnostní rozdělení se zploští, model bere i málo pravděpodobné možnosti. Vhodné pro brainstorming a kreativní psaní. S&nbsp;rostoucí teplotou roste i&nbsp;nesmyslnost a&nbsp;riziko halucinací.</div>
         <div class="temp-samples">
           <div class="temp-sample">Kočka tančila s deštníkem.</div>
           <div class="temp-sample">Kočka úspěšně skládala daňové přiznání.</div>
@@ -543,7 +559,9 @@
     </div>
 
     <p style="margin-top: 18px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 880px;">
-      <strong>Co to znamená v praxi.</strong> Web aplikace (ChatGPT.com, Claude.ai) běžnému uživateli teplotu neukazují; nastavuje ji systém. Přes API máte plnou kontrolu. Pro hodnotící zprávy, vyhledávání v zákonech, sumarizaci textů použijte nízkou teplotu (T ≈ 0–0,3). Pro brainstorming a kreativní psaní vyšší. Když AI v ChatGPT dvakrát po sobě odpoví různě, nehráli jste se sliderem; aplikace ji uvnitř nastavila.
+      <strong>Co to znamená v praxi.</strong> Teplotu jako koncový uživatel neovlivníte. Web aplikace (ChatGPT.com, Claude.ai) ji nezobrazují a neumožní teplotu přenastavit; nastavuje ji systém. Přes API ji mění vývojář aplikace nebo ten, kdo s modelem pracuje programově. Pro extrakci údajů, klasifikaci nebo shrnutí se v API volí T ≈ 0,1–0,3; pro brainstorming a kreativní psaní vyšší.
+      <br><br>
+      <strong>Různé nástroje, různé defaulty.</strong> Není pravda, že by všechny chaty jely se stejnou teplotou. Každá aplikace si volí jinak, často ji dynamicky mění podle typu úlohy a podle modelu. Microsoft Copilot to dokonce nabízí jako explicitní volbu stylu rozhovoru (Přesný / Vyvážený / Kreativní), což odpovídá přibližně různým teplotám. Proto stejný prompt v ChatGPT, Claude.ai a Gemini nedostane jen jiný styl psaní, ale i jinou míru variability.
     </p>
   </section>
 
@@ -551,6 +569,9 @@
     <h2 class="section-title">Deterministicky vs. pravděpodobnostně</h2>
     <p class="section-lead">
       Dva typy systémů vedle sebe na stejném typu úlohy. Vidíte, kde každý funguje a v jakém režimu.
+    </p>
+    <p style="margin-top: -16px; margin-bottom: 24px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 880px;">
+      Navazuje na <a href="2.1-anatomie-aplikace.html">anatomii AI aplikace</a> ze Setkání 2 (tabulka „AI jako komplexní systém"), kde jsme AI systémy rozlišili podle typu výstupu na deterministické a probabilistické. Tady ten kontrast postavíme vedle sebe na konkrétních příkladech.
     </p>
 
     <div class="vs-grid">
@@ -577,43 +598,181 @@
         <p>
           Pro stejný vstup spočítá pravděpodobnostní distribuci možných výstupů. Vrátí jeden vzorek z této distribuce. Při dalším pokusu vrátí jiný vzorek.
         </p>
-        <div class="vs-input">Napiš mi něco o kočce.</div>
+        <div class="vs-input">Chci resetovat heslo</div>
         <div class="vs-outputs">
-          <div class="vs-output">Kočka spí na gauči, ocasem švihne, jen když ji někdo vyruší.</div>
-          <div class="vs-output">Kočka loví v zahradě myši; je domácí, ale instinkty jí zůstaly.</div>
-          <div class="vs-output">Kočka mňouká u dveří, nejspíš chce ven, nebo nazpět dovnitř.</div>
+          <div class="vs-output">Heslo si resetujete na stránce reset.firma.cz/heslo. Zadejte e-mail, přijde vám ověřovací odkaz.</div>
+          <div class="vs-output">Pro reset hesla přejděte na firma.cz/forgot-password a postupujte podle pokynů v e-mailu.</div>
+          <div class="vs-output">Klikněte na podporu.firma.cz/obnova-hesla, kde najdete formulář pro nastavení nového hesla.</div>
         </div>
         <div class="vs-meta">
-          <strong>3 pokusy, 3 různé odpovědi.</strong> Flexibilita: vysoká. Spolehlivost: variabilní. Vždy zní rozumně, ale konkrétní fakta se mění. „Pravdivost" výstupu závisí na tom, co model našel ve svých trénovacích datech.
+          <strong>Stejný vstup, 3 různé odpovědi.</strong> Flexibilita: vysoká. Spolehlivost: variabilní. Vždy zní rozumně, ale konkrétní fakta (například URL) se mění, přičemž model nemá způsob, jak ověřit, která verze je správná. Tady je rozdíl proti FAQ botovi viditelný: bot zaručí jednu pravdivou odpověď, LLM dává plynulé varianty, z&nbsp;nichž některé mohou být chybné.
         </div>
       </div>
     </div>
   </section>
 
   <section>
-    <h2 class="section-title">Proč halucinace nejsou porucha</h2>
+    <h2 class="section-title">Proč halucinace a konfabulace nejsou porucha</h2>
     <p class="section-lead">
       Z pohledu modelu je každý další token jen pravděpodobnostní volba. Model nemá zabudovaný rozdíl mezi „pravdivá věta" a „věrohodně znějící věta". Cíl je <em>plynulé pokračování</em>, ne <em>pravdivé pokračování</em>.
     </p>
 
     <div class="hal-callout">
-      <h3>Halucinace = nejpravděpodobnější pokračování, které se náhodou minulo s pravdou</h3>
+      <h3>Halucinace i konfabulace = nejpravděpodobnější pokračování, které se minulo s pravdou</h3>
       <p>
-        Když se LLM zeptáte na něco, k čemu má dost trénovacích dat (běžné fakto, opakovaná otázka), pravděpodobnostně vyhraje pravdivá odpověď. Když se zeptáte na něco, k čemu má jen málo dat, neexistující data, nebo si protichůdná data, model přesto někoho vybere. <strong>Ne proto, že by věděl. Proto, že musí vybrat token.</strong>
+        Když se LLM zeptáte na něco, k čemu má dost trénovacích dat (běžné fakto, opakovaná otázka), pravděpodobnostně vyhraje pravdivá odpověď. Když se zeptáte na něco, k čemu má jen málo dat, neexistující data, nebo si protichůdná data, model přesto vybere. <strong>Ne proto, že by věděl. Proto, že musí vybrat token.</strong>
+      </p>
+      <p style="margin-top: 4px;"><strong>Dva druhy minutí pravdy</strong> (rozlišení převzaté z psychologie, kde má jiný význam; v kontextu AI je užíváme jako popisné kategorie chybového výstupu):</p>
+      <ul style="margin: 8px 0 12px 0; padding-left: 20px; font-size: 14px; line-height: 1.65; color: var(--ink);">
+        <li style="margin-bottom: 6px;"><strong>Halucinace:</strong> plně vymyšlené informace. Neexistující autor, neexistující studie, vymyšlený paragraf v zákoně, který nikde není.</li>
+        <li><strong>Konfabulace:</strong> přemíchané reálné prvky v nepravdivé kombinaci. Skutečný autor, ale jiná publikace; reálný zákon, ale chybné číslo paragrafu; existující studie, ale jiný závěr, než ve skutečnosti uvádí.</li>
+      </ul>
+      <p>
+        Příklad obojího: zeptáte se na konkrétní paragraf vyhlášky, kterou model v trénovacích datech viděl jen z popisu, ne v plném znění. Pokud si model vymyslí číslo i znění, je to <em>halucinace</em>. Pokud cituje reálný paragraf, ale přiřadí mu jinou vyhlášku nebo posune jeho znění, je to <em>konfabulace</em>. Z hlediska mechanismu jde o tentýž proces; rozdíl je v tom, jak chybu poznáte.
       </p>
       <p>
-        Příklad: zeptáte se na konkrétní paragraf vyhlášky, kterou model v trénovacích datech viděl jen z popisu, ne v plném znění. Model vyplodí <em>plausibilně znějící paragraf</em> včetně čísla a věty, která zní jako právní formulace. Není to chyba programu; je to logický výstup pravděpodobnostního generování při nedostatku dat.
-      </p>
-      <p>
-        <strong>Z toho plyne:</strong> halucinace nelze úplně odstranit. Lze je jen zmenšit a omezit, kdy se na ně musíte ptát. Snížit teplotu, dát modelu primární zdroj, ověřit kritické informace mimo model.
+        <strong>Z toho plyne:</strong> halucinace ani konfabulace nelze úplně odstranit. Lze je jen zmenšit a omezit, kdy se na ně musíte ptát. Snížit teplotu, dát modelu primární zdroj, ověřit kritické informace mimo model.
       </p>
     </div>
   </section>
 
   <section>
+    <h2 class="section-title">Sebejistý tón není signál pravdivosti</h2>
+    <p class="section-lead">
+      Model nemá vnitřní rozdíl mezi „pravdivá věta" a „věrohodně znějící věta". Stejně sebejistě napíše pravdu i halucinaci. Sebevědomý tón je defaultní styl, který do něj vložil trénink, ne známka, že odpověď sedí.
+    </p>
+
+    <div class="hal-callout">
+      <h3>Proč model nikdy neřekne „nevím"</h3>
+      <p>
+        Lidský odborník obvykle pozná, kdy si je jistý a kdy ne, a podle toho mění formulaci („myslím, že", „nejsem si jist, ale", „prokazatelně"). Model takovou vnitřní kalibraci nemá. Jeho jistota je měřitelná pouze na úrovni výběru následujícího tokenu (jak moc vyčnívá nad ostatními), ne na úrovni faktického obsahu.
+      </p>
+      <p>
+        <strong>Proč tedy vždy zní sebejistě?</strong> Důsledek RLHF: hodnotitelé v tréninkové fázi preferovali jasné, sebevědomé odpovědi nad opatrnými s výhradami. Model se na těchto preferencích naučil, že „jasnost prodává". Sebevědomý tón je teď defaultní styl, nezávisle na tom, zda model „ví", nebo doplňuje.
+      </p>
+      <p>
+        <strong>Praktický důsledek:</strong> nedůvěřujte tónu. Nejistě znějící odpověď nemusí být chybná; věrohodně znějící odpověď nemusí být správná. Test pravdivosti probíhá vždy mimo model.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co napříč pokusy variuje, a co zůstává stabilní</h2>
+    <p class="section-lead">
+      Když pošlete stejný prompt vícekrát, nedostanete čistý náhodný šum. Existuje praktická hierarchie stability. Vodítko pro to, čemu věřit a co ověřit.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+      <div style="background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--det); padding: 16px 20px;">
+        <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--det); font-weight: 600; letter-spacing: 1.4px;">NEJSTABILNĚJŠÍ</span>
+          <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink); margin: 0;">Forma a struktura výstupu</h3>
+        </div>
+        <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">
+          Pokud požádáte o 5 odrážek nebo o tabulku, model to obvykle drží napříč pokusy. Forma je „povrch", který se snadno vynutí instrukcí v promptu. Když chcete stabilitu, nezačínejte u obsahu; začněte u formy.
+        </p>
+      </div>
+
+      <div style="background: var(--paper); border: 1px solid var(--line); border-left: 4px solid #5d9aa5; padding: 16px 20px;">
+        <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #5d9aa5; font-weight: 600; letter-spacing: 1.4px;">DOSTATEČNĚ STABILNÍ</span>
+          <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink); margin: 0;">Sémantika a celkový smysl</h3>
+        </div>
+        <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">
+          Hlavní myšlenka odpovědi zůstává obvykle stejná. Pokud požádáte „shrň hlavní body smlouvy", většinou dostanete shrnutí téhož s drobnými přesuny pořadí nebo důrazu, ne úplně jinou interpretaci.
+        </p>
+      </div>
+
+      <div style="background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--accent); padding: 16px 20px;">
+        <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--accent); font-weight: 600; letter-spacing: 1.4px;">VARIABILNÍ</span>
+          <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink); margin: 0;">Konkrétní formulace, příklady, pořadí vět</h3>
+        </div>
+        <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">
+          Jakými slovy je odpověď napsaná, v jakém pořadí věty jdou, jaké příklady model vybere. Tyto věci se přepínají pokus od pokusu. Obvykle to nevadí, smysl zůstává. Pokud potřebujete přesné slovní znění, použijte šablonu, ne LLM.
+        </p>
+      </div>
+
+      <div style="background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--prob); padding: 16px 20px;">
+        <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--prob); font-weight: 600; letter-spacing: 1.4px;">NEJMÉNĚ STABILNÍ</span>
+          <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink); margin: 0;">Konkrétní fakta a čísla</h3>
+        </div>
+        <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0;">
+          Rozptyl je tady největší a halucinace cvakají nejčastěji. Rozepsáno do konkrétních kategorií a praktik v další sekci.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kde model nejvíc halucinuje a jak ho přimět říct „nevím"</h2>
+    <p class="section-lead">
+      Drill-down na spodní patro předchozí hierarchie. Kategorie konkrétních faktů a čísel není homogenní; některá místa jsou rizikovější než jiná. A jelikož defaultně model na nejistotu neupozorňuje, je třeba ho k tomu naformulovat.
+    </p>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink); margin-top: 8px; margin-bottom: 14px;">Kategorie s nejvyšším rizikem</h3>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+      <div style="background: var(--red-soft); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 12px 16px;">
+        <strong style="color: var(--red); font-size: 14px;">URL a webové adresy</strong>
+        <p style="font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.55;">Model si je často „dotvoří" do plausibilní podoby. Vždy zkontrolovat, že odkaz skutečně existuje a vede tam, kam má.</p>
+      </div>
+      <div style="background: var(--red-soft); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 12px 16px;">
+        <strong style="color: var(--red); font-size: 14px;">Čísla paragrafů, vyhlášek, zákonů</strong>
+        <p style="font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.55;">Plausibilní číslo a věrohodně znějící formulace neznamenají, že to v zákoně existuje. Vždy ověřit přímo ve sbírce.</p>
+      </div>
+      <div style="background: var(--red-soft); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 12px 16px;">
+        <strong style="color: var(--red); font-size: 14px;">Citace, autoři, články</strong>
+        <p style="font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.55;">Klasické místo halucinace. Model umí vyrobit citaci s reálným autorem, ale neexistujícím článkem, nebo naopak.</p>
+      </div>
+      <div style="background: var(--red-soft); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 12px 16px;">
+        <strong style="color: var(--red); font-size: 14px;">Statistická čísla a procenta</strong>
+        <p style="font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.55;">„Studie ukazuje, že 73 % …" je často smyšlené nebo posunuté. Vyžádejte si zdroj a ověřte ho.</p>
+      </div>
+      <div style="background: var(--red-soft); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 12px 16px;">
+        <strong style="color: var(--red); font-size: 14px;">Jména osob a institucí</strong>
+        <p style="font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.55;">Vysoké riziko konfabulace: model přiřadí reálnému jménu jinou roli, nebo si jméno smíchá s podobně znějícím.</p>
+      </div>
+      <div style="background: var(--red-soft); border: 1px solid var(--line); border-left: 3px solid var(--red); padding: 12px 16px;">
+        <strong style="color: var(--red); font-size: 14px;">Data, lhůty, časové údaje</strong>
+        <p style="font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.55;">Termíny vyhlášek, data událostí, lhůty. Model si je tvoří plausibilně, ale často chybně.</p>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 880px;">
+      Proč právě tyto kategorie? Pravděpodobnostní distribuce přes možné varianty je v nich extrémně široká: existuje obrovské množství možností, žádná silně nepřevládá, a model proto musí „tipnout".
+    </p>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink); margin-top: 36px; margin-bottom: 12px;">Jak ho přimět říct „nevím"</h3>
+
+    <div style="background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 16px 20px; max-width: 880px; margin-bottom: 16px;">
+      <p style="font-size: 13.5px; color: var(--ink); line-height: 1.65; margin: 0 0 8px 0;">
+        <strong>Než půjdeme dál, technická skutečnost.</strong> Kalibrovaný verifikační systém pravdivosti uvnitř LLM neexistuje. Model nemá nikde uloženo „tady si jsem jistý 73 %, tady 22 %". Co modely mají, jsou <strong>logprobs</strong> (pravděpodobnosti vygenerovaných tokenů, dostupné jen přes API): měří ale jen lokální „překvapivost" výběru tokenu, ne faktickou správnost. Vysoký logprob neznamená pravdivá věta.
+      </p>
+      <p style="font-size: 13.5px; color: var(--ink); line-height: 1.65; margin: 0;">
+        Co máte v promptu k dispozici, je <strong>verbalizovaná jistota</strong>: slovně vyjádřený odhad modelu, kdy si je jistý a kdy ne. Není dokonale kalibrovaná (model může s jistotou napsat nesmysl), ale je to znatelně lepší signál než vágní „buď opatrný". Praktiky níže ji exploitují různými způsoby.
+      </p>
+    </div>
+
+    <ul style="padding-left: 22px; font-size: 13.5px; line-height: 1.7; color: var(--ink); max-width: 880px;">
+      <li style="margin-bottom: 10px;"><strong>Explicitně povolte „nevím" v promptu.</strong> Příklad: <em>„Pokud si nejsi jistý odpovědí, raději napiš ‚nejsem si jistý, ověř' než aby ses dohadoval."</em> Bez tohoto povolení model defaultně raději tipne, než aby přiznal nejistotu.</li>
+      <li style="margin-bottom: 10px;"><strong>Požadujte označení míry jistoty u každé klíčové věty.</strong> <em>„Ke každému tvrzení připoj značku [vysoká jistota], [střední jistota] nebo [nízká jistota]."</em> Model se zamyslí nad rozdílem. Verbalizovaná jistota zůstává nekalibrovaná, ale signalizace pomáhá s rozhodováním, co ověřit pozorněji.</li>
+      <li style="margin-bottom: 10px;"><strong>Vyžadujte zdroj, jinak „nevím".</strong> <em>„Ke každému konkrétnímu faktu uveď zdroj. Pokud zdroj nemáš, napiš ‚zdroj neznám' a fakto vynech."</em> Model raději informaci neuvede, než aby ji vymyslel.</li>
+      <li style="margin-bottom: 10px;"><strong>Použijte reasoning / thinking režim, pokud ho model nabízí.</strong> Claude (Extended Thinking), ChatGPT (GPT-5 thinking, o-series), Gemini (2.5 Thinking). Model nejdřív zviditelní vlastní úvahu, než dá finální odpověď. Tam je daleko viditelnější, kde si je jistý a kde si tipuje. Pro úkoly, kde jistota záleží, použijte tento režim, ne rychlou variantu.</li>
+      <li style="margin-bottom: 10px;"><strong>Trvalé pravidlo v Custom Instructions / Claude Projects: dejte konkrétní postup, ne náladu.</strong> Vágní „odpovídej jen co víš" se nechytá. Konkrétní rámec funguje líp. Příklad: <em>„Před každou faktickou odpovědí proveď tři kroky: (1) co opravdu vím z trénovacích dat nebo z textu této konverzace; (2) co dovozuji nebo dopočítávám; (3) kde mám mezeru. V odpovědi jasně označ, co patří do (1), (2) a (3)."</em></li>
+      <li><strong>Použijte nástroj s vyhledáváním na webu.</strong> ChatGPT search, Perplexity, Claude s nástroji, Gemini Deep Research. Když má model přístup k externím zdrojům, halucinuje míň, protože nemusí spoléhat jen na trénovací data.</li>
+    </ul>
+
+    <p style="margin-top: 14px; font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 880px; font-style: italic;">
+      Žádná z těchto technik nezaručí, že model vždy řekne „nevím", když nezná. Sníží to ale jeho tendenci dohadovat se a usnadní vám rozpoznat, kde máte ověřovat pozorněji.
+    </p>
+  </section>
+
+  <section>
     <h2 class="section-title">Co si z toho odnést</h2>
     <p class="section-lead">
-      Pět praktických návyků, které vznikají z pochopení probability.
+      Šest poznatků, které z probabilistické povahy AI plynou pro praktickou práci.
     </p>
 
     <div class="takeaways">
@@ -621,25 +780,25 @@
         <strong>Nepokládejte stejnou otázku znovu pro ověření.</strong> Druhý výstup může být úplně jiný, a oba mohou být chybné. Ověřujte mimo model, ne uvnitř.
       </div>
       <div class="takeaway-card">
-        <strong>Pro konzistenci snižte teplotu.</strong> Pokud používáte API nebo aplikaci s nastavením, nastavte T ≈ 0 pro shrnutí, klasifikaci, vyhledávání. Web rozhraní vám teplotu neukazují, ale formulujte přesněji.
+        <strong>Stabilita výstupů se ladí teplotou, ale jen v API.</strong> Pokud pracujete s modelem programově, pro shrnutí, klasifikaci a extrakci se v API volí T ≈ 0,1–0,3. V běžných chatech (ChatGPT.com, Claude.ai) teplotu nenastavíte; kompenzujte přesnější formulací zadání.
       </div>
       <div class="takeaway-card">
-        <strong>Halucinace nejsou chyba, jsou cena.</strong> Cenou za flexibilitu a plynulý jazyk je nestabilita faktického obsahu. U konkrétních faktů (čísla paragrafů, jména, data) ověřujte vždy.
+        <strong>Halucinace a konfabulace nejsou chyba, jsou cena.</strong> Cenou za flexibilitu a plynulý jazyk je nestabilita faktického obsahu. U konkrétních faktů (čísla paragrafů, jména, data) ověřujte vždy.
       </div>
       <div class="takeaway-card">
-        <strong>Nedostatek dat = halucinační hnízdo.</strong> Čím vzácnější fakto požadujete, tím větší riziko, že model vyplodí plausibilní výmysl. Hlavní česká legislativa: relativně OK. Konkrétní vyhláška ÚSKVBL: ověřit.
+        <strong>Nedostatek dat = zvýšené riziko halucinace a konfabulace.</strong> Čím vzácnější fakto požadujete, tím větší pravděpodobnost, že model vyplodí plausibilní výmysl. Hlavní česká legislativa: relativně OK. Konkrétní vyhláška ÚSKVBL: ověřit.
       </div>
       <div class="takeaway-card">
         <strong>Plynulost není kvalita.</strong> Plynulou českou odpověď napíše model i ve chvíli, kdy halucinuje. „Zní to dobře" není kvalitativní kritérium; je to defaultní stav.
       </div>
       <div class="takeaway-card">
-        <strong>Stejný prompt v různý čas = různý výstup.</strong> Aplikace mění modely za běhu. Pokud potřebujete stabilní výstup pro stejný vstup, použijte deterministický nástroj (Excel, šablona, regex), ne LLM.
+        <strong>Stejný prompt nemá záruku stejného výstupu.</strong> Uvnitř konverzace se výstup mění samotnou probabilitou; mezi týdny a měsíci ho posouvají aktualizace modelů. Pokud potřebujete stabilní výstup pro stejný vstup, použijte deterministický nástroj (Excel, šablona, regex), ne LLM.
       </div>
     </div>
   </section>
 
   <footer class="footer">
-    AI pro ÚSKVBL · Setkání 2 · Hands-on
+    AI pro ÚSKVBL · Setkání 3 · Hands-on
     <br>
     Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
     <br>
@@ -650,7 +809,7 @@
 
 <script>
 /* ──────────────────────────────────────────────────────────
-   TOKEN TREE — illustrative probability distributions
+   TOKEN TREE: illustrative probability distributions
    ────────────────────────────────────────────────────────── */
 
 // A nested tree of possible token continuations.

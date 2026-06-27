@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Nástroje a jejich nastavení: Claude, ChatGPT, Gemini, Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #4575b5;
+    --accent-hover: #355e91;
+    --accent-soft: #e9f0f8;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+    /* Brand markers (subtle, pro identifikaci sekcí) */
+    --b-claude: #cc7a5b;
+    --b-chatgpt: #4a7c59;
+    --b-gemini: #5b3f7a;
+    --b-copilot: #2c5e7e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── PRINCIPLES ─────────────────────────────────────── */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .principles { grid-template-columns: 1fr; } }
+  .principle-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    padding: 18px 20px;
+  }
+  .principle-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .principle-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ── COMPARE TABLE ──────────────────────────────────── */
+  .compare-wrap {
+    overflow-x: auto;
+  }
+  .compare-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 12.8px;
+  }
+  .compare-table th, .compare-table td {
+    padding: 12px 13px;
+    text-align: left;
+    border: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .compare-table th.label-col {
+    background: var(--paper);
+    font-weight: 600;
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 13px;
+    width: 160px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .compare-table thead th {
+    background: var(--paper);
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .compare-table thead th.brand-claude { color: var(--b-claude); border-top: 3px solid var(--b-claude); }
+  .compare-table thead th.brand-chatgpt { color: var(--b-chatgpt); border-top: 3px solid var(--b-chatgpt); }
+  .compare-table thead th.brand-gemini { color: var(--b-gemini); border-top: 3px solid var(--b-gemini); }
+  .compare-table thead th.brand-copilot { color: var(--b-copilot); border-top: 3px solid var(--b-copilot); }
+  .compare-table td strong { color: var(--ink); }
+  .compare-table tr.row-data td { background: var(--warm-soft); }
+
+  /* ── TOOL SECTIONS ──────────────────────────────────── */
+  .tool-section {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .tool-header {
+    padding: 22px 26px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    border-left: 6px solid var(--accent);
+  }
+  .tool-header.claude { border-left-color: var(--b-claude); }
+  .tool-header.chatgpt { border-left-color: var(--b-chatgpt); }
+  .tool-header.gemini { border-left-color: var(--b-gemini); }
+  .tool-header.copilot { border-left-color: var(--b-copilot); }
+  .tool-header h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .tool-header h3 em {
+    font-style: italic;
+    font-weight: 600;
+  }
+  .tool-header.claude h3 em { color: var(--b-claude); }
+  .tool-header.chatgpt h3 em { color: var(--b-chatgpt); }
+  .tool-header.gemini h3 em { color: var(--b-gemini); }
+  .tool-header.copilot h3 em { color: var(--b-copilot); }
+  .tool-header .tagline {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 720px;
+  }
+  .tool-header .plans {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .tool-header .plans b { color: var(--ink); font-weight: 600; }
+  .tool-body {
+    padding: 22px 26px;
+  }
+  .tool-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 880px) { .tool-grid { grid-template-columns: 1fr; } }
+  .tool-block {
+    border: 1px solid var(--line);
+    padding: 14px 18px;
+    background: var(--paper);
+  }
+  .tool-block h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .tool-header.claude + .tool-body .tool-block h5 { color: var(--b-claude); }
+  .tool-header.chatgpt + .tool-body .tool-block h5 { color: var(--b-chatgpt); }
+  .tool-header.gemini + .tool-body .tool-block h5 { color: var(--b-gemini); }
+  .tool-header.copilot + .tool-body .tool-block h5 { color: var(--b-copilot); }
+  .tool-block p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .tool-block p:last-child { margin-bottom: 0; }
+  /* "Kde to najít" cesta v nastavení */
+  .tool-block .where {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.2px;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 6px 9px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .tool-block .where b { color: var(--ink-soft); font-weight: 600; }
+  .tool-block ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .tool-block ul li {
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .tool-block ul li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .tool-header.claude + .tool-body .tool-block ul li::before { color: var(--b-claude); }
+  .tool-header.chatgpt + .tool-body .tool-block ul li::before { color: var(--b-chatgpt); }
+  .tool-header.gemini + .tool-body .tool-block ul li::before { color: var(--b-gemini); }
+  .tool-header.copilot + .tool-body .tool-block ul li::before { color: var(--b-copilot); }
+
+  .tool-cite {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── SCREENSHOT PLACEHOLDERS ────────────────────────── */
+  .screenshots {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 6px;
+  }
+  @media (max-width: 880px) { .screenshots { grid-template-columns: 1fr; } }
+  .screenshot {
+    background: var(--paper);
+    border: 2px dashed var(--line-strong);
+    aspect-ratio: 16/10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    text-align: center;
+  }
+  .screenshot-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .screenshot-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-style: italic;
+    line-height: 1.5;
+    max-width: 220px;
+  }
+
+  .data-warn {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: var(--warm-soft);
+    border-left: 3px solid var(--warm);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .data-warn strong { color: var(--warm); }
+
+  /* ── DECISION HELPER ────────────────────────────────── */
+  .decisions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .decisions { grid-template-columns: 1fr; } }
+  .decision-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+  }
+  .decision-card h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .decision-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .decision-card .pick {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 8px;
+    display: block;
+  }
+
+  /* ── SCREENSHOT-NEEDED LIST ─────────────────────────── */
+  .needs-list {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 22px 26px;
+  }
+  .needs-list h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .needs-list p.intro {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .needs-list ol {
+    counter-reset: shot;
+    list-style: none;
+  }
+  .needs-list ol li {
+    counter-increment: shot;
+    font-size: 13.5px;
+    color: var(--ink);
+    padding-left: 32px;
+    position: relative;
+    margin-bottom: 12px;
+    line-height: 1.55;
+  }
+  .needs-list ol li::before {
+    content: counter(shot, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 1px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 1.2px;
+    background: var(--bg);
+    padding: 2px 6px;
+    border: 1px solid var(--line);
+  }
+  .needs-list li strong { color: var(--ink); }
+  .needs-list li small {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-style: italic;
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .tip-toggle summary {
+    padding: 12px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+";
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .tip-body {
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 3 · Hands-on</p>
+    <h1>Nástroje a jejich <em>nastavení</em>: Claude, ChatGPT, Gemini, Microsoft Copilot</h1>
+    <p class="hero-subtitle">
+      Čtyři nejrozšířenější AI nástroje k 5/2026. Tato stránka není o tom, který si vybrat, ale o tom, co každý umí a co se v něm dá nastavit. U každého nástroje projdeme čtyři věci stejně: výběr modelu, vlastní instrukce a projekty, paměť a soukromí, vstupy a nástroje. Vždy s informací, kde to najdete a co to dělá. Krátké srovnání nahoře slouží jen pro prvotní orientaci.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Návaznosti: <a href="3.2-anatomie-promptu.html">3.2</a> ukazuje, co dát do promptu; tady ukazujeme, do kterého rozhraní a co se v něm dá nastavit. Limity kontextu, které tu zmiňujeme, vychází z <a href="3.4-prace-s-dokumenty.html">3.4</a>.
+    </p>
+    <div class="definition">
+      <strong>Důležité k datu publikace:</strong> Ceny, modely a politiky se v této oblasti mění rychle a stejně tak se posouvají i názvy položek v nastavení. Údaje níže byly ověřeny v 5/2026 na oficiálních stránkách. Pro citlivá rozhodnutí (placené plány, smluvní použití) ověřte aktuální stav přímo u poskytovatele.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Než se pustíte do nastavení: tři principy</h2>
+    <p class="section-lead">
+      Volba mezi nástroji se zdá nepřehledná, ale řídí ji jen několik zásadních věcí. Tady jsou.
+    </p>
+
+    <div class="principles">
+      <div class="principle-card">
+        <h4>Platíte za silnější model, víc prostoru a funkce</h4>
+        <p>Placené plány obvykle přidávají tři věci naráz: přístup k nejsilnějším modelům, víc prostoru (delší kontext a víc zpráv za den) a funkce navíc. Free verze běží zpravidla na slabším nebo středním modelu. Ten nejvýkonnější buď nedostanete vůbec (u Claude je Opus jen v Pro), nebo jen do vyčerpání přísného stropu, po kterém rozhovor spadne na menší variantu (tak to dělá ChatGPT). Ptejte se proto: stačí mi free model i jeho limity na moje úkoly, nebo potřebuji silnější model, víc prostoru, případně konkrétní funkci?</p>
+      </div>
+      <div class="principle-card">
+        <h4>U free verzí počítejte s trénováním na vašich datech</h4>
+        <p>Většina nástrojů ve free i osobních placených plánech ve výchozím stavu používá vaše konverzace k trénování. Opt-out bývá dostupný, ale často skrytý v nastavení a vypne jen trénování, ne odesílání dat. Vaše vstupy putují na servery poskytovatele tak jako tak (a část se chvíli uchovává). Pro citlivá pracovní data, která nemají opustit instituci, proto není konzumentská verze vhodná ani po opt-outu.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Nastavení vypadají různě, dělají totéž</h4>
+        <p>Každý nástroj pojmenovává věci jinak (Projects, Custom GPTs, Gems), ale principy se opakují: vybrat model, dát trvalou instrukci, ohlídat soukromí, přidat vstupy. Když rozumíte těmto čtyřem kategoriím, zorientujete se v kterémkoli rozhraní.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Krátké srovnání pro orientaci</h2>
+    <p class="section-lead">
+      Jen základní rozcestník, ať víte, o čem mluvíme. Detailní nastavení každého nástroje jsou v sekcích níže. Ceny jsou orientační (v USD nebo EUR podle poskytovatele), místní cena může být i v Kč.
+    </p>
+
+    <div class="compare-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th class="label-col"></th>
+            <th class="brand-claude">Claude</th>
+            <th class="brand-chatgpt">ChatGPT</th>
+            <th class="brand-gemini">Gemini</th>
+            <th class="brand-copilot">M. Copilot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="label-col">Výrobce</th>
+            <td>Anthropic (US)</td>
+            <td>OpenAI (US)</td>
+            <td>Google (US)</td>
+            <td>Microsoft (US)</td>
+          </tr>
+          <tr>
+            <th class="label-col">Free verze</th>
+            <td>Ano (claude.ai)</td>
+            <td>Ano (chatgpt.com)</td>
+            <td>Ano (gemini.google.com)</td>
+            <td>Ano (copilot.microsoft.com)</td>
+          </tr>
+          <tr>
+            <th class="label-col">Hlavní osobní placený plán</th>
+            <td><strong>Pro</strong> 20 USD/měs</td>
+            <td><strong>Plus</strong> 20 USD/měs</td>
+            <td><strong>AI Pro</strong> 19,99 USD/měs</td>
+            <td><strong>M365 Premium</strong> cca 10 EUR/měs</td>
+          </tr>
+          <tr>
+            <th class="label-col">Aktuální vlajková loď</th>
+            <td>Opus 4.7</td>
+            <td>GPT-5.5</td>
+            <td>Gemini 3.1 Pro</td>
+            <td>GPT-5 (od OpenAI)</td>
+          </tr>
+          <tr>
+            <th class="label-col">V čem vyniká</th>
+            <td>Dlouhý kontext, kvalita psaní</td>
+            <td>Nejvíc funkcí a novinek</td>
+            <td>Integrace Google, NotebookLM</td>
+            <td>Integrace Microsoft 365</td>
+          </tr>
+          <tr class="row-data">
+            <th class="label-col">Trénuje na datech? (osobní plány)</th>
+            <td>Defaultně ano, lze vypnout</td>
+            <td>Defaultně ano, lze vypnout</td>
+            <td>Defaultně ano, lze vypnout</td>
+            <td>Defaultně ne (M365)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size: 11px; color: var(--muted); margin-top: 10px; font-family: 'JetBrains Mono', monospace;">
+      Zdroje: claude.com/pricing, openai.com (ChatGPT pricing), gemini.google/subscriptions, microsoft.com/microsoft-365-copilot/pricing, privacy.claude.com, help.openai.com, support.google.com/gemini. Ověřeno 5/2026.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Claude</h2>
+    <p class="section-lead">
+      Od americké firmy Anthropic. Silné stránky: dlouhý kontext, kvalita psaní, Projects pro opakované úkoly. V této sérii ho používáme jako primární nástroj v praktických ukázkách.
+    </p>
+
+    <div class="tool-section">
+      <div class="tool-header claude">
+        <h3>Claude · <em>kvalita textu a dlouhý kontext</em></h3>
+        <p class="tagline">claude.ai. Vyrábí Anthropic (USA). Stabilní zaměření na kvalitu psaní a dlouhé dokumenty. Méně experimentálních funkcí než ChatGPT, ale to, co je v něm, bývá dotažené.</p>
+        <p class="plans"><b>Plány:</b> Free · Pro 20 USD/měs · Max od 100 USD/měs · Team 20 USD/uživatel (netrénuje)</p>
+      </div>
+      <div class="tool-body">
+        <div class="tool-grid">
+          <div class="tool-block">
+            <h5>Výběr modelu</h5>
+            <p class="where"><b>Kde:</b> pole pro prompt → rozbalovací nabídka modelu</p>
+            <p>Přepínáte mezi <strong>Opus 4.7</strong> (nejsilnější, pomalejší) a <strong>Sonnet 4.6</strong> (rychlejší, šetří denní limit). Oba zvládají kontext 1M tokenů. Free běží zpravidla na Sonnetu, Opus odemyká Pro. U složitějších úloh lze zapnout rozšířené přemýšlení, kdy si model dá víc času na rozmyšlenou.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vlastní instrukce a projekty</h5>
+            <p class="where"><b>Kde:</b> levá lišta → Projects → Project instructions + soubory · Settings → Profile</p>
+            <p>Projekt drží trvalou roli a knihovnu dokumentů, takže stejný kontext nevkládáte do každé konverzace znovu. V profilu nastavíte obecné preference, jak vám má Claude odpovídat (jazyk, délka, styl).</p>
+          </div>
+          <div class="tool-block">
+            <h5>Paměť a soukromí</h5>
+            <p class="where"><b>Kde:</b> Settings → Privacy → „Help improve Claude"</p>
+            <p>Přepínač zapnutý defaultně znamená, že konverzace mohou sloužit k trénování (retence až 5 let). Po vypnutí zůstává 30denní retence. Plány Team a Enterprise defaultně netrénují. Podrobnosti v boxu pod kartami.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vstupy a nástroje</h5>
+            <p class="where"><b>Kde:</b> sponka u pole pro prompt · přepínač web search</p>
+            <p>Nahrání PDF, obrázků a dokumentů (i přetažením). Web search funguje ve Free i Pro. Artifacts zobrazí dokument, kód nebo stránku vedle chatu, takže výsledek rovnou vidíte a iterujete na něm.</p>
+          </div>
+        </div>
+
+        <div class="screenshots">
+          <div class="screenshot">
+            <div class="screenshot-tag">Claude · screen 01</div>
+            <div class="screenshot-desc">Rozbalená nabídka výběru modelu u pole pro prompt: Opus 4.7 vs Sonnet 4.6</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">Claude · screen 02</div>
+            <div class="screenshot-desc">Sekce Projects s vyplněnou „Project instructions" a alespoň jedním souborem v knowledge</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">Claude · screen 03</div>
+            <div class="screenshot-desc">Settings → Privacy: přepínač „Help improve Claude" (default zapnuto)</div>
+          </div>
+        </div>
+
+        <div class="data-warn">
+          <strong>Datová politika:</strong> Free, Pro a Max defaultně umožňují trénování modelu na vašich konverzacích, s retencí až 5 let. Po opt-outu (Settings → Privacy) zůstává 30denní retence. Plány Team a Enterprise defaultně netrénují. Ověřeno na privacy.claude.com, 5/2026.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">ChatGPT</h2>
+    <p class="section-lead">
+      Od americké firmy OpenAI. Nejstarší a nejrozšířenější AI chat. Silné stránky: nejširší ekosystém funkcí (Custom GPTs, Sora video, Deep Research, Agent Mode), nejrychleji přidává novinky. Méně předvídatelný v délce odpovědí.
+    </p>
+
+    <div class="tool-section">
+      <div class="tool-header chatgpt">
+        <h3>ChatGPT · <em>nejširší ekosystém</em></h3>
+        <p class="tagline">chatgpt.com. Vyrábí OpenAI (USA). Velký výběr funkcí a rychlé přidávání novinek. Mnoho lidí ho už zná z osobního použití, takže vstupní bariéra je nejnižší.</p>
+        <p class="plans"><b>Plány:</b> Free · Go 8 USD/měs · Plus 20 USD/měs · Pro 100–200 USD/měs · Business od 20 USD/uživatel (netrénuje)</p>
+      </div>
+      <div class="tool-body">
+        <div class="tool-grid">
+          <div class="tool-block">
+            <h5>Výběr modelu</h5>
+            <p class="where"><b>Kde:</b> rozbalovací nabídka modelu nad chatem (horní lišta)</p>
+            <p>Volíte mezi <strong>GPT-5.5</strong> a rychlejšími, úspornějšími variantami. Vyšší plán zvedá limity i délku kontextu (32k tokenů na Plus, 128k na Pro). Některé režimy, třeba delší uvažování, zapínáte přímo u konkrétní zprávy.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vlastní instrukce a Custom GPTs</h5>
+            <p class="where"><b>Kde:</b> Settings → Personalization → Custom instructions · levá lišta → GPTs → Create</p>
+            <p>Custom instructions platí globálně: jednou řeknete, co o vás AI ví a jak má odpovídat. Custom GPT je uložený mini-asistent s vlastní instrukcí a knowledge soubory. Hotové najdete i v marketplace.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Paměť a soukromí</h5>
+            <p class="where"><b>Kde:</b> Settings → Personalization → Memory · Settings → Data Controls</p>
+            <p>Memory si pamatuje fakta napříč konverzacemi (lze vypnout i mazat). Opt-out z trénování je v Data Controls → „Improve the model for everyone". Pro jednorázový citlivý dotaz použijte Temporary Chat: neukládá se do historie a netrénuje.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vstupy a nástroje</h5>
+            <p class="where"><b>Kde:</b> sponka (soubory) · mikrofon (hlas) · nabídka nástrojů</p>
+            <p>Nahrání souborů a obrázků, web search, Deep Research (rozšířená rešerše s citacemi), generování obrázků, Sora (video, od Plus) a Agent Mode pro vícekrokové úkoly.</p>
+          </div>
+        </div>
+
+        <div class="screenshots">
+          <div class="screenshot">
+            <div class="screenshot-tag">ChatGPT · screen 01</div>
+            <div class="screenshot-desc">Výběr modelu v horní liště nad chatem (GPT-5.5 a varianty)</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">ChatGPT · screen 02</div>
+            <div class="screenshot-desc">Custom instructions nebo Custom GPT s vyplněnou instrukcí a knowledge soubory</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">ChatGPT · screen 03</div>
+            <div class="screenshot-desc">Settings → Data Controls → „Improve the model for everyone" (default zapnuto)</div>
+          </div>
+        </div>
+
+        <div class="data-warn">
+          <strong>Datová politika:</strong> Free, Plus i Pro (osobní účty) defaultně používají vaše konverzace k trénování. Opt-out v Settings → Data Controls. Plány Business a Enterprise defaultně netrénují. Pro citlivé jednorázové dotazy je k dispozici Temporary Chat (nezůstává v historii, netrénuje). Ověřeno na help.openai.com, 5/2026.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Gemini</h2>
+    <p class="section-lead">
+      Od Googlu. Silné stránky: integrace s Google Workspace (Gmail, Docs, Drive, Calendar), NotebookLM jako specializovaný nástroj na práci s vlastními zdroji, velmi dlouhý kontext, multimodální schopnosti (video, audio).
+    </p>
+
+    <div class="tool-section">
+      <div class="tool-header gemini">
+        <h3>Gemini · <em>integrace s Google ekosystémem</em></h3>
+        <p class="tagline">gemini.google.com. Vyrábí Google (USA). Pokud žijete v Google Workspace (Gmail, Docs, Drive), Gemini do něj nejlépe zapadá. Velmi dlouhý kontext, video a audio jako vstupy.</p>
+        <p class="plans"><b>Plány:</b> Free · AI Plus 7,99 USD/měs · AI Pro 19,99 USD/měs · AI Ultra 100–200 USD/měs</p>
+      </div>
+      <div class="tool-body">
+        <div class="tool-grid">
+          <div class="tool-block">
+            <h5>Výběr modelu</h5>
+            <p class="where"><b>Kde:</b> přepínač modelu nad chatem (Fast / Pro)</p>
+            <p><strong>Flash</strong> je rychlý na běžné věci, <strong>Gemini 3.1 Pro</strong> je kvalitnější a zvládá kontext až 1M tokenů. Vyšší plán odemyká Pro a Ultra s vyššími limity a delším během náročných úloh.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vlastní instrukce a Gems</h5>
+            <p class="where"><b>Kde:</b> levá lišta → Gems → New Gem · Saved info (personalizace)</p>
+            <p>Gem je uložený asistent s vlastní rolí a zaměřením, obdoba Custom GPT. Saved info drží osobní preference (kdo jste, na čem pracujete), které se promítají do odpovědí.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Paměť a soukromí</h5>
+            <p class="where"><b>Kde:</b> myaccount.google.com → Data and Privacy → Gemini Apps Activity</p>
+            <p>Default zapnuto znamená ukládání konverzací a u části i lidskou kontrolu pro zlepšení modelů. Pozor: vypnutí Apps Activity zastaví trénování, ale zároveň přestane ukládat historii chatů. Firemní Workspace plány defaultně netrénují.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vstupy a nástroje</h5>
+            <p class="where"><b>Kde:</b> ikony u pole (foto, soubor, kamera) · Extensions · NotebookLM</p>
+            <p>Multimodální vstupy (obrázek, video, audio) a propojení s Gmail, Docs a Drive. NotebookLM (notebooklm.google.com) pracuje jen s vašimi zdroji a umí z nich udělat audio přehled. Generování obrázků a videa (Imagen, Veo).</p>
+          </div>
+        </div>
+
+        <div class="screenshots">
+          <div class="screenshot">
+            <div class="screenshot-tag">Gemini · screen 01</div>
+            <div class="screenshot-desc">Přepínač modelu (Fast / Pro) a levá lišta se sekcí Gems</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">Gemini · screen 02</div>
+            <div class="screenshot-desc">NotebookLM se 2&ndash;3 zdroji a generovaným audio přehledem</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">Gemini · screen 03</div>
+            <div class="screenshot-desc">myaccount.google.com → Data and Privacy → Gemini Apps Activity</div>
+          </div>
+        </div>
+
+        <div class="data-warn">
+          <strong>Datová politika:</strong> Konzumentské verze (Free i AI Pro/Ultra na osobních účtech) defaultně trénují a část konverzací prochází lidskou kontrolou pro zlepšení modelů. Opt-out přes myaccount.google.com → Data and Privacy → Gemini Apps Activity. Pozor: vypnutí Apps Activity zároveň vypne ukládání historie chatů. Workspace placené plány pro firmy defaultně netrénují. Ověřeno na support.google.com/gemini, 5/2026.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Microsoft Copilot</h2>
+    <p class="section-lead">
+      Od Microsoftu. Pod kapotou používá modely od OpenAI. Silné stránky: integrace s Word, Excel, PowerPoint, Outlook, Teams. Pro lidi pracující v Microsoft 365 nejpřirozenější volba. Nabízí méně ručních nastavení než ostatní, většinu obstará kontext otevřené aplikace.
+    </p>
+
+    <div class="tool-section">
+      <div class="tool-header copilot">
+        <h3>Microsoft Copilot · <em>integrace s Microsoft 365</em></h3>
+        <p class="tagline">copilot.microsoft.com (zdarma) plus Copilot uvnitř aplikací Microsoft 365 (placené). Vyrábí Microsoft, modely od OpenAI. Když pracujete v Wordu, Excelu, Outlooku či Teams, Copilot do nich umí přímo zasahovat.</p>
+        <p class="plans"><b>Plány:</b> Free · M365 Premium cca 10 EUR/měs · Copilot Business od 18 USD/uživatel · Enterprise 30 USD/uživatel</p>
+      </div>
+      <div class="tool-body">
+        <div class="tool-grid">
+          <div class="tool-block">
+            <h5>Výběr modelu a režimu</h5>
+            <p class="where"><b>Kde:</b> copilot.microsoft.com → volba režimu (Quick / Think Deeper)</p>
+            <p>Model (GPT od OpenAI) se ručně nepřepíná jako u ostatních nástrojů. Místo toho volíte režim: <strong>Think Deeper</strong> zapne pomalejší, ale důkladnější odpověď u složitějších dotazů.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vlastní instrukce a integrace</h5>
+            <p class="where"><b>Kde:</b> v každé M365 aplikaci panel Copilot · Copilot Studio (firmy)</p>
+            <p>Copilot pracuje s kontextem otevřeného dokumentu, e-mailu nebo schůzky, takže instrukce dáváte přímo v aplikaci. Firmy si v Copilot Studiu staví vlastní agenty s danými znalostmi a pravidly.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Paměť a soukromí</h5>
+            <p class="where"><b>Kde:</b> účet na copilot.microsoft.com · u firem spravuje administrátor</p>
+            <p>M365 Premium, Business i Enterprise defaultně netrénují na obsahu vašich dokumentů a konverzací. To je hlavní výhoda pro pracovní data. Free Copilot na webu má mírnější spotřební politiku a pro citlivá data se nehodí.</p>
+          </div>
+          <div class="tool-block">
+            <h5>Vstupy a nástroje</h5>
+            <p class="where"><b>Kde:</b> panel Copilot v aplikaci · copilot.microsoft.com (upload, hlas)</p>
+            <p>Ve Wordu přepíše a shrne text, v Excelu pomůže se vzorci a analýzou, v Outlooku shrne dlouhé vlákno, v Teams zápis a úkoly ze schůzky. Webová verze umí upload, hlas (Copilot Voice) a generování obrázků (Designer).</p>
+          </div>
+        </div>
+
+        <div class="screenshots">
+          <div class="screenshot">
+            <div class="screenshot-tag">Copilot · screen 01</div>
+            <div class="screenshot-desc">copilot.microsoft.com s volbou režimu Quick / Think Deeper</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">Copilot · screen 02</div>
+            <div class="screenshot-desc">Word s otevřeným panelem Copilot vpravo, návrh úpravy odstavce</div>
+          </div>
+          <div class="screenshot">
+            <div class="screenshot-tag">Copilot · screen 03</div>
+            <div class="screenshot-desc">Outlook se shrnutím dlouhého e-mailového vlákna (Summarize)</div>
+          </div>
+        </div>
+
+        <div class="data-warn">
+          <strong>Datová politika:</strong> M365 Premium (osobní placený) a M365 Copilot Business / Enterprise (firemní) defaultně nepoužívají obsah dokumentů a konverzací k trénování modelů. To je hlavní výhoda Microsoft přístupu pro pracovní použití. Free Copilot na copilot.microsoft.com má politiku spotřební služby (méně přísnou), nedoporučuje se pro citlivá data. Ověřeno na microsoft.com, 5/2026.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Nastavení, která udělejte hned</h2>
+    <p class="section-lead">
+      Než začnete vkládat pracovní materiály, projděte si pár nastavení. Ušetří čas a sníží riziko, že data skončí někde, kde je nechcete. Platí napříč nástroji, jen se jinak jmenují.
+    </p>
+
+    <div class="decisions">
+      <div class="decision-card">
+        <h5>Zkontrolujte trénování na vašich datech</h5>
+        <p>U free a osobních placených plánů se defaultně trénuje na vašich konverzacích. Pokud vkládáte neveřejné podklady, vypněte to dřív, než je nahrajete.</p>
+        <span class="pick">Claude: Settings → Privacy · ChatGPT: Data Controls · Gemini: Apps Activity</span>
+      </div>
+      <div class="decision-card">
+        <h5>Nastavte si vlastní instrukce</h5>
+        <p>Jednou popište, kdo jste, v jakém kontextu pracujete a jak má AI odpovídat. Pak to neopakujete v každém promptu a výstupy jsou konzistentnější.</p>
+        <span class="pick">Claude: Profile / Projects · ChatGPT: Custom instructions · Gemini: Gems</span>
+      </div>
+      <div class="decision-card">
+        <h5>Vyberte model podle úkolu</h5>
+        <p>Silnější model na kvalitu a složité texty, rychlejší na běžné a opakované věci, kde šetříte denní limit. Není potřeba mít pořád zapnutý ten nejdražší.</p>
+        <span class="pick">Opus vs Sonnet · GPT-5.5 vs lehčí · Gemini Pro vs Flash</span>
+      </div>
+      <div class="decision-card">
+        <h5>Pro jednorázový citlivý dotaz použijte dočasný režim</h5>
+        <p>Když potřebujete jen rychle něco probrat a nechcete to v historii ani v tréninku, zvolte dočasnou konverzaci, nebo ji po použití smažte.</p>
+        <span class="pick">ChatGPT: Temporary Chat · ostatní: smazat konverzaci po použití</span>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Citlivá data a free verze</summary>
+      <div class="tip-body">
+        <p>Pro pracovní data, která by neměla opustit vaši instituci (osobní údaje klientů, neveřejné dokumenty, interní podklady), nejsou free verze žádného z těchto nástrojů vhodná volba bez explicitního opt-outu z trénování. Ten je dostupný u všech, ale je dobré si pamatovat, že platí jen do té doby, dokud ho někdo nezapne zpět.</p>
+        <p>Pro pravidelnou pracovní práci s citlivými daty raději plán, který defaultně netrénuje: Microsoft 365 Premium / Business / Enterprise, Claude Team / Enterprise, ChatGPT Business / Enterprise, Google Workspace placené plány. Tématu se budeme detailně věnovat v <a href="../index.html#s7">Setkání 7 (Instituce)</a>, kde probereme pravidla pro institucionální použití AI.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co potřebujeme nafotit pro tento průvodce</h2>
+    <p class="section-lead">
+      Screenshoty zatím nejsou přidané (placeholdery výše). Tady je seznam toho, co je potřeba nafotit. Stačí 12 obrázků (3 na nástroj), zaměřené na nastavení, ne na úvodní obrazovku. Rozlišení velké, aby šly zmenšit na šířku karty.
+    </p>
+
+    <div class="needs-list">
+      <h4>Seznam screenshotů</h4>
+      <p class="intro">Doporučení: foťte v anglické verzi rozhraní, aby ukázky odpovídaly i tomu, co najdou v původním jazyce. Pokud má nástroj viditelně lokalizované české menu, foťte v něm.</p>
+      <ol>
+        <li><strong>Claude · výběr modelu</strong><small>Rozbalená nabídka modelu u pole pro prompt: jasně viditelné Opus 4.7 a Sonnet 4.6, ideálně s popiskem rozdílu.</small></li>
+        <li><strong>Claude · Projects</strong><small>Otevřený projekt s vyplněnou „Project instructions" a alespoň jedním souborem v knowledge.</small></li>
+        <li><strong>Claude · Privacy</strong><small>Settings → Privacy → přepínač „Help improve Claude" (nebo aktuální český název). Jasně zobrazený stav přepínače.</small></li>
+        <li><strong>ChatGPT · výběr modelu</strong><small>Horní lišta nad chatem s rozbalenou nabídkou modelu (GPT-5.5 a lehčí varianty).</small></li>
+        <li><strong>ChatGPT · Custom instructions / GPT</strong><small>Settings → Personalization → Custom instructions, nebo vytvořený Custom GPT s instrukcí a knowledge soubory.</small></li>
+        <li><strong>ChatGPT · Data Controls</strong><small>Settings → Data Controls → „Improve the model for everyone" toggle. Klíčový pro ukázku opt-outu.</small></li>
+        <li><strong>Gemini · model a Gems</strong><small>Přepínač modelu (Fast / Pro) nahoře a levá lišta se sekcí Gems.</small></li>
+        <li><strong>NotebookLM</strong><small>notebooklm.google.com: otevřený notebook se 2&ndash;3 zdroji a vygenerovaným audio přehledem („Audio Overview").</small></li>
+        <li><strong>Gemini · Apps Activity</strong><small>myaccount.google.com → Data and Privacy → Gemini Apps Activity. Detail s přepínačem a poznámkou, že vypnutí odstraní i historii.</small></li>
+        <li><strong>Copilot · web a režim</strong><small>copilot.microsoft.com s viditelnou volbou režimu Quick / Think Deeper.</small></li>
+        <li><strong>Copilot · Word</strong><small>Word s otevřeným dokumentem a panelem Copilot vpravo. Návrh přepisu odstavce nebo shrnutí.</small></li>
+        <li><strong>Copilot · Outlook</strong><small>Outlook s dlouhým e-mailovým vláknem a tlačítkem Copilot „Summarize". Zobrazené shrnutí.</small></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Nastavení uděláte jednou a pak vám slouží. Začněte tím, co máte po ruce, projděte čtyři kategorie nastavení a po dvou týdnech víte, zda potřebujete změnit.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Nastavení stačí udělat jednou.</strong> Vlastní instrukce a projekty (Projects, Custom GPTs, Gems) ušetří opakované vkládání kontextu do každé konverzace.
+      </div>
+      <div class="takeaway-card">
+        <strong>Opt-out je výchozí krok.</strong> Free a osobní placené plány obvykle trénují na vašich datech. Pro pracovní data zkontrolujte trénování dřív, než něco nahrajete, nebo zvolte plán bez trénování.
+      </div>
+      <div class="takeaway-card">
+        <strong>Model volíte podle úkolu.</strong> Silnější na kvalitu a složité texty, rychlejší na běžné věci a tam, kde šetříte limit. Není nutné mít pořád ten nejdražší.
+      </div>
+      <div class="takeaway-card">
+        <strong>Údaje stárnou rychle.</strong> Ceny, modely i názvy položek v nastavení se mění v týdnech, ne v letech. Tato stránka odráží stav 5/2026. Pro citlivá rozhodnutí ověřte aktuální stav přímo u poskytovatele.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 3 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

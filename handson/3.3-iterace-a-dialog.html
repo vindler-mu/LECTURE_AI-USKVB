@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Iterace a dialog s AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #4575b5;
+    --accent-hover: #355e91;
+    --accent-soft: #e9f0f8;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── COMPARISON BOX ─────────────────────────────────── */
+  .compare-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 720px) { .compare-box { grid-template-columns: 1fr; } }
+  .compare-col {
+    padding: 22px 24px;
+    border: 1px solid var(--line);
+  }
+  .compare-col.before { background: var(--warm-soft); border-color: color-mix(in srgb, var(--warm) 40%, var(--line)); }
+  .compare-col.after { background: var(--green-soft); border-color: color-mix(in srgb, var(--green) 40%, var(--line)); }
+  .compare-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .compare-col.before h4 { color: var(--warm); }
+  .compare-col.after h4 { color: var(--green); }
+  .compare-col p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .compare-col ul {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .compare-col ul li {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .compare-col.before ul li::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    color: var(--warm);
+    font-weight: 700;
+  }
+  .compare-col.after ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* ── MOVES (4 typy iteračních tahů) ─────────────────── */
+  .moves {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .moves { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .moves { grid-template-columns: 1fr; } }
+  .move-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .move-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .move-card .when {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 10px;
+    letter-spacing: 0.2px;
+  }
+  .move-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .move-card .pattern {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  /* ── ROUNDS (interaktivní dialog) ───────────────────── */
+  .rounds-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 26px 28px;
+  }
+  .round-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .round-tab {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 9px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.2px;
+  }
+  .round-tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .round-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .round-stage {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+  }
+  .round-stage h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .round-stage .round-lead {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .msg {
+    border-left: 3px solid var(--line);
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    background: var(--paper);
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .msg.user { border-left-color: var(--accent); background: var(--accent-soft); }
+  .msg.ai { border-left-color: var(--green); background: var(--green-soft); }
+  .msg .who {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .msg.user .who { color: var(--accent); }
+  .msg.ai .who { color: var(--green); }
+  .msg .body { color: var(--ink); }
+  .msg .body p { margin-bottom: 8px; }
+  .msg .body p:last-child { margin-bottom: 0; }
+
+  .round-note {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--warm);
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .round-note strong { color: var(--warm); }
+
+  .round-progress {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    margin-top: 4px;
+  }
+  .round-progress span {
+    flex: 1;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+  }
+  .round-progress span.done { background: var(--accent); }
+
+  /* ── STOP RULES ─────────────────────────────────────── */
+  .stop-rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .stop-rules { grid-template-columns: 1fr; } }
+  .stop-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+  }
+  .stop-card.warn { border-left-color: var(--warm); }
+  .stop-card h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .stop-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .tip-toggle summary {
+    padding: 12px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+";
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .tip-body {
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 3 · Hands-on</p>
+    <h1>Iterace místo jednorázového dotazu: <em>rozhovor</em> jako pracovní metoda</h1>
+    <p class="hero-subtitle">
+      Nejčastější chyba při práci s AI: vzít první odpověď a dál ji neupravovat. První odpověď bývá kompromis: padne někam mezi vaše skutečné očekávání a nejpravděpodobnější interpretaci, kterou model na podobné zadání volí. Kvalitní výsledek vzniká obvykle ve dvou až pěti kolech dialogu. Tato stránka ukazuje, proč to tak je a jak takový rozhovor vést.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="3.2-anatomie-promptu.html">anatomii promptu</a>. I dobře postavený první prompt obvykle vyžaduje doladění. Tady ukazujeme, jak.
+    </p>
+    <div class="definition">
+      <strong>Iterace</strong> = postupné zlepšování výstupu v dialogu. Místo „jeden prompt, jedna odpověď" pracujete v rytmu: ptáte se, čtete, upravujete, ptáte se znovu. Každé kolo dolaďuje obě strany: co AI potřebuje vědět a co vy ve výsledku chcete.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Proč první odpověď bývá kompromis</h2>
+    <p class="section-lead">
+      AI se defaultně sama neptá. Když je zadání nejednoznačné, vybírá si nejpravděpodobnější interpretaci a začne odpovídat. Když je téma rozsáhlé, dělá kompromis mezi šíří a hloubkou. Když nemáte jasný formát, volí univerzální. Iterace tyto kompromisy postupně odstraňuje. Můžete ji dělat i obráceně: požádat AI, aby se před odpovědí sama zeptala na to, co jí chybí.
+    </p>
+
+    <div class="compare-box">
+      <div class="compare-col before">
+        <h4>Jeden prompt, jedna odpověď</h4>
+        <p>Vezmete první výsledek a zkopírujete ho, nebo zavřete chat. Co se stane:</p>
+        <ul>
+          <li>Dostanete univerzální verzi pro průměrný případ</li>
+          <li>AI neuhodla detaily, na kterých vám záleželo</li>
+          <li>Formát je obecný, ne nutně použitelný</li>
+          <li>Často s tím odcházíte spíš zklamaný</li>
+        </ul>
+      </div>
+      <div class="compare-col after">
+        <h4>Iterace v dialogu</h4>
+        <p>Po první odpovědi pokračujete v konverzaci. Co se stane:</p>
+        <ul>
+          <li>Postupně se odhalí, co jste si pod úkolem představoval</li>
+          <li>Můžete reagovat na konkrétní místa, která nesedí</li>
+          <li>AI se přizpůsobuje vaší zpětné vazbě</li>
+          <li>Odcházíte s něčím, co opravdu použijete</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Co tím model „myslí"</summary>
+      <div class="tip-body">
+        <p>Když si AI vybírá interpretaci nejednoznačného zadání, neděje se tam nic záhadného. Vrátí statisticky nejčastější odpověď, jakou v trénovacích datech viděla na podobně formulované zadání. Pokud první odpověď nesedí tomu, co jste chtěl, obvykle to znamená, že jste úkol formuloval podobně jako většina lidí, ale potřeboval jste něco specifičtějšího než průměr.</p>
+        <p>Iterace tedy neznamená, že si AI pamatuje vaše preference do budoucna. V rámci jedné konverzace ano: model vidí celou historii. Mezi konverzacemi jen tehdy, pokud máte zapnuté trvalé nastavení (popsané v <a href="3.2-anatomie-promptu.html">3.2</a>).</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Čtyři typy iteračních tahů</h2>
+    <p class="section-lead">
+      V iteraci nejčastěji použijete čtyři typy zpráv. Pro každý se vyplatí znát vzor. Není to vyčerpávající seznam, ale tyto čtyři typy v praxi potkáte nejčastěji.
+    </p>
+
+    <div class="moves">
+      <div class="move-card">
+        <h4>Doptat se</h4>
+        <div class="when">Když odpověď nepochopíte, nebo ji zpochybňujete</div>
+        <p>Místo nového zadání ji požádáte o vysvětlení nebo o zdroje. Často to odhalí, kde si něco domyslela.</p>
+        <div class="pattern">„Proč jsi zvolil X místo Y?"
+„Cituj větu, ze které to plyne."</div>
+      </div>
+      <div class="move-card">
+        <h4>Upravit</h4>
+        <div class="when">Když je odpověď v zásadě dobrá, ale potřebuje doladit</div>
+        <p>Reagujete na konkrétní místo. Říkáte, co změnit, jakým směrem a proč.</p>
+        <div class="pattern">„Druhý odstavec je moc strohý.
+Rozveď ho a uveď konkrétní příklad."</div>
+      </div>
+      <div class="move-card">
+        <h4>Dát příklad</h4>
+        <div class="when">Když chcete jiný styl nebo strukturu, kterou je těžké popsat</div>
+        <p>Ukázka funguje lépe než dlouhý popis. AI velmi dobře napodobuje styl a formát z příkladu.</p>
+        <div class="pattern">„Spíš v tomhle stylu:
+[vložím ukázku, jak to má znít]"</div>
+      </div>
+      <div class="move-card">
+        <h4>Posunout dál</h4>
+        <div class="when">Když je tahle část hotová a jdete na další krok</div>
+        <p>Místo nové konverzace pokračujete tematicky navazujícím úkolem. V rámci stejné konverzace si model drží předchozí kontext.</p>
+        <div class="pattern">„Teď udělej totéž pro
+následující situaci..."</div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Negativní instrukce fungují hůř než pozitivní</summary>
+      <div class="tip-body">
+        <p>„Nepiš to formálně" často nepomáhá tak dobře jako „Piš to v lehčím tónu, jako kdybys to říkal kamarádovi". Anthropic to popisuje ve svých doporučeních pro formulaci promptů: pozitivní příklad „jak má text znít" funguje spolehlivěji než zákaz „takhle ne".</p>
+        <p>Praktický důsledek pro iteraci: když odpověď nesedí, neřekněte „tohle ne", ale spíš „chci to v tomto stylu, takto…". Když nemáte konkrétní ukázku, popište vlastnost, kterou chcete (kratší, konkrétnější, méně technické), místo toho, abyste zakazoval tu současnou.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Tři kola na jednom úkolu</h2>
+    <p class="section-lead">
+      Konkrétní průchod iterací na úkolu, který si každý umí představit: žádost o reklamaci u e-shopu. Klikněte na kola 1 až 3 a sledujte, jak se výsledek postupně mění. Pod každým kolem najdete poznámku, co se zlepšilo a co ještě nesedí.
+    </p>
+
+    <div class="rounds-wrap">
+      <div class="round-tabs" id="round-tabs">
+        <button class="round-tab active" data-round="1">Kolo 1 · První prompt</button>
+        <button class="round-tab" data-round="2">Kolo 2 · Doladění</button>
+        <button class="round-tab" data-round="3">Kolo 3 · Finální verze</button>
+      </div>
+
+      <div class="round-progress" id="round-progress">
+        <span class="done"></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="round-stage">
+        <h4 id="round-title"></h4>
+        <p class="round-lead" id="round-lead"></p>
+
+        <div class="msg user">
+          <div class="who">Vy</div>
+          <div class="body" id="user-msg"></div>
+        </div>
+        <div class="msg ai">
+          <div class="who">AI</div>
+          <div class="body" id="ai-msg"></div>
+        </div>
+
+        <div class="round-note" id="round-note"></div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Nemusíte psát dlouhé úpravy</summary>
+      <div class="tip-body">
+        <p>Úprava v iteraci může být velmi krátká: „kratší", „bez emocí", „přidej konkrétní datum". AI má kontext celé konverzace, takže si „kratší" přeloží jako „kratší verze předchozího textu, ostatní zachovat".</p>
+        <p>Praktický důsledek: nemusíte se bát ptát úsporně. Tři slova často stačí. Co naopak vždy stojí za to: po úpravě si přečíst novou verzi celou. AI při změně jedné části občas zhorší jinou (například při zkrácení vyhodí důležitý detail). Iterace je rytmus „ptát se, číst, upravit".</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdy iteraci ukončit</h2>
+    <p class="section-lead">
+      Nekonečné dolaďování je stejně problematický extrém jako jednorázový prompt. Existují dva druhy signálů, kdy přestat: <strong>pozitivní</strong> (výsledek stačí) a <strong>varovné</strong> (dialog se nikam neposouvá). Ke každému dva typické příznaky.
+    </p>
+
+    <div class="stop-rules">
+      <div class="stop-card">
+        <h5>Přírůstky mezi koly klesají</h5>
+        <p>Pokud první kolo posunulo výsledek hodně, druhé méně a třetí už jen mění slovíčka, jste na dobrém konci. Z této pozice už to lepší nebude. Vezměte výsledek a použijte ho.</p>
+      </div>
+      <div class="stop-card">
+        <h5>„Tohle bych použil"</h5>
+        <p>Hotové neznamená dokonalé. Hotové znamená, že to splňuje účel, kvůli kterému jste AI použil. Když se přistihnete, jak leštíte drobnosti, které ve výsledku nikdo nepozná, dávno jste přehoupl bod, kdy bylo lépe začít výsledek používat.</p>
+      </div>
+      <div class="stop-card warn">
+        <h5>AI opakuje stejnou chybu</h5>
+        <p>Pokud jste dvakrát nebo třikrát řekl „ne tohle, ale tamto" a AI se vrátila ke stejnému řešení, dialog se zacyklil. Často je rychlejší otevřít nový chat s lepším úvodním promptem (s pochopením toho, co bylo špatně) než dialog zachraňovat.</p>
+      </div>
+      <div class="stop-card warn">
+        <h5>Iterace stojí víc úsilí než ruční zpracování</h5>
+        <p>Některé úkoly napíšete ručně rychleji, než s nimi vyiterujete v AI. Když si po pěti kolech říkáte, že už jste to mohl mít hotové, máte pravdu. Není to selhání AI, je to nesoulad nástroje s úkolem. Příště zkuste úkol rozdělit jinak, nebo zvolte jiný nástroj.</p>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Restart není selhání</summary>
+      <div class="tip-body">
+        <p>V kvalitní práci s AI je restart konverzace běžný nástroj. Po prvních pokusech zjistíte, jak měla být postavená první zpráva. Otevřete nový chat, napíšete lepší úvodní prompt (s tím, co jste se v předchozí konverzaci naučil), a často dojdete k cíli rychleji a lépe.</p>
+        <p>Když potřebujete neztratit hodnotnou část předchozí konverzace, požádejte AI: „Shrň mi v pěti odrážkách, co jsme zatím rozhodli a kam jsme se dostali." Toto shrnutí pak vezměte jako kontext do nového chatu.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Iterace není znamení selhání. Je to standardní pracovní rytmus, který odlišuje pohodlnou práci s AI od frustrující.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>První odpověď bývá kompromis.</strong> Kvalitní výsledek vzniká obvykle ve 2 až 5 kolech dialogu. Kdo končí u první odpovědi, nechává hlavní část hodnoty na stole.
+      </div>
+      <div class="takeaway-card">
+        <strong>Čtyři iterační tahy.</strong> Doptat se, upravit, dát příklad, posunout dál. S těmito čtyřmi pokryjete většinu typických situací.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pozitivní instrukce funguje lépe než negativní.</strong> „Spíš v tomhle stylu" pomůže víc než „takhle ne". Ukázka jiného stylu je nejúčinnější forma zpětné vazby.
+      </div>
+      <div class="takeaway-card">
+        <strong>Vědět, kdy přestat.</strong> Když se další iterace mění málo, je hotovo. Když se zacyklí, je čas na restart. Když by bylo rychlejší napsat to ručně, úkol neseděl nástroji.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 3 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   ITERACE: tři kola dialogu na úloze reklamace u e-shopu
+   ────────────────────────────────────────────────────────── */
+
+const rounds = {
+  1: {
+    title: 'Kolo 1 · První prompt',
+    lead: 'Jednoduché zadání bez detailů. AI dosadí průměrné očekávání.',
+    user: '<p>Napiš mi reklamaci pro e-shop, dorazil mi rozbitý kávovar.</p>',
+    ai: `
+      <p>Vážený obchodní partnere,</p>
+      <p>obracím se na Vás s reklamací zakoupeného zboží. Dne ... jsem od vás obdržel kávovar, který byl při dodání poškozen. Žádám o vyřízení reklamace v souladu se zákonem č. 89/2012 Sb., občanský zákoník.</p>
+      <p>Předem děkuji za vyřízení.</p>
+      <p>S pozdravem,<br>...</p>`,
+    note: '<strong>Co je dobré:</strong> formálně správné. <strong>Co ale chybí:</strong> nemá identifikaci objednávky, popis poškození, žádaný způsob vyřízení, ani konkrétní termín. Nepoužitelné bez doplnění.'
+  },
+  2: {
+    title: 'Kolo 2 · Doladění s detaily a požadavkem',
+    lead: 'Vy doplníte konkrétní fakta, řeknete tón a co přesně po obchodu chcete.',
+    user: `
+      <p>Dobře, doplň konkrétní detaily:</p>
+      <ul>
+        <li>Objednávka č. 2026-0517-883 ze dne 20. 5. 2026</li>
+        <li>Kávovar model DeLonghi Magnifica S</li>
+        <li>Při dodání byl rozbitý plastový kryt zásobníku na zrna, kávovar nešel zavřít</li>
+        <li>Chci vrátit peníze, nikoliv výměnu</li>
+        <li>Tón profesionální, ale ne podlézavý. Jsem rozzlobený, ale chci to věcně.</li>
+      </ul>`,
+    ai: `
+      <p>Vážený obchodní partnere,</p>
+      <p>obracím se na Vás v souvislosti s objednávkou č. 2026-0517-883 ze dne 20. 5. 2026. Předmětem objednávky byl kávovar DeLonghi Magnifica S.</p>
+      <p>Při převzetí jsem zjistil, že plastový kryt zásobníku na zrna byl rozbitý a kávovar nelze řádně uzavřít. Zboží tedy zjevně nemá vlastnosti, které lze očekávat. Vzhledem k charakteru závady reklamaci uplatňuji a žádám o vrácení kupní ceny v plné výši, nikoliv o výměnu zboží.</p>
+      <p>Žádám o potvrzení přijetí reklamace a o sdělení dalšího postupu.</p>
+      <p>S pozdravem,<br>...</p>`,
+    note: '<strong>Velký posun:</strong> všechny relevantní detaily, jasný požadavek. <strong>Stále chybí:</strong> termín, do kdy chcete odpověď. Bez něj máte slabší vyjednávací pozici.'
+  },
+  3: {
+    title: 'Kolo 3 · Finální verze',
+    lead: 'Drobná úprava (termín odpovědi) a krátká verbální korekce stylu.',
+    user: `
+      <p>Přidej v závěru jasný termín: do 14 dnů od odeslání žádám potvrzení a do 30 dnů vyřízení. A celkově to ještě o trochu zkrať, je to pořád zbytečně květnaté.</p>`,
+    ai: `
+      <p>Vážený obchodní partnere,</p>
+      <p>k objednávce č. 2026-0517-883 ze dne 20. 5. 2026 uplatňuji reklamaci. Předmětem objednávky byl kávovar DeLonghi Magnifica S. Při převzetí jsem zjistil rozbitý plastový kryt zásobníku na zrna, který znemožňuje řádné uzavření.</p>
+      <p>Žádám o vrácení kupní ceny v plné výši, nikoliv o výměnu.</p>
+      <p>Prosím o potvrzení přijetí reklamace do 14 dnů od odeslání tohoto e-mailu a o její vyřízení nejpozději do 30 dnů. V opačném případě budu nucen postupovat dle zákona.</p>
+      <p>S pozdravem,<br>...</p>`,
+    note: '<strong>Použitelná verze.</strong> Konkrétní, věcná, s termíny. Bez emocí, ale s jasnou vyjednávací pozicí. Hotovo. Další kolo by už jen měnilo slovíčka.'
+  }
+};
+
+const roundTabs = document.querySelectorAll('.round-tab');
+const progressDots = document.querySelectorAll('#round-progress span');
+const roundTitle = document.getElementById('round-title');
+const roundLead = document.getElementById('round-lead');
+const userMsg = document.getElementById('user-msg');
+const aiMsg = document.getElementById('ai-msg');
+const roundNote = document.getElementById('round-note');
+
+function renderRound(n) {
+  const r = rounds[n];
+  roundTitle.textContent = r.title;
+  roundLead.textContent = r.lead;
+  userMsg.innerHTML = r.user;
+  aiMsg.innerHTML = r.ai;
+  roundNote.innerHTML = r.note;
+  roundTabs.forEach(b => b.classList.toggle('active', Number(b.dataset.round) === n));
+  progressDots.forEach((d, i) => d.classList.toggle('done', i < n));
+}
+
+roundTabs.forEach(btn => {
+  btn.addEventListener('click', () => renderRound(Number(btn.dataset.round)));
+});
+
+renderRound(1);
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

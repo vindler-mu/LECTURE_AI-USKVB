@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Anatomie promptu a práce s kontextem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #4575b5;
+    --accent-hover: #355e91;
+    --accent-soft: #e9f0f8;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── METAFORA: NOVÝ KOLEGA ──────────────────────────── */
+  .colleague-box {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 720px) {
+    .colleague-box { grid-template-columns: 1fr; }
+  }
+  .colleague-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .colleague-col p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .colleague-col ul {
+    list-style: none;
+    margin-top: 10px;
+  }
+  .colleague-col ul li {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .colleague-col ul li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── PROMPT BUILDER ─────────────────────────────────── */
+  .builder {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 26px 28px;
+  }
+  .builder-instructions {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .builder-stages {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .stage-btn {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 7px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.2px;
+  }
+  .stage-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .stage-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .builder-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 880px) {
+    .builder-grid { grid-template-columns: 1fr; }
+  }
+  .builder-panel {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    min-height: 360px;
+  }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .prompt-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .prompt-text .role-part { color: var(--accent); font-weight: 500; }
+  .prompt-text .context-part { color: var(--warm); }
+  .prompt-text .task-part { color: var(--green); font-weight: 500; }
+  .prompt-text .format-part { color: var(--red); }
+  .prompt-text .base-task { color: var(--ink); font-weight: 600; }
+
+  .response-text {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .response-text h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .response-text p {
+    margin-bottom: 8px;
+  }
+  .response-text ul {
+    margin-left: 20px;
+    margin-bottom: 8px;
+  }
+  .response-text li { margin-bottom: 3px; }
+  .response-quality {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .response-quality strong {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* ── LEGEND ─────────────────────────────────────────── */
+  .legend {
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  /* ── COMPONENT CARDS ────────────────────────────────── */
+  .components {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+  @media (max-width: 880px) {
+    .components { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .components { grid-template-columns: 1fr; }
+  }
+  .comp-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    border-top: 3px solid var(--accent);
+  }
+  .comp-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .comp-card .comp-q {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 10px;
+    letter-spacing: 0.2px;
+  }
+  .comp-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ── KONTEXT TABLE ──────────────────────────────────── */
+  .kontext-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 13.5px;
+  }
+  .kontext-table th, .kontext-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .kontext-table th {
+    background: var(--paper);
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+  .kontext-table td strong { color: var(--ink); }
+  .kontext-table tr:nth-child(even) td { background: var(--paper); }
+
+  /* ── NÁSTROJ KARTY ──────────────────────────────────── */
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 22px;
+  }
+  @media (max-width: 880px) {
+    .tools { grid-template-columns: 1fr; }
+  }
+  .tool-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .tool-card h5 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .tool-card p {
+    font-size: 12.8px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .tool-card .src {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── DIALOG VISUALIZATION ──────────────────────────── */
+  .dialog-flow {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 22px 26px;
+    margin-top: 20px;
+  }
+  .dialog-msg {
+    border-left: 3px solid var(--line);
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    background: var(--bg);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .dialog-msg.user { border-left-color: var(--accent); }
+  .dialog-msg.ai { border-left-color: var(--green); }
+  .dialog-msg.warn { border-left-color: var(--warm); background: var(--warm-soft); }
+  .dialog-msg.fix { border-left-color: var(--green); background: var(--green-soft); }
+  .dialog-msg .who {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .dialog-msg.user .who { color: var(--accent); }
+  .dialog-msg.ai .who { color: var(--green); }
+  .dialog-msg.warn .who { color: var(--warm); }
+  .dialog-msg.fix .who { color: var(--green); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .tip-toggle summary {
+    padding: 12px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+";
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .tip-body {
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) {
+    .takeaways { grid-template-columns: 1fr; }
+  }
+  .takeaway-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / STRIP / REVEAL ────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000;
+    transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent); letter-spacing: 2.5px;
+    margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: "";
+    display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view {
+      opacity: 1; transform: translateY(0);
+    }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 3 · Hands-on</p>
+    <h1>Anatomie promptu a <em>kontext</em>: jak mluvit s AI, aby vás chápala</h1>
+    <p class="hero-subtitle">
+      Kvalita odpovědi z AI závisí z velké části na tom, co řeknete a kolik kontextu nástroj má. Stejný úkol s vágním zadáním a se zadáním s kontextem dává úplně jiný výsledek. Tato stránka ukazuje, z čeho se skládá kvalitní prompt, kde se kontext dává a jak ho udržet, když se konverzace prodlužuje.
+    </p>
+    <p style="margin-top: 12px; font-size: 13.5px; color: var(--muted); max-width: 760px; line-height: 1.6;">
+      Navazuje na <a href="3.1-pravdepodobnost.html">pravděpodobnostní generátor</a>: čím je zadání kvalitnější, tím méně volnosti dáváte náhodě a tím konzistentnější odpovědi dostáváte.
+    </p>
+    <div class="definition">
+      <strong>Prompt</strong> = jednotlivá zpráva, kterou AI posíláte. <strong>Kontext</strong> = vše, co model v daný okamžik „vidí" před tím, než odpoví: instrukce, předchozí zprávy v konverzaci, přiložené dokumenty, trvalé nastavení nástroje.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">AI vás nezná a úkol taky ne</h2>
+    <p class="section-lead">
+      Nejčastější příčina nepoužitelné odpovědi není „špatná AI". Je to chybějící kontext. Když na AI vychrlíte „Shrň mi to", chová se jako nový kolega, který nemá tušení, kdo jste, k čemu odpověď bude a co považujete za dobré. Dělá to nejlepší, co umí: produkuje průměrné nasazení.
+    </p>
+
+    <div class="colleague-box">
+      <div class="colleague-col">
+        <h4>Co AI standardně neví</h4>
+        <p>Pokud jí to neřeknete, model nezná:</p>
+        <ul>
+          <li>Kdo se ptá (laik, odborník, role)</li>
+          <li>K čemu odpověď bude (e-mail, rozhodnutí, podklad)</li>
+          <li>Co považujete za „dobré" (stručné, formální, hloubkové)</li>
+          <li>Co už víte a co je naopak nové</li>
+          <li>Tlak, kontext a omezení (čas, citlivost, publikum)</li>
+        </ul>
+      </div>
+      <div class="colleague-col">
+        <h4>Jak to AI řeší bez kontextu</h4>
+        <p>Když chybí kontext, model dosadí statistický průměr z trénovacích dat. Výsledek tedy bude:</p>
+        <ul>
+          <li>Univerzální (vhodné pro nikoho konkrétního)</li>
+          <li>Vágní v místech, kde záleželo na detailu</li>
+          <li>Spíš delší než kratší (je to bezpečnější odhad)</li>
+          <li>Postavené na nejčastější interpretaci, ne na té vaší</li>
+          <li>Bez vazby na to, k čemu odpověď reálně použijete</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Proč to není „chyba AI"</summary>
+      <div class="tip-body">
+        <p>Anthropic, výrobce nástroje Claude, doporučuje na svém promptování pohled „chytrý, ale nový kolega bez znalosti vašich norem a postupů". A přidává zlaté pravidlo: <em>ukažte svůj prompt kolegovi s minimálním kontextem o úkolu. Pokud bude zmatený, AI taky.</em></p>
+        <p>To není metafora navíc. Model opravdu nemá uloženou znalost o vás, vaší práci ani vašich preferencích. Vše, co o úkolu „ví", je v daný moment v tom, co jste mu dali. Když dáte málo, dostanete odhad. Když dáte hodně, dostanete cílenou odpověď.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Anatomie kvalitního promptu: čtyři komponenty</h2>
+    <p class="section-lead">
+      Dobrý prompt má čtyři komponenty. Kterákoliv chybí, kompenzuje to AI svým odhadem. Klikněte si níže ukázkový úkol „shrnutí smlouvy o pronájmu před podpisem" a postupně přidávejte komponenty. Uvidíte, jak prompt roste, a hlavně, jak roste i užitečnost odpovědi.
+    </p>
+
+    <div class="components">
+      <div class="comp-card">
+        <h4>Role</h4>
+        <div class="comp-q">Z jaké pozice má AI odpovědět?</div>
+        <p>Určuje slovník, hloubku detailu a styl. „Jsi právník" a „Jsi učitel" dají úplně jinou odpověď na stejnou otázku.</p>
+      </div>
+      <div class="comp-card">
+        <h4>Kontext</h4>
+        <div class="comp-q">Co AI potřebuje vědět?</div>
+        <p>Situace, publikum, omezení. Kdo si odpověď bude číst, co s ní udělá, čeho se obává nebo na co se těší.</p>
+      </div>
+      <div class="comp-card">
+        <h4>Konkrétní zadání</h4>
+        <div class="comp-q">Co přesně chcete udělat?</div>
+        <p>Sloveso a jasné body. Místo „pomoct se smlouvou" raději „najdi body, které kupujícího omezují".</p>
+      </div>
+      <div class="comp-card">
+        <h4>Formát a kritéria</h4>
+        <div class="comp-q">Jak má výsledek vypadat?</div>
+        <p>Délka, struktura, styl, čemu se vyhnout. „3 odrážky, bez žargonu" stačí, ale musí to padnout.</p>
+      </div>
+    </div>
+
+    <div class="builder" style="margin-top: 28px;">
+      <p class="builder-instructions">Klikněte postupně na komponenty a sledujte vlevo prompt, vpravo typickou odpověď.</p>
+      <div class="builder-stages" id="stages">
+        <button class="stage-btn active" data-stage="0">0 · Holý úkol</button>
+        <button class="stage-btn" data-stage="1">1 · + Role</button>
+        <button class="stage-btn" data-stage="2">2 · + Kontext</button>
+        <button class="stage-btn" data-stage="3">3 · + Zadání</button>
+        <button class="stage-btn" data-stage="4">4 · + Formát</button>
+      </div>
+
+      <div class="builder-grid">
+        <div class="builder-panel">
+          <p class="panel-label">Váš prompt</p>
+          <div class="prompt-text" id="prompt-out"></div>
+        </div>
+        <div class="builder-panel">
+          <p class="panel-label">Typická odpověď AI</p>
+          <div class="response-text" id="response-out"></div>
+          <div class="response-quality" id="quality-out"></div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background: var(--accent);"></span> Role</span>
+        <span class="legend-item"><span class="legend-dot" style="background: var(--warm);"></span> Kontext</span>
+        <span class="legend-item"><span class="legend-dot" style="background: var(--green);"></span> Zadání</span>
+        <span class="legend-item"><span class="legend-dot" style="background: var(--red);"></span> Formát</span>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Pořadí komponent v promptu nemusí být přesně tohle</summary>
+      <div class="tip-body">
+        <p>Rozdělení na čtyři komponenty (role / kontext / zadání / formát) je didaktické. V praxi se některé prolínají a v promptu klidně mohou být napsané jinak, než byly vyjmenované tady. Důležité je, že v promptu jsou.</p>
+        <p>Pro delší a strukturovaný prompt se vyplatí oddělit komponenty viditelně (například nadpisy, prázdné řádky, nebo pro náročnější použití XML tagy jako <code>&lt;role&gt;</code>, <code>&lt;kontext&gt;</code>, <code>&lt;úkol&gt;</code>). Modelu to pomáhá lépe odlišit, co je instrukce a co je vstupní materiál.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Bias v promptu: AI vám ráda dá za pravdu</h2>
+    <p class="section-lead">
+      I dobře postavený prompt může selhat, pokud do něj nevědomky vložíte odpověď, kterou chcete slyšet. AI je tréninkem (RLHF) naučená vám příliš neodporovat, takže když z dotazu prosvítá, jaké stanovisko by vám sedělo, model na něj často kývne. Říká se tomu <strong>sykofantství</strong> a je to doložená vlastnost současných LLM.
+    </p>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-bottom: 14px;">Tři typické formy skrytého bias</h3>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+      <div style="background: var(--paper); border: 1px solid var(--line); padding: 16px 18px;">
+        <h4 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--ink);">Sugestivní formulace</h4>
+        <div style="background: var(--warm-soft); border-left: 3px solid var(--warm); padding: 8px 12px; margin-bottom: 8px; font-size: 13px; font-style: italic;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.5px; color: var(--warm); font-weight: 600; display: block; margin-bottom: 4px; font-style: normal;">SUGESTIVNÍ</span>
+          „Není přece špatné použít X v této situaci?"
+        </div>
+        <div style="background: var(--green-soft); border-left: 3px solid var(--green); padding: 8px 12px; font-size: 13px; font-style: italic;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.5px; color: var(--green); font-weight: 600; display: block; margin-bottom: 4px; font-style: normal;">NEUTRÁLNÍ</span>
+          „Je vhodné použít X? Jaké jsou argumenty pro a proti?"
+        </div>
+      </div>
+
+      <div style="background: var(--paper); border: 1px solid var(--line); padding: 16px 18px;">
+        <h4 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--ink);">Předjímání závěru</h4>
+        <div style="background: var(--warm-soft); border-left: 3px solid var(--warm); padding: 8px 12px; margin-bottom: 8px; font-size: 13px; font-style: italic;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.5px; color: var(--warm); font-weight: 600; display: block; margin-bottom: 4px; font-style: normal;">SUGESTIVNÍ</span>
+          „Vysvětli mi, proč je X lepší než Y."
+        </div>
+        <div style="background: var(--green-soft); border-left: 3px solid var(--green); padding: 8px 12px; font-size: 13px; font-style: italic;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.5px; color: var(--green); font-weight: 600; display: block; margin-bottom: 4px; font-style: normal;">NEUTRÁLNÍ</span>
+          „Porovnej X a Y. Silné a slabé stránky každého."
+        </div>
+      </div>
+
+      <div style="background: var(--paper); border: 1px solid var(--line); padding: 16px 18px;">
+        <h4 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--ink);">Pozitivní rámec</h4>
+        <div style="background: var(--warm-soft); border-left: 3px solid var(--warm); padding: 8px 12px; margin-bottom: 8px; font-size: 13px; font-style: italic;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.5px; color: var(--warm); font-weight: 600; display: block; margin-bottom: 4px; font-style: normal;">SUGESTIVNÍ</span>
+          „Co se mi na tomto nápadu líbí?"
+        </div>
+        <div style="background: var(--green-soft); border-left: 3px solid var(--green); padding: 8px 12px; font-size: 13px; font-style: italic;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.5px; color: var(--green); font-weight: 600; display: block; margin-bottom: 4px; font-style: normal;">NEUTRÁLNÍ</span>
+          „Najdi silné stránky, slabé stránky i rizika nápadu."
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; margin-top: 22px; max-width: 880px;">
+      <strong>Proč to AI nevyrovnává.</strong> RLHF preferoval odpovědi, které uživatel přijal pozitivně, nad odpověďmi, které mu odporovaly. Model si z toho odnesl, že souhlasit je obvykle lepší než nesouhlasit a že rámec uživatele je obvykle správný. Pokud do promptu vložíte tendenci („myslím, že X je dobrý nápad"), model spíš najde důvody pro X než proti.
+    </p>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 10px;">Praktiky pro neutrálnější prompt</h3>
+
+    <ul style="padding-left: 22px; font-size: 13.5px; line-height: 1.7; color: var(--ink); max-width: 880px;">
+      <li style="margin-bottom: 8px;"><strong>Když rozhodujete, žádejte oponenturu.</strong> <em>„Najdi co nejvíc důvodů, proč by to byl špatný nápad."</em> Explicitní role kritika vyrovnává defaultní souhlas.</li>
+      <li style="margin-bottom: 8px;"><strong>Otevřená otázka, ne nabízená možnost.</strong> <em>„Je vhodné X?"</em> místo <em>„Není X dobré?"</em>. Otevřená formulace neukazuje, co chcete slyšet.</li>
+      <li style="margin-bottom: 8px;"><strong>Defaultně obojí stranu.</strong> <em>„Argumenty pro a argumenty proti, oba seznamy stejně poctivě."</em> Model bude muset oba seznamy obhájit.</li>
+      <li style="margin-bottom: 8px;"><strong>Pro klíčová rozhodnutí: role oponenta.</strong> <em>„Vystupuj jako ďáblův advokát. Najdi nejvážnější rizika a slabiny."</em> Trvalá role v promptu nutí model držet kritickou polohu.</li>
+      <li><strong>Pozor na opakované doptávání.</strong> Když po odpovědi řeknete <em>„opravdu si myslíš, že X?"</em>, model může ustoupit a změnit pozici jen kvůli tlaku, ne kvůli novým informacím. Pokud chcete zpochybnit, zadejte to jako úkol (<em>„zpochybni svou předchozí odpověď"</em>), ne jako tlak.</li>
+    </ul>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Sykofantství je výzkumně doložené</summary>
+      <div class="tip-body">
+        <p>Anthropic, OpenAI a další publikovali výzkum ukazující, že současné LLM mají systematickou tendenci souhlasit s uživatelem, i když by věcně měly mít opačné stanovisko. Týká se to faktických tvrzení i hodnoticích soudů. Důvod: RLHF preferuje odpovědi, které uživatel přijal pozitivně, a souhlas je obvykle pozitivně přijatý.</p>
+        <p>Praktický důsledek: pokud potřebujete poctivou kritiku nebo nezávislé posouzení, neptejte se přímo na hodnocení. Zadejte explicitní úkol najít chyby, slabiny, rizika nebo opačné argumenty.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kontext: kde žije a jak ho dodat</h2>
+    <p class="section-lead">
+      Komponenta „kontext" může v promptu znamenat dvě různé věci. Jednorázový kontext, který napíšete přímo do zprávy. A trvalý kontext, který nastavíte jednou a AI ho používá napříč konverzacemi. Mezi tím leží přiložené dokumenty: kontext, který trvá jen v rámci jedné konverzace. Volba mezi nimi ovlivňuje, jak často musíte stejné věci opakovat.
+    </p>
+
+    <table class="kontext-table">
+      <thead>
+        <tr>
+          <th>Kde kontext žije</th>
+          <th>Trvanlivost</th>
+          <th>Kdy to použít</th>
+          <th>Příklad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>V samotném promptu</strong></td>
+          <td>Jen tato zpráva (přenese se ale do dalších zpráv stejné konverzace)</td>
+          <td>Jednorázový úkol, který nebudete opakovat. Nebo když chcete vyzkoušet, jak kontext mění výstup.</td>
+          <td>„Klient se chystá podepsat smlouvu o pronájmu, právu nerozumí. Shrň mi smlouvu níže..."</td>
+        </tr>
+        <tr>
+          <td><strong>Jako přiložený soubor</strong></td>
+          <td>Celá konverzace (dokud chat nezavřete)</td>
+          <td>Pracujete s konkrétním dokumentem v několika zprávách: ptáte se na něj postupně z různých úhlů.</td>
+          <td>Přetáhnete PDF do okna chatu a v dalších zprávách se na něj odkazujete: „Co o tom říká ten dokument?"</td>
+        </tr>
+        <tr>
+          <td><strong>V trvalém nastavení nástroje</strong></td>
+          <td>Napříč všemi konverzacemi (dokud to nezměníte)</td>
+          <td>Opakovaně děláte podobné úkoly, máte trvalou roli nebo preference, které nechcete pokaždé psát.</td>
+          <td>Nastavíte „Jsem právník, dělám pronájmy. Vyhýbej se právnickému žargonu, vysvětluj jako kamarádovi."</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 10px;">Tři typy mechanismů pro trvalé nastavení</h3>
+    <p style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; max-width: 880px; margin-bottom: 14px;">
+      V kategorii „trvalé nastavení nástroje" se v populárních AI nástrojích typicky setkáte se třemi typy mechanismů. Konkrétní jména funkcí, dostupnost na plánech a kde je v UI najít, projdeme v <a href="3.5-nastroje-pruvodce.html">průvodci nástroji (3.5)</a>.
+    </p>
+
+    <ul style="padding-left: 22px; font-size: 13.5px; line-height: 1.7; color: var(--ink); max-width: 880px;">
+      <li style="margin-bottom: 8px;"><strong>Pracovní prostor s vlastními pravidly</strong> (Claude Projects, Gemini Gems, ChatGPT GPTs). Vlastní instrukce, vlastní knihovna souborů, izolovaná konverzace. Hodí se pro opakovanou práci ve stejné roli nebo se stejnými dokumenty.</li>
+      <li style="margin-bottom: 8px;"><strong>Custom Instructions (globální preference)</strong>. Trvalá role, styl odpovědí, omezení; platí napříč všemi vašimi konverzacemi v daném nástroji, dokud to nezměníte.</li>
+      <li><strong>Automatická paměť napříč konverzacemi</strong>. Některé nástroje umí samy uložit informace z jednoho chatu a vytáhnout je v jiném. Bývá to opt-in (vy to zapnete) a obvykle se to dá editovat nebo úplně smazat.</li>
+    </ul>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Trvalý kontext je výhoda i riziko</summary>
+      <div class="tip-body">
+        <p>Trvalé nastavení šetří čas (nemusíte stejnou roli psát znovu a znovu), ale zároveň znamená, že vám AI odpovídá s předpokladem, který si možná už ani nepamatujete. Když pak něco neodpovídá vašemu očekávání, podívejte se nejdřív, jestli vás „neovlivňuje" starší instrukce.</p>
+        <p>Z hlediska dat: do trvalého nastavení (Custom Instructions, Memory, Projects knowledge) nedávejte citlivé osobní nebo pracovní informace, které by neměly opustit vaše zařízení. Bezpečnost dat probereme detailně v <a href="../index.html#s7">Setkání 7</a>; zatím platí jednoduché pravidlo: trvalý kontext zhmotňuje to, co tam dáte, do něčeho, co v nástroji „leží" a často se posílá ke každé zprávě.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Práce s kontextem v průběhu konverzace</h2>
+    <p class="section-lead">
+      Konverzace = postupně rostoucí kontext. S každou zprávou model „vidí" víc historie. To je dobré (drží se tématu), ale i nepříjemné: po desítkách zpráv se model může začít chovat, jako by zapomněl, co jste mu řekli na začátku. Nebo se kontext „rozmlží" tím, jak v něm leží různě staré a různě relevantní informace.
+    </p>
+
+    <h3 style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700; margin-top: 12px; margin-bottom: 10px;">Praktiky pro práci s rostoucím kontextem</h3>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;" class="practices">
+      <div class="tool-card">
+        <h5>Připomeňte klíčovou instrukci</h5>
+        <p>Když odpověď nesedí, zkuste znovu poslat hlavní omezení („Klient je laik, žádný žargon"). Často to stačí, aby se konverzace srovnala. Není to znamení selhání, je to jeden z normálních postupů.</p>
+      </div>
+      <div class="tool-card">
+        <h5>Požádejte o shrnutí dosavadního stavu</h5>
+        <p>„Shrň mi, co jsme zatím dohodli a co zbývá vyřešit." Když dostanete shrnutí, vidíte, jestli se model drží linie, nebo už něco překroutil. Shrnutí pak můžete použít jako vstup do nové konverzace.</p>
+      </div>
+      <div class="tool-card">
+        <h5>Začněte nové vlákno, když se mění téma</h5>
+        <p>Když odbočíte k úplně jinému úkolu, raději otevřete nový chat. Snižujete šanci, že předchozí kontext bude křížově ovlivňovat odpovědi. Můžete vzít to podstatné a vložit ho do prvního promptu nového chatu.</p>
+      </div>
+      <div class="tool-card">
+        <h5>Restartujte, když je něco nepochopené</h5>
+        <p>Když AI opakuje stejnou chybu i po opravách, často je nejrychlejší začít znovu s lepším promptem. Pokus „zachránit" pokaženou konverzaci stojí víc úsilí než nový start.</p>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Kontextové okno: praktická hranice</summary>
+      <div class="tip-body">
+        <p>Kontextové okno (context window) je maximální počet tokenů, který model umí najednou „vidět". Tokeny jsou útržky textu, zhruba 3–4 znaky na token v češtině. Současné nástroje (Claude, ChatGPT, Gemini) mají okna desítek až stovek tisíc tokenů, což odpovídá dlouhým dokumentům až celým knihám.</p>
+        <p>Praktický důsledek: většina běžných úkolů se vejde bez problémů. Když ale máte hodně dlouhou konverzaci nebo přiložíte několik velkých dokumentů zároveň, můžete narazit na limit. Modely mají různé strategie, jak okno přerůst (například shrnutí starší historie), ale výsledek je vždy ztráta detailů. Detaily o nástrojích a jejich oknech budou v <a href="3.5-nastroje-pruvodce.html">průvodci nástroji (3.5)</a> a v <a href="3.4-prace-s-dokumenty.html">práci s dokumenty (3.4)</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Anatomie promptu a práce s kontextem nejsou „umění". Jsou to návyky, které se dají popsat a naučit.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>AI nezná vás ani úkol.</strong> Co jí neřeknete, AI doplní průměrem z trénovacích dat. Cíleně dodaný kontext mění vágní odpověď na cílenou.
+      </div>
+      <div class="takeaway-card">
+        <strong>Kvalitní prompt má čtyři komponenty.</strong> Role, kontext, konkrétní zadání, formát a kritéria. Když chybí, AI doplní odhad. Když jsou tam, dostanete cílenou odpověď.
+      </div>
+      <div class="takeaway-card">
+        <strong>Kontext má tři místa.</strong> V samotném promptu, jako přiložený soubor, v trvalém nastavení nástroje. Volba ovlivňuje, jak často musíte stejné věci opakovat.
+      </div>
+      <div class="takeaway-card">
+        <strong>Kontext se v dlouhých konverzacích rozmlží.</strong> Připomenutí klíčové instrukce, shrnutí stavu a nové vlákno při změně tématu vám pomáhají ho udržet ve formě.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pozor na sykofantství.</strong> AI vám tíhne dát za pravdu. Když chcete kritiku nebo posouzení, zadejte to explicitně jako úkol („najdi rizika", „ďáblův advokát"), ne jen jako otázku „co si o tom myslíš".
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 3 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.7 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   PROMPT BUILDER: postupné skládání kvalitního promptu
+   ────────────────────────────────────────────────────────── */
+
+const stages = [
+  {
+    // 0: holý úkol
+    prompt: [{ cls: 'base-task', text: 'Shrň mi tu smlouvu o pronájmu.' }],
+    response: {
+      html: `
+        <h5>Shrnutí smlouvy</h5>
+        <p>Předložená smlouva o pronájmu obsahuje standardní ustanovení o předmětu nájmu, době trvání, výši nájemného a způsobu platby. Smluvní strany se zavazují dodržovat povinnosti vyplývající z občanského zákoníku, zejména ustanovení o nájmu bytu. Smlouva dále upravuje práva a povinnosti pronajímatele a nájemce, podmínky pro výpověď a odpovědnost za případné škody...</p>
+        <p style="color: var(--muted); font-style: italic;">(pokračuje další odstavec o vyúčtování, opět spíš opisuje, než vybírá podstatné)</p>`,
+      quality: 'Univerzální shrnutí. <strong>Spíš opis než výběr.</strong> Pro člověka, který se chystá podepsat, nepoužitelné.'
+    }
+  },
+  {
+    // 1: + role
+    prompt: [
+      { cls: 'role-part', text: 'Jsi právník, který kontroluje smlouvy pro klienty bez právního vzdělání.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'base-task', text: 'Shrň mi tu smlouvu o pronájmu.' }
+    ],
+    response: {
+      html: `
+        <h5>Shrnutí smlouvy z právního pohledu</h5>
+        <p>Smlouva působí jako standardní formulář bez závažných nestandardních ustanovení. Doporučuji se však zaměřit na následující body, které bývají pro klienty problematické:</p>
+        <ul>
+          <li>Délka výpovědní lhůty a podmínky pro její využití</li>
+          <li>Sankce za pozdní platbu nájemného</li>
+          <li>Stav předmětu nájmu a jeho dokumentace</li>
+        </ul>
+        <p style="color: var(--muted); font-style: italic;">(odpověď je odbornější, ale stále obecná: nevychází z této smlouvy)</p>`,
+      quality: '<strong>Lepší slovník a strukturovanější pohled.</strong> Ale model pořád nečte konkrétní smlouvu, jen mluví o smlouvách obecně.'
+    }
+  },
+  {
+    // 2: + kontext
+    prompt: [
+      { cls: 'role-part', text: 'Jsi právník, který kontroluje smlouvy pro klienty bez právního vzdělání.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'context-part', text: 'Klient (52 let) se chystá podepsat smlouvu o pronájmu bytu. Není v právu doma, smluvní termíny ho stresují a má hlavně zájem o věci, které by ho mohly nepříjemně překvapit. Smlouvu posílám v příloze.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'base-task', text: 'Shrň mi tu smlouvu o pronájmu.' }
+    ],
+    response: {
+      html: `
+        <h5>Shrnutí pro klienta před podpisem</h5>
+        <p>Smlouva je standardní formulář s pár místy, na která bych vás chtěl upozornit:</p>
+        <ul>
+          <li>Nájem je sjednán na 1 rok s automatickým prodlužováním, výpovědní lhůta 3 měsíce. Pokud nechcete být vázán dlouhodobě, počítejte s tím, že vystoupit můžete nejdříve za 15 měsíců od podpisu.</li>
+          <li>Kauce je 3 měsíční nájmy splatné při podpisu. Není napsáno, jak se vrací, to bych ujasnil.</li>
+          <li>Drobné opravy do 1 000 Kč si platíte sám.</li>
+        </ul>
+        <p>Žádné překvapivé pasti ve smlouvě nejsou, ale ten bod o kauci bych s pronajímatelem dořešil.</p>`,
+      quality: '<strong>Konkrétní odpověď na konkrétní smlouvu</strong>, psaná pro neprávníka. Pořád ale neurčuje, co je pro klienta nejdůležitější.'
+    }
+  },
+  {
+    // 3: + konkrétní zadání
+    prompt: [
+      { cls: 'role-part', text: 'Jsi právník, který kontroluje smlouvy pro klienty bez právního vzdělání.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'context-part', text: 'Klient (52 let) se chystá podepsat smlouvu o pronájmu bytu. Není v právu doma, smluvní termíny ho stresují a má hlavně zájem o věci, které by ho mohly nepříjemně překvapit. Smlouvu posílám v příloze.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'task-part', text: 'Projdi smlouvu a soustřeď se konkrétně na: (1) měsíční náklady (nájem a co se ještě platí navíc), (2) jak dlouho je závazek a kdy z něj jde vystoupit, (3) za jakých podmínek lze smlouvu ukončit ze strany pronajímatele, (4) co se stane při neplacení nebo při poškození bytu.' }
+    ],
+    response: {
+      html: `
+        <h5>4 body, na které je třeba se podívat</h5>
+        <p><strong>Měsíční náklady:</strong> Nájem 18 500 Kč. Navíc zálohy na energie cca 4 500 Kč, internet 500 Kč. Celkem cca 23 500 Kč měsíčně.</p>
+        <p><strong>Délka závazku:</strong> 1 rok pevně, pak automatické prodloužení o 1 rok. Vypovědět dřív lze jen z důvodů uvedených v zákoně.</p>
+        <p><strong>Ukončení ze strany pronajímatele:</strong> Standardní zákonné důvody. Smlouva nepřidává nic nadstandardního, což je dobré.</p>
+        <p><strong>Neplacení / poškození:</strong> Smluvní pokuta 0,1 % denně z dlužné částky. Poškození nad rámec běžného opotřebení se hradí z kauce.</p>`,
+      quality: '<strong>Cílená odpověď přesně na 4 oblasti</strong>, které klient potřebuje vědět. Ale formát ještě není ideální, klient si bude muset extrahovat sám, co je riziko.'
+    }
+  },
+  {
+    // 4: + formát
+    prompt: [
+      { cls: 'role-part', text: 'Jsi právník, který kontroluje smlouvy pro klienty bez právního vzdělání.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'context-part', text: 'Klient (52 let) se chystá podepsat smlouvu o pronájmu bytu. Není v právu doma, smluvní termíny ho stresují a má hlavně zájem o věci, které by ho mohly nepříjemně překvapit. Smlouvu posílám v příloze.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'task-part', text: 'Projdi smlouvu a soustřeď se konkrétně na: (1) měsíční náklady, (2) délku závazku, (3) podmínky ukončení ze strany pronajímatele, (4) co se stane při neplacení nebo poškození.' },
+      { cls: 'plain', text: '\n\n' },
+      { cls: 'format-part', text: 'Odpověď strukturuj jako: krátký úvodní souhrn (1–2 věty), pak pro každý ze 4 bodů odrážka s konkrétními čísly. Na konci sekce „Na co bych si dal pozor" se 2–3 body, které mě jako klienta překvapily nebo se mi nezdají. Vyhni se právnickému žargonu, vysvětluj jako kamarádovi.' }
+    ],
+    response: {
+      html: `
+        <h5>Smlouva o pronájmu – výtah pro klienta</h5>
+        <p>Smlouva je celkově standardní bez velkých překvapení. Pozor si dejte hlavně na kauci a smluvní pokutu.</p>
+        <ul>
+          <li><strong>Měsíční náklady:</strong> 23 500 Kč celkem (18 500 nájem + 4 500 energie + 500 internet).</li>
+          <li><strong>Délka závazku:</strong> 1 rok pevně, pak automaticky o 1 rok. Vypovědět dřív lze jen ze zákonných důvodů.</li>
+          <li><strong>Pronajímatel může ukončit:</strong> jen ze zákonných důvodů (neplacení, hrubé porušení).</li>
+          <li><strong>Když neplatíte:</strong> smluvní pokuta 0,1 % denně. <strong>Když poškodíte:</strong> hradí se z kauce.</li>
+        </ul>
+        <p style="color: var(--accent); font-weight: 600;">Na co bych si dal pozor:</p>
+        <ul>
+          <li>Kauce 3 nájmy je hodně, ale není napsáno, jak se vrací. Zeptal bych se.</li>
+          <li>Drobné opravy do 1 000 Kč máte na sobě. Není to drama, ale počítejte s tím.</li>
+          <li>Automatické prodlužování o rok = pokud nechcete být dlouhodobě vázaný, musíte hlídat termín.</li>
+        </ul>`,
+      quality: '<strong>Cílená odpověď, kterou klient může rovnou použít.</strong> Struktura, čísla, varování. Z „shrň mi to" se stala použitelná porada.'
+    }
+  }
+];
+
+const stageBtns = document.querySelectorAll('.stage-btn');
+const promptOut = document.getElementById('prompt-out');
+const responseOut = document.getElementById('response-out');
+const qualityOut = document.getElementById('quality-out');
+
+function renderStage(idx) {
+  const s = stages[idx];
+  promptOut.innerHTML = '';
+  s.prompt.forEach(part => {
+    const span = document.createElement('span');
+    if (part.cls && part.cls !== 'plain') span.className = part.cls;
+    span.textContent = part.text;
+    promptOut.appendChild(span);
+  });
+  responseOut.innerHTML = s.response.html;
+  qualityOut.innerHTML = s.response.quality;
+  stageBtns.forEach(b => b.classList.toggle('active', Number(b.dataset.stage) === idx));
+}
+
+stageBtns.forEach(btn => {
+  btn.addEventListener('click', () => renderStage(Number(btn.dataset.stage)));
+});
+
+renderStage(0);
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>
