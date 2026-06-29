@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Klasické vs sémantické vyhledávání</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #5b3f7a; --accent-hover: #46305f; --accent-soft: #ede5f3;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TWO METHODS ────────────────────────────────────── */
+  .methods { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .methods { grid-template-columns: 1fr; } }
+  .method { background: var(--paper); border: 1px solid var(--line); padding: 20px 22px; }
+  .method.classic { border-top: 3px solid var(--ink-soft); }
+  .method.semantic { border-top: 3px solid var(--accent); }
+  .method h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700;
+    margin-bottom: 2px; color: var(--ink);
+  }
+  .method .tech {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+    margin-bottom: 14px; letter-spacing: 0.3px;
+  }
+  .method ol { list-style: none; counter-reset: step; margin-bottom: 12px; }
+  .method li {
+    font-size: 12.9px; line-height: 1.5; padding: 4px 0 4px 26px; position: relative; color: var(--ink-soft);
+    counter-increment: step;
+  }
+  .method li::before {
+    content: counter(step); position: absolute; left: 0; top: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  }
+  .method.classic li::before { background: #e7e9ec; color: var(--ink-soft); }
+  .method.semantic li::before { background: var(--accent-soft); color: var(--accent-hover); }
+  .method .verdict {
+    margin-top: 10px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 12.8px; line-height: 1.55;
+  }
+  .method .verdict .g { color: var(--green); font-weight: 600; }
+  .method .verdict .w { color: var(--warm); font-weight: 600; }
+
+  .example-box {
+    margin-top: 18px; background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line)); border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+  }
+  .example-box .q {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent-hover);
+    font-weight: 600; margin-bottom: 8px;
+  }
+  .example-box p { font-size: 13.2px; line-height: 1.6; color: var(--ink); }
+  .example-box strong { color: var(--accent-hover); }
+
+  /* ── SCENARIO PICKER ────────────────────────────────── */
+  .sc-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .sc-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .sc-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .sc-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .sc-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .sc-panel { background: var(--bg); border: 1px solid var(--line); padding: 20px 22px; }
+  .sc-q {
+    font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--ink);
+    background: var(--paper); border: 1px solid var(--line); padding: 10px 14px; margin-bottom: 16px;
+  }
+  .sc-q span { color: var(--muted); font-size: 11px; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .sc-winner { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .sc-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600;
+    padding: 5px 12px; color: #fff;
+  }
+  .sc-badge.classic { background: var(--ink-soft); }
+  .sc-badge.semantic { background: var(--accent); }
+  .sc-badge.hybrid { background: var(--green); }
+  .sc-winner .lbl { font-size: 12.5px; color: var(--muted); }
+  .sc-body { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); }
+  .sc-body strong { color: var(--ink); }
+  .sc-tip {
+    margin-top: 12px; padding: 10px 12px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 12.5px; line-height: 1.55; color: var(--ink);
+  }
+  .sc-tip strong { color: var(--accent); }
+
+  /* ── HYBRID ─────────────────────────────────────────── */
+  .hybrid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 880px) { .hybrid-cards { grid-template-columns: 1fr; } }
+  .hy-card {
+    background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .hy-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 700;
+    margin-bottom: 6px; color: var(--ink);
+  }
+  .hy-card p { font-size: 12.8px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on</p>
+    <h1>Klasické vs <em>sémantické</em> vyhledávání: slova vs význam</h1>
+    <p class="hero-subtitle">
+      Pod každým vyhledáváním běží jeden ze dvou principů. Klasické hledá podle <em>slov</em> — text se musí shodovat. Sémantické (AI) hledá podle <em>významu</em> — chápe, že „obrazovka" a „monitor" je totéž. Každý princip je dobrý na něco jiného, a pro práci s léčivy je rozdíl mezi nimi překvapivě praktický.
+    </p>
+    <div class="definition">
+      <strong>Embedding</strong> = převod textu na seznam čísel (vektor), který zachycuje jeho význam. Dva texty s podobným významem mají podobná čísla, i když používají jiná slova. Na tom stojí sémantické vyhledávání: nehledá shodu písmen, ale blízkost významů.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Dva způsoby, jak stroj hledá</h2>
+    <p class="section-lead">
+      Oba principy začínají předzpracováním obsahu, ale dělají s textem něco úplně jiného. Z toho plynou jejich silné i slabé stránky.
+    </p>
+
+    <div class="methods">
+      <div class="method classic">
+        <h3>Klasické vyhledávání</h3>
+        <div class="tech">BM25 · shoda klíčových slov</div>
+        <ol>
+          <li>Předzpracování → systém si zaindexuje slova v dokumentech</li>
+          <li>Pamatuje si, ve kterých dokumentech se slovo vyskytuje</li>
+          <li>Čím častěji je slovo v dokumentu, tím vyšší skóre</li>
+          <li>Vrátí dokumenty, kde se hledaná slova shodují</li>
+        </ol>
+        <div class="verdict">
+          <span class="g">Silné:</span> rychlé, předvídatelné, vždy stejný výsledek na stejný dotaz.<br>
+          <span class="w">Slabé:</span> „obrazovka" ≠ „monitor" — slova se musí přesně shodovat.
+        </div>
+      </div>
+      <div class="method semantic">
+        <h3>Sémantické vyhledávání</h3>
+        <div class="tech">embedding · blízkost významu</div>
+        <ol>
+          <li>Předzpracování → každý dokument se převede na vektor (čísla)</li>
+          <li>Stejně se na vektor převede i váš dotaz</li>
+          <li>Systém hledá dokumenty, jejichž čísla jsou dotazu nejblíž</li>
+          <li>Vrátí dokumenty podobné <em>významem</em>, ne nutně slovy</li>
+        </ol>
+        <div class="verdict">
+          <span class="g">Silné:</span> „obrazovka" a „monitor" jsou si blízko — chápe, že jde o totéž.<br>
+          <span class="w">Slabé:</span> velmi přesné termíny (název léku, zkratka) zvládá hůř.
+        </div>
+      </div>
+    </div>
+
+    <div class="example-box">
+      <div class="q">Dotaz: „vliv obrazovek na spánek dětí"</div>
+      <p><strong>Klasické</strong> najde jen dokumenty, kde je doslova „obrazovka" — minou se články psané o „displejích" nebo „monitorech". <strong>Sémantické</strong> najde všechny tři, protože chápe, že jde o stejný pojem. Tady vyhrává význam nad slovem.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdy který: záleží na tom, co hledáte</h2>
+    <p class="section-lead">
+      Tady je ten praktický zlom. Pro pojmy a popisy je lepší význam (sémantické). Pro přesné identifikátory — názvy léčiv, zkratky, kódy — je lepší slovo (klasické). Klikněte na typ dotazu.
+    </p>
+
+    <div class="sc-wrap">
+      <div class="sc-tabs" id="sc-tabs">
+        <button class="sc-tab active" data-sc="concept">Pojem / téma</button>
+        <button class="sc-tab" data-sc="drug">Přesný název léčiva</button>
+        <button class="sc-tab" data-sc="code">Zkratka / kód</button>
+        <button class="sc-tab" data-sc="describe">Popis bez znalosti termínu</button>
+      </div>
+
+      <div class="sc-panel">
+        <div class="sc-q"><span>PŘÍKLAD DOTAZU</span><span id="sc-query-text" style="color:var(--ink);font-size:13.5px;display:inline;letter-spacing:0"></span></div>
+        <div class="sc-winner">
+          <span class="sc-badge" id="sc-badge"></span>
+          <span class="lbl" id="sc-lbl"></span>
+        </div>
+        <div class="sc-body" id="sc-body"></div>
+        <div class="sc-tip" id="sc-tip"></div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Proč AI tápe u názvů léčiv a zkratek</summary>
+      <div class="tip-body">
+        <p>Sémantické vyhledávání je postavené na podobnosti významu. Jenže přesný název účinné látky, obchodní název, ATCvet kód nebo číslo šarže nemají „význam", který by se dal zobecnit — jsou to jedinečné identifikátory. Sémantický systém je proto může „přitáhnout" k podobně znějícím nebo příbuzným látkám a tím ztratit přesnost.</p>
+        <p>Praktický důsledek pro práci s léčivy: <strong>když hledáte konkrétní přípravek, látku nebo kód, dejte přednost přesné shodě</strong> (klasické vyhledávání, uvozovky kolem názvu, filtr na pole). Sémantické hledání nechte na situace, kdy hledáte podle popisu nebo pojmu, ne podle přesného označení.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Nejlepší je obojí: hybridní vyhledávání</h2>
+    <p class="section-lead">
+      Moderní odborné systémy obě metody nekombinují náhodou. Spojení přesnosti klíčových slov a chápání významu dává nejspolehlivější výsledek. Dobré je vědět, co se přitom děje.
+    </p>
+
+    <div class="hybrid-cards">
+      <div class="hy-card">
+        <h4>Hybridní = klasické + sémantické</h4>
+        <p>Systém pustí oba způsoby a výsledky spojí: přesnou shodu klíčových slov i blízkost významu. Tím pokryje jak přesné termíny, tak synonyma a opisy.</p>
+      </div>
+      <div class="hy-card">
+        <h4>LLM jako encoder, ne decoder</h4>
+        <p>Ve fázi hledání model text <em>zpracovává</em> (převádí na význam), ale <em>negeneruje</em>. Nepíše odpověď, jen pomáhá najít. To je jiná, méně riziková role než psaní textu.</p>
+      </div>
+      <div class="hy-card">
+        <h4>Kde teprve vzniká text</h4>
+        <p>Plynulá odpověď s větami vzniká až později, ve fázi syntézy (RAG). Teprve tam model generuje — a tam taky vzniká riziko smyšlených tvrzení (viz <a href="4.1-jak-ai-vyhledava.html">strana 4.1</a>).</p>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Vyhledávání ≠ generování — a proč na tom záleží</summary>
+      <div class="tip-body">
+        <p>Strana <a href="4.1-jak-ai-vyhledava.html">4.1</a> ukazuje, že chyba nejčastěji vzniká ve fázi, kdy model <em>generuje</em> text a přiřazuje citace. Sémantické vyhledávání samo o sobě negeneruje — jen řadí dokumenty podle blízkosti významu. To je důležité rozlišení: <strong>najít relevantní dokument je spolehlivější než nechat model napsat, co v něm stojí.</strong></p>
+        <p>Praktický závěr: čím víc se opřete o samotné vyhledávání (a otevřete si nalezené dokumenty) a čím méně spoléháte na hotovou vygenerovanou odpověď, tím menší prostor pro halucinaci. Vyhledávání vás navede; co v dokumentu je, si přečtěte sami.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Klasické hledá slova, sémantické význam. Rozdíl není akademický — určuje, kdy vám AI vyhledávání pomůže a kdy vás zradí, zvlášť u přesných odborných termínů.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Slovo vs význam.</strong> Klasické (BM25) hledá shodu klíčových slov, je rychlé a předvídatelné. Sémantické (embedding) hledá blízkost významu a chápe synonyma — „obrazovka" ≈ „monitor".
+      </div>
+      <div class="takeaway-card">
+        <strong>Pojem → sémantické, identifikátor → klasické.</strong> Na témata a popisy je lepší význam. Na přesné názvy léčiv, zkratky a kódy je lepší přesná shoda slov.
+      </div>
+      <div class="takeaway-card">
+        <strong>AI tápe u přesných termínů.</strong> Názvy látek a kódy nemají zobecnitelný „význam", tak je sémantika může rozmlžit k příbuzným. U konkrétního přípravku žádejte přesnou shodu.
+      </div>
+      <div class="takeaway-card">
+        <strong>Vyhledávání ≠ generování.</strong> Hledání (encoder) jen řadí dokumenty a je spolehlivější. Text se generuje až v syntéze — a tam vzniká riziko halucinace. Opřete se o nalezené dokumenty.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Zjednodušuje technické principy do praktického vodítka.</em>
+  </footer>
+
+</main>
+
+<script>
+const scenarios = {
+  concept: {
+    query: 'vliv antimikrobiální rezistence na chov zvířat',
+    winner: 'semantic', badge: 'Sémantické', lbl: 'vyhrává význam',
+    body: 'Hledáte <strong>téma</strong>, ne konkrétní slovo. Sémantické vyhledávání najde i práce, které píšou o „antibiotické rezistenci", „AMR" nebo „odolnosti vůči léčivům" — chápe, že jde o totéž. Klasické by se omezilo jen na přesnou formulaci a část relevantních prací by minulo.',
+    tip: '<strong>Doporučení:</strong> u pojmů a témat se spolehněte na význam (sémantické / AI nástroje), klidně v přirozeném jazyce.'
+  },
+  drug: {
+    query: 'amoxicilin trihydrát 500 mg',
+    winner: 'classic', badge: 'Klasické', lbl: 'vyhrává přesná shoda',
+    body: 'Hledáte <strong>konkrétní látku a sílu</strong>. Tady chcete přesně to a nic jiného. Sémantické vyhledávání může výsledek „rozmlžit" k podobným antibiotikům nebo jiným silám, protože je vnímá jako významově blízké. Klasická přesná shoda vrátí přesně daný přípravek.',
+    tip: '<strong>Doporučení:</strong> název dejte do uvozovek a využijte filtr na pole. U léčiv je přesnost důležitější než šíře.'
+  },
+  code: {
+    query: 'ATCvet kód QJ01CA04',
+    winner: 'classic', badge: 'Klasické', lbl: 'vyhrává přesná shoda',
+    body: 'Zkratky, kódy a čísla šarží jsou <strong>jedinečné identifikátory bez zobecnitelného významu</strong>. Sémantické vyhledávání s nimi zachází hůř — nemá z čeho odvodit „podobnost". Klasická shoda znaku po znaku je tu spolehlivá a jednoznačná.',
+    tip: '<strong>Doporučení:</strong> kódy a zkratky hledejte přesně (klasicky). Pokud je AI „opraví" nebo nahradí podobnými, je to varovný signál.'
+  },
+  describe: {
+    query: 'lék na zánět kloubů u psů, nesteroidní',
+    winner: 'semantic', badge: 'Sémantické', lbl: 'vyhrává význam',
+    body: 'Neznáte přesný název a hledáte <strong>podle popisu</strong>. Tady sémantické vyhledávání exceluje: z popisu „zánět kloubů, nesteroidní" dovede najít relevantní účinné látky a přípravky, i když nepoužijete jejich odborný název. Klasické by bez správného klíčového slova tápalo.',
+    tip: '<strong>Doporučení:</strong> popisné a „nevím přesně, jak se to jmenuje" dotazy patří sémantickému hledání. Pak ale přesný název ověřte klasicky.'
+  }
+};
+
+const scTabs = document.querySelectorAll('.sc-tab');
+const elQuery = document.getElementById('sc-query-text');
+const elBadge = document.getElementById('sc-badge');
+const elLbl = document.getElementById('sc-lbl');
+const elBody = document.getElementById('sc-body');
+const elTip = document.getElementById('sc-tip');
+
+function renderScenario(key) {
+  const s = scenarios[key];
+  elQuery.textContent = '„' + s.query + '"';
+  elBadge.textContent = s.badge;
+  elBadge.className = 'sc-badge ' + s.winner;
+  elLbl.textContent = s.lbl;
+  elBody.innerHTML = s.body;
+  elTip.innerHTML = s.tip;
+  scTabs.forEach(b => b.classList.toggle('active', b.dataset.sc === key));
+}
+
+scTabs.forEach(btn => btn.addEventListener('click', () => renderScenario(btn.dataset.sc)));
+renderScenario('concept');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

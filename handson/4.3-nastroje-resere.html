@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Nástroje pro AI rešerši</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #5b3f7a;
+    --accent-hover: #46305f;
+    --accent-soft: #ede5f3;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65;
+    max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TWO FAMILIES ───────────────────────────────────── */
+  .families { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .families { grid-template-columns: 1fr; } }
+  .family {
+    background: var(--paper); border: 1px solid var(--line);
+    border-top: 3px solid var(--accent); padding: 20px 22px;
+  }
+  .family.alt { border-top-color: var(--green); }
+  .family h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px;
+    font-weight: 700; margin-bottom: 4px; color: var(--ink);
+  }
+  .family .sub { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 12px; }
+  .family p { font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 10px; }
+  .family ul { list-style: none; margin-top: 6px; }
+  .family li {
+    font-size: 12.8px; line-height: 1.5; padding: 4px 0 4px 16px; position: relative; color: var(--ink-soft);
+  }
+  .family li::before {
+    content: "›"; position: absolute; left: 0; color: var(--accent); font-weight: 700;
+  }
+  .family.alt li::before { color: var(--green); }
+
+  /* ── USE-CASE PICKER ────────────────────────────────── */
+  .uc-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .uc-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .uc-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+    text-align: left;
+  }
+  .uc-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .uc-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .uc-panel { background: var(--bg); border: 1px solid var(--line); padding: 20px 22px; }
+  .uc-goal {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 700;
+    color: var(--ink); margin-bottom: 16px;
+  }
+  .uc-rec {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+  }
+  .uc-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    background: var(--accent-soft); color: var(--accent-hover);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+    padding: 5px 11px;
+  }
+  .uc-chip.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .uc-body { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); }
+  .uc-body strong { color: var(--ink); }
+  .uc-why { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .uc-watch {
+    margin-top: 12px; padding: 10px 12px; background: var(--warm-soft);
+    border-left: 3px solid var(--warm); font-size: 12.5px; line-height: 1.55; color: var(--ink);
+  }
+  .uc-watch strong { color: var(--warm); }
+
+  /* ── COMPARISON TABLE ───────────────────────────────── */
+  .cmp-table {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 12.8px; margin-top: 8px;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 11px 13px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .cmp-table th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .cmp-table td strong { color: var(--ink); }
+  .cmp-table tr:nth-child(even) td { background: var(--paper); }
+  .cmp-table .cat {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600;
+    background: var(--accent-soft) !important;
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500; color: var(--accent);
+    letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on</p>
+    <h1>Nástroje pro AI <em>rešerši</em>: přehled a kdy který</h1>
+    <p class="hero-subtitle">
+      Nástrojů na AI vyhledávání jsou desítky a každý týden přibývají. Naučit se je všechny nemá smysl. Mnohem užitečnější je vědět, do jakých dvou rodin patří a podle jakého úkolu mezi nimi vybírat. Tahle strana dává mapu, ne katalog.
+    </p>
+    <div class="definition">
+      <strong>Klíčový rozdíl:</strong> obecné AI chatboty hledají na <em>otevřeném webu</em> (kde je všechno — i nesmysly), kdežto specializované odborné nástroje hledají v <em>kurátorovaných databázích</em> recenzovaných prací. Pro odbornou práci je tenhle rozdíl důležitější než to, který chatbot je zrovna „nejlepší".
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Dvě rodiny nástrojů</h2>
+    <p class="section-lead">
+      Skoro každý nástroj pro AI rešerši spadá do jedné ze dvou rodin. Liší se v tom, kde hledají — a to určuje, k čemu se hodí. Pro běžný úřední provoz potřebujete obojí, jen na různé věci.
+    </p>
+
+    <div class="families">
+      <div class="family">
+        <h3>Obecné chatboty s vyhledáváním</h3>
+        <div class="sub">hledají na otevřeném webu</div>
+        <p>Univerzální nástroje, které k odpovědi přidají živé hledání. Skvělé na rychlou orientaci, aktuální dění a první přehled. Web je ale nefiltrovaný: vedle úřadů a odborných zdrojů sem patří i blogy, marketing a dezinformace.</p>
+        <ul>
+          <li><strong>Perplexity</strong> — postavené přímo na vyhledávání, vrací odkazy ke každému tvrzení</li>
+          <li><strong>ChatGPT</strong> (se zapnutým hledáním / Deep research)</li>
+          <li><strong>Claude</strong> (s web search) — opatrné v práci s nahranými dokumenty</li>
+          <li><strong>Gemini</strong> — napevno propojené s Google vyhledáváním</li>
+          <li><strong>NotebookLM</strong> — hledá jen ve zdrojích, které mu sami dáte</li>
+        </ul>
+      </div>
+      <div class="family alt">
+        <h3>Specializované odborné nástroje</h3>
+        <div class="sub">hledají v databázích recenzované literatury</div>
+        <p>Zaměřené na vědeckou literaturu. Hledají v indexech recenzovaných článků (Semantic Scholar a podobně), takže každý nález je dohledatelná publikace, ne náhodná stránka. Pro evidence-based práci nenahraditelné.</p>
+        <ul>
+          <li><strong>Consensus</strong> — odpovědi na otázku z reálných studií (200M+ prací)</li>
+          <li><strong>Elicit</strong> — strukturovaný přehled literatury, tabulky z článků</li>
+          <li><strong>Scite</strong> — ukazuje, zda další práce nález <em>potvrzují, nebo vyvracejí</em></li>
+          <li><strong>Semantic Scholar</strong> — bezplatné vyhledávání a citační graf</li>
+          <li><strong>Google Scholar</strong> — klasika, není „AI", ale patří do výbavy</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> „Hledá na webu" ≠ „hledá v důvěryhodných zdrojích"</summary>
+      <div class="tip-body">
+        <p>Když obecný chatbot najde odpověď „na webu", neznamená to, že ji našel v kvalitním zdroji. Vyhledávač vrací, co je dostupné a dobře optimalizované, ne nutně to, co je pravda. Mezi výsledky tak může být oficiální stránka EMA i obsahová farma, která ji opisuje s chybami.</p>
+        <p>Praktický důsledek: u obecných chatbotů věnujte pozornost <strong>tomu, odkud zdroj je</strong>, ne jen tomu, že nějaký zdroj existuje. Doménu jako <code>eur-lex.europa.eu</code> nebo <code>ema.europa.eu</code> berte jinak než blog. U odborných nástrojů tenhle problém v zásadě odpadá — pracují jen s publikovanou literaturou.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdy který: vyberte podle úkolu</h2>
+    <p class="section-lead">
+      Místo „jaký nástroj je nejlepší" se ptejte „co teď potřebuju udělat". Klikněte na svůj cíl a podívejte se na doporučený nástroj, důvod a na co si dát pozor.
+    </p>
+
+    <div class="uc-wrap">
+      <div class="uc-tabs" id="uc-tabs">
+        <button class="uc-tab active" data-uc="fresh">Rychle zjistit aktuální fakt</button>
+        <button class="uc-tab" data-uc="overview">Přehled tématu z více zdrojů</button>
+        <button class="uc-tab" data-uc="evidence">Co říká věda na otázku</button>
+        <button class="uc-tab" data-uc="citation">Ověřit, jak je studie citovaná</button>
+        <button class="uc-tab" data-uc="docs">Rešerše ve vlastních dokumentech</button>
+        <button class="uc-tab" data-uc="review">Strukturovaný přehled literatury</button>
+      </div>
+
+      <div class="uc-panel">
+        <div class="uc-goal" id="uc-goal"></div>
+        <div class="uc-rec" id="uc-rec"></div>
+        <div class="uc-body" id="uc-body"></div>
+        <div class="uc-watch" id="uc-watch"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Srovnání na jeden pohled</h2>
+    <p class="section-lead">
+      Orientační přehled. Konkrétní funkce i limity se mění verzi od verze — tabulka je mapa, ne smlouva. U placených plánů a citlivých rešerší si aktuální stav ověřte přímo u nástroje.
+    </p>
+
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>Nástroj</th>
+          <th>Kde hledá</th>
+          <th>Silná stránka</th>
+          <th>Na co pozor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4" class="cat">Obecné chatboty s vyhledáváním</td></tr>
+        <tr>
+          <td><strong>Perplexity</strong></td>
+          <td>Otevřený web</td>
+          <td>Odkaz ke každému tvrzení, rychlost, přehledný výstup</td>
+          <td>I nejlepší z měřených měl ~37 % chybných atribucí citací</td>
+        </tr>
+        <tr>
+          <td><strong>ChatGPT</strong></td>
+          <td>Otevřený web (volitelně) + Deep research</td>
+          <td>Široký ekosystém, dlouhé reporty z Deep research</td>
+          <td>Hledání nemusí běžet vždy; bez něj odpovídá z paměti</td>
+        </tr>
+        <tr>
+          <td><strong>Claude</strong></td>
+          <td>Otevřený web (volitelně)</td>
+          <td>Opatrná práce s nahranými dokumenty, čitelné uvažování</td>
+          <td>Web search je třeba mít zapnutý; jinak z paměti</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini</strong></td>
+          <td>Google Search (napevno)</td>
+          <td>Integrace s Google prostředím, Deep research přes mnoho stránek</td>
+          <td>V testech citací patřil mezi méně spolehlivé</td>
+        </tr>
+        <tr>
+          <td><strong>NotebookLM</strong></td>
+          <td>Jen vámi vložené zdroje</td>
+          <td>Odpovídá výhradně z vašich materiálů, méně halucinuje</td>
+          <td>Nehledá ven — co nevložíte, to nezná</td>
+        </tr>
+        <tr><td colspan="4" class="cat">Specializované odborné nástroje</td></tr>
+        <tr>
+          <td><strong>Consensus</strong></td>
+          <td>Databáze studií (Semantic Scholar)</td>
+          <td>Odpověď na otázku poskládaná z reálných prací</td>
+          <td>Syntéza zjednodušuje; u sporných témat čtěte studie samy</td>
+        </tr>
+        <tr>
+          <td><strong>Elicit</strong></td>
+          <td>Databáze studií (~138M prací)</td>
+          <td>Strukturovaný přehled, extrakce dat z článků do tabulky</td>
+          <td>Extrahovaná data namátkou ověřujte proti originálu</td>
+        </tr>
+        <tr>
+          <td><strong>Scite</strong></td>
+          <td>Citační kontext publikací</td>
+          <td>Ukáže, zda práci jiní potvrzují, či vyvracejí</td>
+          <td>Spíš doplněk k ověřování než hlavní vyhledávač</td>
+        </tr>
+        <tr>
+          <td><strong>Semantic Scholar</strong></td>
+          <td>Index recenzované literatury (200M+)</td>
+          <td>Zdarma, citační graf, krátká shrnutí (TLDR)</td>
+          <td>Discovery nástroj, ne odpovídací — vrací práce, ne závěry</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Zdroje: srovnávací přehledy AI rešeršních nástrojů a studie přesnosti citací (Tow Center / CJR, 3/2025); deklarované rozsahy databází nástrojů. Ověřeno 6/2026 — funkce a limity se rychle mění.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Osvědčená kombinace: objev → ověř → sepiš</summary>
+      <div class="tip-body">
+        <p>Většina zkušených uživatelů nesází na jeden nástroj, ale řetězí je. Běžný postup pro odbornou rešerši:</p>
+        <p><strong>1. Objev širokého záběru.</strong> Perplexity nebo Deep research na rychlou mapu tématu a první zdroje. <strong>2. Ověření v odborné rovině.</strong> Klíčová tvrzení proženete Consensem nebo Elicit, abyste viděli, co říká recenzovaná literatura. <strong>3. Sepsání.</strong> Claude nebo ChatGPT na poskládání podkladu — ale jen z faktů, které jste v krocích 1–2 ověřili.</p>
+        <p>Pointa: každý nástroj dělá to, v čem je dobrý. Obecný chatbot na rozhled, odborný nástroj na důkazy, a psaní až nakonec nad ověřeným materiálem.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Nehoňte se za „nejlepším" nástrojem. Vyberte podle úkolu a u odborných věcí dejte přednost nástrojům, které hledají v literatuře, ne na otevřeném webu.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Dvě rodiny.</strong> Obecné chatboty hledají na otevřeném webu (rozhled, aktuálnost). Odborné nástroje v databázích recenzovaných prací (důkazy). Na odbornou práci potřebujete obě.
+      </div>
+      <div class="takeaway-card">
+        <strong>Vybírejte podle úkolu.</strong> Aktuální fakt → Perplexity. Co říká věda → Consensus / Elicit. Vlastní dokumenty → NotebookLM / Projekt. Jak je studie přijímaná → Scite.
+      </div>
+      <div class="takeaway-card">
+        <strong>„Web" není záruka kvality.</strong> Obecné chatboty vrací i blogy a marketing. Vždy si všímejte, z jaké domény zdroj je, ne jen že nějaký zdroj má.
+      </div>
+      <div class="takeaway-card">
+        <strong>Řetězte: objev → ověř → sepiš.</strong> Jeden nástroj na rozhled, druhý na důkazy, psaní až nad ověřeným materiálem. Nikdy nepublikujte přímo první výstup.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Fakta o nástrojích jsou orientační a v čase se mění — u citlivých rešerší ověřte aktuální stav.</em>
+  </footer>
+
+</main>
+
+<script>
+const ucs = {
+  fresh: {
+    goal: 'Rychle zjistit aktuální fakt',
+    rec: [['Perplexity', 1], ['ChatGPT (hledání)', 0], ['Gemini', 0]],
+    body: 'Potřebujete jednu konkrétní aktuální informaci a odkaz, kde se ověří. <strong>Perplexity</strong> je na tohle stavěné: hledá skoro vždy a u každého tvrzení ukáže zdroj. ChatGPT i Gemini zvládnou totéž, jen je u ChatGPT občas třeba hledání vyvolat.',
+    why: 'Proč: u krátkého faktu chcete co nejkratší cestu od dotazu k ověřitelnému odkazu. Odborné nástroje by tu byly zbytečně těžké.',
+    watch: '<strong>Pozor:</strong> i u jednoho faktu otevřete odkaz a tvrzení v něm najděte. Atribuce citací je u všech těchto nástrojů chybná v desítkách procent případů.'
+  },
+  overview: {
+    goal: 'Udělat si přehled o tématu z více zdrojů',
+    rec: [['Deep research (ChatGPT / Gemini)', 1], ['Perplexity', 0]],
+    body: 'Chcete širší rozhled, ne jeden fakt: kdo, co, hlavní pozice, klíčové zdroje. Na tohle se hodí <strong>Deep research</strong> režim — projde desítky až stovky stránek a sepíše strukturovaný přehled s citacemi. Perplexity zvládne lehčí variantu rychleji.',
+    why: 'Proč: deep research pokryje víc zdrojů, než byste ručně stihli. Výstup berte jako odrazový můstek a seznam zdrojů k přečtení, ne jako hotovou pravdu.',
+    watch: '<strong>Pozor:</strong> dlouhá zpráva uspává ostražitost. Čím delší výstup, tím víc tvrzení k ověření. Projděte aspoň klíčové citace, ne jen závěr.'
+  },
+  evidence: {
+    goal: 'Zjistit, co na otázku říká věda',
+    rec: [['Consensus', 1], ['Elicit', 0]],
+    body: 'Máte otázku typu „pomáhá X na Y" a chcete odpověď opřenou o studie, ne o web. <strong>Consensus</strong> poskládá odpověď z reálných recenzovaných prací a ukáže, jak silná shoda mezi nimi je. <strong>Elicit</strong> jde dál do hloubky a umí z prací vytáhnout data do tabulky.',
+    why: 'Proč: tyhle nástroje hledají v indexu publikací, takže každý nález je dohledatelná studie. To je přesně to, co obecný chatbot zaručit nedokáže.',
+    watch: '<strong>Pozor:</strong> i syntéza ze studií zjednodušuje. U sporných nebo zásadních otázek si pár klíčových studií otevřete a přečtěte sami — nástroj vám má najít, ne nahradit čtení.'
+  },
+  citation: {
+    goal: 'Ověřit, jak odborná komunita studii přijala',
+    rec: [['Scite', 1], ['Semantic Scholar', 0]],
+    body: 'Máte konkrétní studii a chcete vědět, jestli ji další práce potvrzují, nebo zpochybňují. <strong>Scite</strong> ukáže citační kontext: kolik prací nález podporuje, kolik mu odporuje a kolik ho jen zmiňuje. <strong>Semantic Scholar</strong> nabídne citační graf a navazující práce.',
+    why: 'Proč: počet citací sám o sobě nic neříká — studie může být hodně citovaná právě proto, že ji ostatní vyvracejí. Scite ten rozdíl ukáže.',
+    watch: '<strong>Pozor:</strong> tohle je nástroj na ověřování, ne na první hledání. Použijte ho, až máte konkrétní práci, jejíž váhu chcete posoudit.'
+  },
+  docs: {
+    goal: 'Hledat ve vlastních dokumentech, ne na webu',
+    rec: [['NotebookLM', 1], ['Projekt (Claude / Custom GPT)', 0]],
+    body: 'Pracujete s vlastní sadou spisů, předpisů nebo studií a chcete odpovědi výhradně z nich. <strong>NotebookLM</strong> hledá jen ve zdrojích, které mu vložíte, a u odpovědí odkazuje na konkrétní pasáže. Pro opakovanou práci se stejnými dokumenty se hodí Projekt v Claude nebo Custom GPT.',
+    why: 'Proč: omezení na vaše zdroje výrazně snižuje halucinace — model nemá kam „utéct" mimo zadané materiály a odpovědi se dají dohledat v textu.',
+    watch: '<strong>Pozor:</strong> u dlouhých dokumentů model nevidí celý text najednou (RAG). Pro celkové otázky a porovnání verzí viz <a href="3.4-prace-s-dokumenty.html">strana 3.4</a>.'
+  },
+  review: {
+    goal: 'Sestavit strukturovaný přehled literatury',
+    rec: [['Elicit', 1], ['Consensus', 0], ['Semantic Scholar', 0]],
+    body: 'Děláte rešerši, kde potřebujete víc studií systematicky vedle sebe: metoda, vzorek, výsledek. <strong>Elicit</strong> je na tohle postavený — vrátí relevantní práce a vytáhne z nich data do přehledové tabulky. Consensus doplní rychlou orientaci, Semantic Scholar dohledávání navazujících prací.',
+    why: 'Proč: ruční vytahování stejných údajů z desítek článků je zdlouhavé. Elicit to zrychlí a dá jednotnou strukturu, ze které se dobře pracuje dál.',
+    watch: '<strong>Pozor:</strong> automaticky vytažená čísla a závěry namátkou ověřte proti originálu. Extrakce z grafů a tabulek bývá nejnespolehlivější.'
+  }
+};
+
+const ucTabs = document.querySelectorAll('.uc-tab');
+const elGoal = document.getElementById('uc-goal');
+const elRec = document.getElementById('uc-rec');
+const elBody = document.getElementById('uc-body');
+const elWatch = document.getElementById('uc-watch');
+
+function renderUc(key) {
+  const u = ucs[key];
+  elGoal.textContent = u.goal;
+  elRec.innerHTML = u.rec.map(([name, prim]) =>
+    `<span class="uc-chip${prim ? ' primary' : ''}">${name}</span>`).join('');
+  elBody.innerHTML = u.body + `<div class="uc-why">${u.why}</div>`;
+  elWatch.innerHTML = u.watch;
+  ucTabs.forEach(b => b.classList.toggle('active', b.dataset.uc === key));
+}
+
+ucTabs.forEach(btn => btn.addEventListener('click', () => renderUc(btn.dataset.uc)));
+renderUc('fresh');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

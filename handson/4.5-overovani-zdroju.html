@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Ověřování zdrojů a citací</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #5b3f7a; --accent-hover: #46305f; --accent-soft: #ede5f3;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── STAKES ─────────────────────────────────────────── */
+  .stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 720px) { .stat-strip { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: var(--paper); border: 1px solid var(--line);
+    border-top: 3px solid var(--red); padding: 16px 18px;
+  }
+  .stat-num {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 32px;
+    font-weight: 700; color: var(--red); line-height: 1; margin-bottom: 6px;
+  }
+  .stat-card p { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); }
+  .stat-card .who { font-weight: 600; color: var(--ink); }
+
+  /* ── CITATION SHOWCASE ──────────────────────────────── */
+  .cite-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  @media (max-width: 820px) { .cite-compare { grid-template-columns: 1fr; } }
+  .cite-box { border: 1px solid var(--line); background: var(--bg); padding: 18px 20px; }
+  .cite-box.fake { border-top: 3px solid var(--red); }
+  .cite-box.real { border-top: 3px solid var(--green); }
+  .cite-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 12px; display: inline-block;
+  }
+  .cite-box.fake .cite-tag { color: var(--red); }
+  .cite-box.real .cite-tag { color: var(--green); }
+  .cite-text {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; line-height: 1.6;
+    color: var(--ink); padding: 12px 14px; background: var(--paper); border: 1px solid var(--line);
+    margin-bottom: 14px;
+  }
+  .cite-text .mark-bad { background: var(--red-soft); border-bottom: 2px solid var(--red); padding: 0 2px; }
+  .cite-text .mark-good { background: var(--green-soft); border-bottom: 2px solid var(--green); padding: 0 2px; }
+  .cite-flags { list-style: none; }
+  .cite-flags li {
+    font-size: 12.5px; line-height: 1.5; padding: 5px 0 5px 20px; position: relative; color: var(--ink-soft);
+  }
+  .cite-flags li::before { position: absolute; left: 0; font-weight: 700; }
+  .cite-box.fake .cite-flags li::before { content: "✕"; color: var(--red); }
+  .cite-box.real .cite-flags li::before { content: "✓"; color: var(--green); }
+
+  /* ── CHECKLIST PICKER ───────────────────────────────── */
+  .ck-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .ck-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ck-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px 9px 12px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ck-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .ck-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .ck-tab .step-n {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    background: var(--accent-soft); color: var(--accent-hover); width: 20px; height: 20px;
+    display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;
+  }
+  .ck-tab.active .step-n { background: rgba(255,255,255,0.25); color: #fff; }
+  .ck-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 880px) { .ck-grid { grid-template-columns: 1fr; } }
+  .ck-panel { background: var(--bg); border: 1px solid var(--line); padding: 18px 20px; min-height: 260px; }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  }
+  .ck-q {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700;
+    color: var(--ink); margin-bottom: 12px;
+  }
+  .ck-how { font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); }
+  .ck-how strong { color: var(--ink); }
+  .ck-prompt {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6;
+    color: var(--ink); white-space: pre-wrap; word-wrap: break-word;
+    background: var(--paper); border: 1px solid var(--line); padding: 12px 14px;
+  }
+  .ck-fail {
+    margin-top: 14px; padding: 10px 12px; background: var(--red-soft);
+    border-left: 3px solid var(--red); font-size: 12.5px; line-height: 1.55; color: var(--ink);
+  }
+  .ck-fail strong { color: var(--red); }
+
+  /* ── RED FLAGS ──────────────────────────────────────── */
+  .flags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 880px) { .flags-grid { grid-template-columns: 1fr; } }
+  .flag-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--warm);
+    padding: 16px 18px;
+  }
+  .flag-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 700;
+    margin-bottom: 6px; color: var(--ink);
+  }
+  .flag-card p { font-size: 12.8px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ── QUICK ROUTINE ──────────────────────────────────── */
+  .routine {
+    margin-top: 24px; background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+    border-left: 4px solid var(--accent); padding: 20px 24px;
+  }
+  .routine h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700;
+    color: var(--accent-hover); margin-bottom: 12px;
+  }
+  .routine ol { margin-left: 20px; }
+  .routine li { font-size: 13.5px; line-height: 1.7; color: var(--ink); margin-bottom: 4px; }
+  .routine li strong { color: var(--accent-hover); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on</p>
+    <h1>Ověřování zdrojů a <em>citací</em>: jak poznat skutečný nález</h1>
+    <p class="hero-subtitle">
+      Tohle je nejdůležitější strana celého setkání. AI umí najít informace rychleji než kdokoliv z nás — ale taky umí přesvědčivě uvést zdroj, který neexistuje, nebo citaci připsat ke špatné práci. Ověřování není projev nedůvěry, je to standardní krok rešerše. Tady je postup, který zabere minuty a ochrání před trapnou i drahou chybou.
+    </p>
+    <div class="definition">
+      <strong>Halucinovaná citace</strong> = zdroj, který AI uvede tak věrohodně, že vypadá pravě, ale buď neexistuje (smyšlený název, autor, DOI), nebo existuje, ale dané tvrzení vůbec neobsahuje. Druhá varianta je zákeřnější: odkaz funguje, jen neříká to, co u něj AI tvrdí.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Proč na tom záleží: reálné následky</h2>
+    <p class="section-lead">
+      Smyšlené citace nejsou teoretické riziko. Po celém světě přibývají případy, kdy se profesionálové spolehli na AI citace a předložili je jako pravé. V právu, kde se vše ověřuje, to skončilo sankcemi — a stejná logika platí pro každé odborné rozhodnutí s následky.
+    </p>
+
+    <div class="stat-strip">
+      <div class="stat-card">
+        <div class="stat-num">1 227</div>
+        <p><span class="who">Zdokumentovaných případů</span> u soudů po světě, kde generativní AI vyrobila citaci předloženou soudu (databáze k začátku 2026).</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2–3<span style="font-size:16px"> / den</span></div>
+        <p><span class="who">Tempo nových případů</span> koncem 2025 — z přibližně dvou týdně začátkem roku. Problém roste, ne mizí.</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$30 000</div>
+        <p><span class="who">Sankce pro dva advokáty</span> (Sixth Circuit, 3/2026) za podání s desítkami smyšlených či zkreslených citací. Pokuty z pár stovek vyrostly na pětimístné.</p>
+      </div>
+    </div>
+    <p class="footnote">
+      Zdroje: databáze případů halucinací AI u soudů (D. Charlotin); reportáže o sankcích (Sixth Circuit 3/2026, Alabama Supreme Court 4/2026). Ověřeno 6/2026.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> „Vždyť je to jen pomocník" je přesně ta past</summary>
+      <div class="tip-body">
+        <p>Společným jmenovatelem sankcionovaných případů nebylo to, že někdo použil AI. Bylo to, že <strong>nikdo výstup neověřil</strong> a předložil ho jako vlastní práci. AI udělala přesně to, co dělá: vygenerovala plausibilní text. Selhal lidský krok mezi generováním a použitím.</p>
+        <p>Pro úřad je z toho jasné poučení: AI smí být ve workflow, ale ověření citací a zdrojů je nepřenosná lidská odpovědnost. Tomu, kdo výstup podepíše, nepomůže, že „to napsala AI".</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Jak vypadá smyšlená citace</h2>
+    <p class="section-lead">
+      Halucinovaná citace nevypadá divně — vypadá dokonale. Právě proto klame. Naučit se její typické znaky je první obrana. Porovnejte podezřelou a ověřitelnou citaci.
+    </p>
+
+    <div class="cite-compare">
+      <div class="cite-box fake">
+        <span class="cite-tag">Podezřelá citace</span>
+        <div class="cite-text">
+          Novák, J., &amp; Svoboda, P. (2021). <span class="mark-bad">Antimicrobial resistance patterns in companion animals: a comprehensive review</span>. <span class="mark-bad">Journal of Veterinary Pharmacology</span>, 44(3), 215–229. <span class="mark-bad">https://doi.org/10.1016/j.jvp.2021.03.014</span>
+        </div>
+        <ul class="cite-flags">
+          <li>Název zní „učebnicově obecně" — jako průměr toho, jak takové studie vypadají</li>
+          <li>Časopis existuje pod podobným, ale ne přesně tímto názvem</li>
+          <li>DOI vede do prázdna nebo k úplně jiné práci</li>
+          <li>Vznikla bez živého hledání — model ji poskládal z paměti</li>
+        </ul>
+      </div>
+      <div class="cite-box real">
+        <span class="cite-tag">Ověřitelná citace</span>
+        <div class="cite-text">
+          Autoři a název, které <span class="mark-good">dohledáte v PubMed nebo přes DOI</span>, kde <span class="mark-good">DOI vede přímo na článek</span> a v jeho textu <span class="mark-good">skutečně najdete</span> pasáž, o kterou se tvrzení opírá.
+        </div>
+        <ul class="cite-flags">
+          <li>DOI po kliknutí otevře přesně tu práci</li>
+          <li>Záznam najdete i nezávisle v PubMed / Scholar</li>
+          <li>Tvrzení v textu článku doopravdy stojí</li>
+          <li>Vznikla z živého hledání v databázi prací</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Zrádnější je „pravý zdroj, špatné tvrzení"</summary>
+      <div class="tip-body">
+        <p>Smyšlený zdroj s nefunkčním DOI odhalíte snadno — odkaz nevede nikam. Mnohem zákeřnější je situace, kdy AI uvede <strong>existující, dohledatelnou práci</strong>, ale připíše jí tvrzení, které v ní není. Odkaz funguje, autor sedí, a přesto je atribuce falešná.</p>
+        <p>Proto první krok ověření (existuje zdroj?) nikdy nestačí sám. Vždy následuje druhý: <strong>říká ten zdroj opravdu to, co u něj AI tvrdí?</strong> Bez otevření a přečtení příslušné pasáže máte jen domněnku, ne ověření.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Ověřovací postup ve čtyřech krocích</h2>
+    <p class="section-lead">
+      Projděte tyto čtyři otázky v pořadí. Jakmile některá selže, dál nepokračujte — zdroj v dané podobě nepoužívejte. Klikněte na krok a podívejte se, jak ho provést a jaký prompt si k tomu vyžádat.
+    </p>
+
+    <div class="ck-wrap">
+      <div class="ck-tabs" id="ck-tabs">
+        <button class="ck-tab active" data-ck="exists"><span class="step-n">1</span>Existuje zdroj?</button>
+        <button class="ck-tab" data-ck="says"><span class="step-n">2</span>Říká to tvrzení?</button>
+        <button class="ck-tab" data-ck="trust"><span class="step-n">3</span>Je důvěryhodný?</button>
+        <button class="ck-tab" data-ck="current"><span class="step-n">4</span>Je aktuální?</button>
+      </div>
+
+      <div class="ck-grid">
+        <div class="ck-panel">
+          <p class="panel-label">Co ověřit a jak</p>
+          <div class="ck-q" id="ck-q"></div>
+          <div class="ck-how" id="ck-how"></div>
+          <div class="ck-fail" id="ck-fail"></div>
+        </div>
+        <div class="ck-panel">
+          <p class="panel-label">Prompt, který si vyžádejte</p>
+          <div class="ck-prompt" id="ck-prompt"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Varovné signály a rychlá rutina</h2>
+    <p class="section-lead">
+      Některé znaky odpovědi by měly automaticky zvednout ostražitost. Když narazíte na kterýkoliv z nich, ověřujte důkladněji.
+    </p>
+
+    <div class="flags-grid">
+      <div class="flag-card">
+        <h4>Příliš hladká citace</h4>
+        <p>Dokonale formátovaná citace s DOI, kterou model uvedl, aniž viditelně hledal. Čím učebnicovější, tím podezřelejší.</p>
+      </div>
+      <div class="flag-card">
+        <h4>Žádné odkazy, jen jména</h4>
+        <p>AI jmenuje autory a roky, ale neukáže klikací zdroj. Bez odkazu nemáte co ověřit — a model nejspíš odpovídal z paměti.</p>
+      </div>
+      <div class="flag-card">
+        <h4>Přesná čísla bez zdroje</h4>
+        <p>Konkrétní procenta, částky, čísla paragrafů uvedená s jistotou, ale bez citace. Právě tyhle údaje si AI nejčastěji domýšlí.</p>
+      </div>
+      <div class="flag-card">
+        <h4>Sebejistý tón u sporné věci</h4>
+        <p>Téma je odborně sporné, ale odpověď zní jednoznačně a bez „záleží na". Sebejistota není kalibrovaná na pravdu.</p>
+      </div>
+      <div class="flag-card">
+        <h4>Odkaz, který jste neotevřeli</h4>
+        <p>Dokud jste zdroj neotevřeli a tvrzení v něm nenašli, je to nepotvrzená informace — bez ohledu na to, jak dobře vypadá.</p>
+      </div>
+      <div class="flag-card">
+        <h4>Shoda s tím, co chcete slyšet</h4>
+        <p>Odpověď podezřele přesně potvrzuje vaši hypotézu. AI se přizpůsobuje zadání; o to pečlivěji ověřujte, co se vám hodí.</p>
+      </div>
+    </div>
+
+    <div class="routine">
+      <h3>Dvouminutová rutina, než citaci použijete</h3>
+      <ol>
+        <li><strong>Klikni na odkaz.</strong> Vede někam reálně, nebo do prázdna? Nefunkční DOI = konec.</li>
+        <li><strong>Najdi tvrzení v textu.</strong> Ctrl+F na klíčové slovo. Není-li tam, citace neplatí, i když zdroj existuje.</li>
+        <li><strong>Zkontroluj doménu / recenzovanost.</strong> Je to EUR-Lex, EMA, PubMed — nebo náhodný blog?</li>
+        <li><strong>Ověř datum a verzi.</strong> Platí to dnes? U předpisu konsolidované znění, u studie rok.</li>
+      </ol>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> U kritických věcí žádejte „cituj přesnou pasáž"</summary>
+      <div class="tip-body">
+        <p>Nejúčinnější jednotlivá technika proti halucinacím je donutit AI citovat doslovně. Místo „co o tom říká studie X" se ptejte: <code>Cituj přesnou větu z té práce, na které tvrzení stojí. Pokud takovou větu nemáš, napiš to a netvrď to.</code></p>
+        <p>Tím se model dostává do situace, kdy buď doloží konkrétní pasáž (kterou si ověříte), nebo přizná, že ji nemá. Konfabulaci to neodstraní úplně, ale výrazně ji omezí — a hlavně vám dá konkrétní text, který jde najít v originále. Detailně k práci s dokumenty viz <a href="3.4-prace-s-dokumenty.html">strana 3.4</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Ověření citací není volitelný luxus, je to nepřenosný krok. AI najde, vy potvrdíte. Tomu, kdo výstup použije, nepomůže, že chybu udělala AI.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Existuje ≠ říká to.</strong> Dva kroky, ne jeden. Nejdřív ověřte, že zdroj existuje (otevřete odkaz/DOI). Pak že dané tvrzení opravdu obsahuje (najděte pasáž). Pravý zdroj se špatným tvrzením je nejčastější past.
+      </div>
+      <div class="takeaway-card">
+        <strong>Odkaz je pozvánka k ověření, ne důkaz.</strong> Dokud jste zdroj neotevřeli, máte nepotvrzenou informaci. Sebejistý tón a hezké formátování o pravdivosti nevypovídají nic.
+      </div>
+      <div class="takeaway-card">
+        <strong>Žádejte doslovnou citaci.</strong> „Cituj přesnou pasáž, jinak to netvrď." Buď model doloží text k ověření, nebo přizná, že ho nemá. Nejúčinnější jednotlivá obrana.
+      </div>
+      <div class="takeaway-card">
+        <strong>Ověření je lidská odpovědnost.</strong> 1 227 zdokumentovaných případů a pětimístné sankce vznikly tam, kde lidský krok ověření vypadl. AI smí pomáhat, podpis a kontrola zůstávají na člověku.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Statistiky jsou orientační a v čase se mění — pro citlivé použití ověřte aktuální stav.</em>
+  </footer>
+
+</main>
+
+<script>
+const checks = {
+  exists: {
+    q: 'Existuje ten zdroj vůbec?',
+    how: 'Otevřete odkaz nebo DOI. Když AI uvede DOI, vložte ho do <strong>doi.org</strong> nebo vyhledejte název v <strong>PubMed / Google Scholar</strong>. Pokud zdroj nikde nenajdete a odkaz nevede k reálné práci, je citace nejspíš smyšlená.',
+    fail: '<strong>Když selže:</strong> zdroj neexistuje. Nepoužívejte ho a nežádejte AI o „opravu" stejného odkazu — požádejte ji, ať hledá znovu v databázi a doloží jen to, co dohledá.',
+    prompt: 'U každého zdroje, který uvádíš, dej\nfunkční odkaz nebo DOI, který vede přímo\nna tu práci. Pokud odkaz nemáš, zdroj\nneuváděj — radši napiš, že jsi ho nenašel.'
+  },
+  says: {
+    q: 'Říká ten zdroj opravdu to tvrzení?',
+    how: 'Otevřete zdroj a najděte konkrétní pasáž (Ctrl+F na klíčové slovo). Tvrzení u citace musí v textu reálně být. Tohle je nejčastěji vynechávaný krok — a přitom ten nejdůležitější, protože existující zdroj může být připsaný k tvrzení, které neobsahuje.',
+    fail: '<strong>Když selže:</strong> zdroj sice existuje, ale tvrzení v něm není. Citace neplatí. Tvrzení berte jako nepodložené, dokud nenajdete zdroj, který ho skutečně obsahuje.',
+    prompt: 'Cituj přesnou větu nebo odstavec ze zdroje,\nna které to tvrzení stojí. Chci si ji\nnajít v originále. Pokud takovou pasáž\nnemáš, napiš to a tvrzení neuváděj jako\ndoložené.'
+  },
+  trust: {
+    q: 'Je zdroj důvěryhodný?',
+    how: 'Posuďte, odkud zdroj je. Primární a autoritativní (EUR-Lex, EMA, PubMed, recenzovaný časopis) váží jinak než blog, marketingová stránka nebo obsahová farma. U legislativy patří důvěra jen oficiálním databázím, u vědy recenzované literatuře.',
+    fail: '<strong>Když selže:</strong> zdroj je nedůvěryhodný (anonymní blog, neověřitelná stránka). Tvrzení nepoužívejte jako doložené a dohledejte primární zdroj — předpis v EUR-Lex, studii přes DOI.',
+    prompt: 'U každého zdroje uveď, z jaké je domény\na jestli jde o primární zdroj (předpis,\nrecenzovaná studie), nebo o sekundární\n(článek, blog). Primární zdroje preferuj\na sekundární označ.'
+  },
+  current: {
+    q: 'Je zdroj aktuální a ve správné verzi?',
+    how: 'Zkontrolujte datum a verzi. U předpisu rozlišujte vyhlášené a <strong>konsolidované znění</strong> (s pozdějšími změnami) — co platí dnes, hledejte v aktuálním konsolidovaném znění v EUR-Lex. U studie ověřte rok a to, že ji novější práce nepřekonaly nebo nestáhly.',
+    fail: '<strong>Když selže:</strong> zdroj je zastaralý nebo jde o překonané znění. Pro rozhodnutí použijte aktuální verzi. AI často popisuje „nějaké" znění bez ohledu na to, co platí teď.',
+    prompt: 'U předpisu uveď, jestli popisuješ původní,\nnebo aktuální konsolidované znění, a k jakému\ndatu. U studie uveď rok a jestli víš o novější\npráci, která ji nahrazuje. Když si nejsi jistý\naktuálností, řekni to.'
+  }
+};
+
+const ckTabs = document.querySelectorAll('.ck-tab');
+const elQ = document.getElementById('ck-q');
+const elHow = document.getElementById('ck-how');
+const elFail = document.getElementById('ck-fail');
+const elPrompt = document.getElementById('ck-prompt');
+
+function renderCheck(key) {
+  const c = checks[key];
+  elQ.textContent = c.q;
+  elHow.innerHTML = c.how;
+  elFail.innerHTML = c.fail;
+  elPrompt.textContent = c.prompt;
+  ckTabs.forEach(b => b.classList.toggle('active', b.dataset.ck === key));
+}
+
+ckTabs.forEach(btn => btn.addEventListener('click', () => renderCheck(btn.dataset.ck)));
+renderCheck('exists');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

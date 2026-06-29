@@ -83,7 +83,24 @@ const sessions = [
     why: "Významná část odborné práce zahrnuje vyhledávání, čtení a&nbsp;vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud umíte ověřit, že nalezené informace a&nbsp;zdroje jsou skutečné a&nbsp;relevantní.",
     topics: ["Nástroje pro AI rešerše", "Vyhledávání v&nbsp;legislativě a&nbsp;odborné literatuře", "Ověřování zdrojů a&nbsp;citací", "Klasická vs. AI rešerše"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Zkoušíte vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe."
+    practice: "Zkoušíte vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe.",
+    materials: [
+      { label: "Informační chování a&nbsp;princip minimální námahy", href: "handson/4.0-informacni-chovani.html" },
+      { label: "Jak AI vyhledává: čtyři režimy hledání", href: "handson/4.1-jak-ai-vyhledava.html" },
+      { label: "Klasické vs. sémantické vyhledávání: slova vs význam", href: "handson/4.2-klasicke-vs-semanticke.html" },
+      { label: "Nástroje pro AI rešerši a&nbsp;kdy který", href: "handson/4.3-nastroje-resere.html" },
+      { label: "Vyhledávání v&nbsp;legislativě a&nbsp;odborné literatuře", href: "handson/4.4-legislativa-literatura.html" },
+      { label: "Ověřování zdrojů a&nbsp;citací: jak poznat skutečný nález", href: "handson/4.5-overovani-zdroju.html" },
+      { label: "Klasická vs. AI rešerše: kdy co a&nbsp;jak je spojit", href: "handson/4.6-klasicka-vs-ai.html" },
+      { label: "Fáze zapojení AI: kde vstupuje do vyhledávání", href: "handson/4.7-faze-zapojeni-ai.html" }
+    ],
+    toolkit: [
+      { label: "Perplexity", href: "https://www.perplexity.ai" },
+      { label: "Consensus", href: "https://consensus.app" },
+      { label: "Elicit", href: "https://elicit.com" },
+      { label: "NotebookLM", href: "https://notebooklm.google.com" },
+      { label: "EUR-Lex", href: "https://eur-lex.europa.eu" }
+    ]
   },
   {
     n: 5,

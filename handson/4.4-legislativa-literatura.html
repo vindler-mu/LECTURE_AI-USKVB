@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Vyhledávání v legislativě a odborné literatuře</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #5b3f7a; --accent-hover: #46305f; --accent-soft: #ede5f3;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65;
+    max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── PRINCIPLE BANNER ───────────────────────────────── */
+  .principle {
+    background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+    border-left: 4px solid var(--accent); padding: 18px 22px; margin-bottom: 28px;
+  }
+  .principle p { font-size: 14.5px; line-height: 1.6; color: var(--ink); }
+  .principle strong { color: var(--accent-hover); }
+
+  /* ── QUERY BUILDER ──────────────────────────────────── */
+  .qb-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .qb-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .qb-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .qb-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .qb-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .qb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 880px) { .qb-grid { grid-template-columns: 1fr; } }
+  .qb-col { background: var(--bg); border: 1px solid var(--line); padding: 16px 18px; }
+  .qb-col.bad { border-top: 3px solid var(--red); }
+  .qb-col.good { border-top: 3px solid var(--green); }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  }
+  .qb-col.bad .panel-label { color: var(--red); }
+  .qb-col.good .panel-label { color: var(--green); }
+  .qb-query {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65;
+    color: var(--ink); white-space: pre-wrap; word-wrap: break-word;
+    padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px dashed var(--line);
+  }
+  .qb-note { font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+  .qb-note strong { color: var(--ink); }
+
+  .qb-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 720px) { .qb-skills { grid-template-columns: 1fr; } }
+  .qb-skill { padding: 14px 16px; border: 1px solid var(--line); background: var(--bg); }
+  .qb-skill.can { border-left: 3px solid var(--green); }
+  .qb-skill.cant { border-left: 3px solid var(--warm); }
+  .qb-skill h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1.2px;
+    text-transform: uppercase; margin-bottom: 8px; font-weight: 600;
+  }
+  .qb-skill.can h5 { color: var(--green); }
+  .qb-skill.cant h5 { color: var(--warm); }
+  .qb-skill ul { list-style: none; }
+  .qb-skill li { font-size: 12.8px; line-height: 1.5; padding: 4px 0 4px 16px; position: relative; color: var(--ink-soft); }
+  .qb-skill li::before { content: "›"; position: absolute; left: 0; font-weight: 700; }
+  .qb-skill.can li::before { color: var(--green); }
+  .qb-skill.cant li::before { color: var(--warm); }
+
+  /* ── SOURCES TABLE ──────────────────────────────────── */
+  .src-table {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 8px;
+  }
+  .src-table th, .src-table td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.55;
+  }
+  .src-table th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .src-table td strong { color: var(--ink); }
+  .src-table tr:nth-child(even) td { background: var(--paper); }
+  .src-table .cat {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--accent-soft) !important;
+  }
+  .src-table code {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on</p>
+    <h1>Vyhledávání v <em>legislativě</em> a odborné literatuře</h1>
+    <p class="hero-subtitle">
+      Dvě oblasti, kde se AI rešerše nejvíc vyplatí — a kde nejvíc bolí, když selže. U předpisů i u odborných studií platí stejné pravidlo: AI je výborný navigátor, ale špatný svědek. Ať najde a zorientuje, potvrzení si vezměte z oficiálního zdroje.
+    </p>
+    <div class="definition">
+      <strong>Primární zdroj</strong> = původní, autoritativní znění (samotný předpis v EUR-Lex, původní studie v recenzovaném časopise). <strong>Sekundární zdroj</strong> = něco, co o primárním zdroji mluví (shrnutí, článek, odpověď AI). Pro závazné rozhodnutí platí jen primární zdroj — AI vás k němu má dovést, ne ho nahradit.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Jedno pravidlo pro obě oblasti</h2>
+    <div class="principle">
+      <p><strong>AI najde a zorientuje. Oficiální zdroj potvrdí.</strong> AI použijte k tomu, abyste rychle našli, který předpis nebo která studie je relevantní, a pochopili, o čem zhruba je. Konkrétní znění článku, číslo, datum účinnosti nebo závěr studie ale vždy ověřte přímo v primárním zdroji. AI si totiž čísla paragrafů, roky i citace umí splést — nebo rovnou vymyslet.</p>
+    </div>
+    <p class="section-lead" style="margin-bottom:0">
+      Zní to opatrně, ale je to přesně rozdělení rolí, ve kterém AI šetří nejvíc času a přitom nenadělá škodu. Zbytek strany ukazuje, jak v každé z obou oblastí formulovat dotaz a kam se vrátit pro jistotu.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Jak formulovat rešeršní dotaz</h2>
+    <p class="section-lead">
+      Vágní dotaz dá vágní nebo smyšlenou odpověď. Dobrý rešeršní dotaz říká, co hledáte, v jaké oblasti a co od odpovědi čekáte — včetně toho, že chcete uvést zdroj. Přepněte mezi legislativou a literaturou a porovnejte slabý a silný dotaz.
+    </p>
+
+    <div class="qb-wrap">
+      <div class="qb-tabs" id="qb-tabs">
+        <button class="qb-tab active" data-qb="legis">Legislativa</button>
+        <button class="qb-tab" data-qb="lit">Odborná literatura</button>
+      </div>
+
+      <div class="qb-grid">
+        <div class="qb-col bad">
+          <p class="panel-label">✕ Slabý dotaz</p>
+          <div class="qb-query" id="qb-bad"></div>
+          <div class="qb-note" id="qb-bad-note"></div>
+        </div>
+        <div class="qb-col good">
+          <p class="panel-label">✓ Silný dotaz</p>
+          <div class="qb-query" id="qb-good"></div>
+          <div class="qb-note" id="qb-good-note"></div>
+        </div>
+      </div>
+
+      <div class="qb-skills">
+        <div class="qb-skill can">
+          <h5 id="qb-can-title">Kde AI v této oblasti pomáhá</h5>
+          <ul id="qb-can"></ul>
+        </div>
+        <div class="qb-skill cant">
+          <h5 id="qb-cant-title">Kde AI v této oblasti selhává</h5>
+          <ul id="qb-cant"></ul>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Čísla paragrafů a citace jsou nejkřehčí část odpovědi</summary>
+      <div class="tip-body">
+        <p>AI zvládá překvapivě dobře <em>obsah</em> — o čem předpis je, co studie zhruba zjistila. Výrazně hůř zvládá <em>přesné identifikátory</em>: číslo článku, odstavce, datum účinnosti, DOI, ročník časopisu. Právě tyhle údaje si nejčastěji „domyslí", protože vypadají jako detail, který musí někde být.</p>
+        <p>Praktické pravidlo: <strong>každé číslo a každou citaci z odpovědi ber jako návrh, kde hledat, ne jako fakt.</strong> Číslo nařízení použijte k tomu, abyste ho našli v EUR-Lex — a teprve tam si přečtěte, co v daném článku doopravdy stojí. Stejně u studie: název a autory použijte k dohledání originálu, citaci samotnou neopisujte.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kam se vrátit pro jistotu</h2>
+    <p class="section-lead">
+      Tohle je seznam primárních zdrojů, kterým AI nemá konkurovat, ale dovést vás k nim. Když AI něco tvrdí o předpisu nebo studii, ověření patří sem.
+    </p>
+
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th>Zdroj</th>
+          <th>Na co</th>
+          <th>Proč je primární</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="3" class="cat">Legislativa</td></tr>
+        <tr>
+          <td><strong>EUR-Lex</strong><br><code>eur-lex.europa.eu</code></td>
+          <td>Veškerá legislativa EU: nařízení, směrnice, konsolidovaná znění</td>
+          <td>Úřední věstník EU. Konsolidované znění ukáže předpis i s pozdějšími změnami.</td>
+        </tr>
+        <tr>
+          <td><strong>EMA</strong><br><code>ema.europa.eu</code></td>
+          <td>Veterinární léčiva, Union Product Database (UPD), vědecká doporučení</td>
+          <td>UPD je jediný zdroj o registrovaných veterinárních léčivech v EU/EHP (zřízen nař. (EU) 2019/6).</td>
+        </tr>
+        <tr>
+          <td><strong>e-Sbírka / Sbírka zákonů</strong><br><code>e-sbirka.cz</code></td>
+          <td>České předpisy a jejich účinná znění</td>
+          <td>Oficiální vyhlašování českých předpisů. Ověříte zde i účinnost a novely.</td>
+        </tr>
+        <tr>
+          <td><strong>ÚSKVBL</strong><br><code>uskvbl.cz</code></td>
+          <td>Národní agenda veterinárních léčiv a biopreparátů</td>
+          <td>Příslušný národní úřad — výklady, seznamy, pokyny pro ČR.</td>
+        </tr>
+        <tr><td colspan="3" class="cat">Odborná literatura</td></tr>
+        <tr>
+          <td><strong>PubMed</strong><br><code>pubmed.ncbi.nlm.nih.gov</code></td>
+          <td>Biomedicínská a veterinární literatura</td>
+          <td>Bezplatný autoritativní index. Záznam s DOI dohledáte u zdroje.</td>
+        </tr>
+        <tr>
+          <td><strong>Semantic Scholar / Google Scholar</strong></td>
+          <td>Široké dohledání prací a citací napříč obory</td>
+          <td>Odkážou na původní publikaci a její citační okolí.</td>
+        </tr>
+        <tr>
+          <td><strong>Vydavatel / DOI</strong><br><code>doi.org/…</code></td>
+          <td>Ověření, že konkrétní studie existuje a co opravdu říká</td>
+          <td>DOI vede přímo k původnímu článku. Když nevede nikam, citace je podezřelá.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Příklady předpisů: veterinární léčiva upravuje nařízení (EU) 2019/6; GMP pro veterinární léčiva řeší prováděcí nařízení (EU) 2025/2091 s použitelností od 16. 7. 2026. Konkrétní znění a účinnost vždy ověřte v EUR-Lex. Ověřeno 6/2026.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> EMA i sama nasazuje AI nad regulační data</summary>
+      <div class="tip-body">
+        <p>Od března 2026 nabízí EMA rozšířené vyhledávání s „AI-enabled knowledge mining" nad regulačními a vědeckými informacemi z evropské lékové sítě. Smysl je stejný jako u téhle strany: zrychlit nalezení relevantního obsahu — ne nahradit primární zdroj.</p>
+        <p>Pro vaši praxi z toho plyne: AI nad <em>kurátorovanými</em> regulačními daty (jako u EMA) je důvěryhodnější než obecný chatbot nad otevřeným webem, protože hledá v ověřeném korpusu. Ale i tady platí, že závazné je až znění v EUR-Lex nebo v příslušné databázi, na které vás nástroj odkáže.</p>
+      </div>
+    </details>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> Konsolidované vs. vyhlášené znění</summary>
+      <div class="tip-body">
+        <p>U evropských i českých předpisů existuje rozdíl mezi původním vyhlášeným zněním a zněním <strong>konsolidovaným</strong> (původní text se zapracovanými pozdějšími změnami). AI často mluví obecně „o nařízení", aniž rozliší, jestli popisuje původní, nebo aktuální verzi.</p>
+        <p>Praktický důsledek: když potřebujete vědět, co platí <em>dnes</em>, hledejte v EUR-Lex konsolidované znění a všímejte si data poslední aktualizace. AI vám pomůže najít správné číslo předpisu, ale jestli pracujete s aktuálním zněním, si ohlídejte sami.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      V legislativě i v literatuře je AI skvělá na „kde to hledat" a „o čem to zhruba je". Na „co přesně tam stojí" je nespolehlivá. Rozdělte si role podle toho.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>AI najde, primární zdroj potvrdí.</strong> Použijte AI k nalezení relevantního předpisu či studie. Závazné znění, čísla a citace si vezměte z EUR-Lex, EMA, e-Sbírky, PubMedu nebo od vydavatele.
+      </div>
+      <div class="takeaway-card">
+        <strong>Dobrý dotaz uvádí oblast a žádá zdroj.</strong> Ne „co platí o lécích", ale „v nařízení (EU) 2019/6 najdi článek o… a cituj jeho přesné znění, ať ho ověřím v EUR-Lex".
+      </div>
+      <div class="takeaway-card">
+        <strong>Čísla a citace jsou nejkřehčí.</strong> Obsah AI zvládá, přesné identifikátory (článek, datum, DOI) si domýšlí. Ber je jako vodítko, kde hledat, ne jako fakt.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pozor na verzi předpisu.</strong> Rozlišujte vyhlášené a konsolidované znění. Co platí dnes, ověřte v aktuálním konsolidovaném znění, ne podle obecného popisu od AI.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Příklady předpisů jsou ilustrativní — závazné znění ověřte v EUR-Lex a u příslušných úřadů.</em>
+  </footer>
+
+</main>
+
+<script>
+const qb = {
+  legis: {
+    bad: 'Co říká zákon o veterinárních lécích?',
+    badNote: '<strong>Proč je slabý:</strong> nevymezuje předpis, zemi ani co přesně chcete. AI odpoví obecně a klidně si přimyslí číslo paragrafu, které „nějak musí existovat".',
+    good: 'V nařízení (EU) 2019/6 o veterinárních\nléčivech najdi ustanovení o registraci\nléčiva. Uveď číslo článku a cituj jeho\nznění tak, ať ho můžu ověřit v EUR-Lex.\nPokud si nejsi jistý článkem, řekni to\notevřeně a nehádej číslo.',
+    goodNote: '<strong>Proč je silný:</strong> jmenuje konkrétní předpis, ptá se na konkrétní věc, žádá citaci k ověření a výslovně dává AI svolení přiznat nejistotu místo hádání.',
+    canTitle: 'Kde AI u legislativy pomáhá',
+    can: [
+      'Najít, který předpis téma upravuje',
+      'Vysvětlit smysl ustanovení jednoduše',
+      'Shrnout strukturu dlouhého nařízení',
+      'Navrhnout, kde v EUR-Lex hledat dál'
+    ],
+    cantTitle: 'Kde AI u legislativy selhává',
+    cant: [
+      'Přesná čísla článků a odstavců',
+      'Data účinnosti a novelizace',
+      'Rozlišení vyhlášeného a konsolidovaného znění',
+      'Doslovné citace — často je přeformuluje'
+    ]
+  },
+  lit: {
+    bad: 'Najdi studie o antibiotické rezistenci\nu zvířat.',
+    badNote: '<strong>Proč je slabý:</strong> obecné zadání bez odborného nástroje svádí chatbot k tomu, aby „citace" poskládal podle toho, jak studie obvykle vypadají — včetně smyšlených názvů a DOI.',
+    good: 'V Consensu (nebo Elicit) najdi recenzované\nstudie o antimikrobiální rezistenci\nu hospodářských zvířat z posledních 5 let.\nU každé uveď autory, rok, časopis a DOI.\nNepřidávej studie, které nemůžeš doložit\nzáznamem v databázi.',
+    goodNote: '<strong>Proč je silný:</strong> míří na odborný nástroj hledající v databázi prací, vymezuje téma i období, žádá ověřitelné identifikátory a zakazuje nedoložené nálezy.',
+    canTitle: 'Kde AI u literatury pomáhá',
+    can: [
+      'Najít relevantní práce k tématu',
+      'Shrnout, co studie zhruba zjistila',
+      'Porovnat metody a vzorky napříč studiemi',
+      'Ukázat, zda nález jiní potvrzují (Scite)'
+    ],
+    cantTitle: 'Kde AI u literatury selhává',
+    cant: [
+      'Vymýšlí názvy studií a DOI (zvlášť obecné chatboty)',
+      'Přesná čísla a údaje z grafů a tabulek',
+      'Posouzení kvality a vah jednotlivých studií',
+      'Aktuální práce po tréninkovém cutoffu (bez hledání)'
+    ]
+  }
+};
+
+const qbTabs = document.querySelectorAll('.qb-tab');
+const elBad = document.getElementById('qb-bad');
+const elBadNote = document.getElementById('qb-bad-note');
+const elGood = document.getElementById('qb-good');
+const elGoodNote = document.getElementById('qb-good-note');
+const elCanTitle = document.getElementById('qb-can-title');
+const elCan = document.getElementById('qb-can');
+const elCantTitle = document.getElementById('qb-cant-title');
+const elCant = document.getElementById('qb-cant');
+
+function renderQb(key) {
+  const q = qb[key];
+  elBad.textContent = q.bad;
+  elBadNote.innerHTML = q.badNote;
+  elGood.textContent = q.good;
+  elGoodNote.innerHTML = q.goodNote;
+  elCanTitle.textContent = q.canTitle;
+  elCan.innerHTML = q.can.map(x => `<li>${x}</li>`).join('');
+  elCantTitle.textContent = q.cantTitle;
+  elCant.innerHTML = q.cant.map(x => `<li>${x}</li>`).join('');
+  qbTabs.forEach(b => b.classList.toggle('active', b.dataset.qb === key));
+}
+
+qbTabs.forEach(btn => btn.addEventListener('click', () => renderQb(btn.dataset.qb)));
+renderQb('legis');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

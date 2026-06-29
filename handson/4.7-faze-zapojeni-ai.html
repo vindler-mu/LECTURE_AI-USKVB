@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Fáze zapojení AI do vyhledávání</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #5b3f7a; --accent-hover: #46305f; --accent-soft: #ede5f3;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── PHASE PICKER ───────────────────────────────────── */
+  .ph-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .ph-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ph-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 13px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ph-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .ph-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .ph-tab .pn {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    width: 19px; height: 19px; border-radius: 50%; display: inline-flex; align-items: center;
+    justify-content: center; background: var(--accent-soft); color: var(--accent-hover);
+  }
+  .ph-tab.active .pn { background: rgba(255,255,255,0.25); color: #fff; }
+  .ph-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 880px) { .ph-grid { grid-template-columns: 1fr; } }
+  .ph-panel { background: var(--bg); border: 1px solid var(--line); padding: 18px 20px; min-height: 280px; }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  }
+  .ph-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700;
+    color: var(--ink); margin-bottom: 2px;
+  }
+  .ph-en { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
+  .ph-block { margin-bottom: 14px; }
+  .ph-block h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 4px;
+  }
+  .ph-block p { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); }
+  .ph-decider {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 2px;
+    font-size: 13px; color: var(--ink);
+  }
+  .decider-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; color: #fff;
+  }
+  .decider-badge.user { background: var(--green); }
+  .decider-badge.system { background: var(--ink-soft); }
+  .decider-badge.ai { background: var(--accent); }
+  .ph-watch {
+    margin-top: 12px; padding: 10px 12px; background: var(--warm-soft);
+    border-left: 3px solid var(--warm); font-size: 12.5px; line-height: 1.55; color: var(--ink);
+  }
+  .ph-watch strong { color: var(--warm); }
+
+  /* ── CONTROL STRIP ──────────────────────────────────── */
+  .strip { display: flex; border: 1px solid var(--line); margin-top: 8px; overflow: hidden; }
+  @media (max-width: 720px) { .strip { flex-direction: column; } }
+  .strip-seg { flex: 1; padding: 14px 12px; text-align: center; border-right: 1px solid var(--line); }
+  .strip-seg:last-child { border-right: none; }
+  @media (max-width: 720px) { .strip-seg { border-right: none; border-bottom: 1px solid var(--line); } .strip-seg:last-child { border-bottom: none; } }
+  .strip-seg.user { background: var(--green-soft); }
+  .strip-seg.system { background: var(--paper); }
+  .strip-seg.ai { background: var(--accent-soft); }
+  .strip-ph { font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .strip-who {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.8px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  .strip-seg.user .strip-who { color: var(--green); }
+  .strip-seg.system .strip-who { color: var(--ink-soft); }
+  .strip-seg.ai .strip-who { color: var(--accent); }
+  .strip-legend {
+    display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px;
+    font-size: 12px; color: var(--ink-soft);
+  }
+  .strip-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .lg-dot { width: 12px; height: 12px; border: 1px solid var(--line); }
+  .lg-dot.user { background: var(--green-soft); border-color: var(--green); }
+  .lg-dot.system { background: var(--paper); border-color: var(--line-strong); }
+  .lg-dot.ai { background: var(--accent-soft); border-color: var(--accent); }
+
+  /* ── TABLE ──────────────────────────────────────────── */
+  .ph-table {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 20px;
+  }
+  .ph-table th, .ph-table td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .ph-table th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .ph-table td strong { color: var(--ink); }
+  .ph-table tr:nth-child(even) td { background: var(--paper); }
+  .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; white-space: nowrap;
+  }
+  .tag.zdroj { background: var(--green-soft); color: var(--green); }
+  .tag.info { background: var(--accent-soft); color: var(--accent-hover); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── NEXT ───────────────────────────────────────────── */
+  .next-card {
+    margin-top: 28px; background: var(--red-soft);
+    border: 1px solid color-mix(in srgb, var(--red) 25%, var(--line));
+    border-left: 4px solid var(--red); padding: 18px 22px;
+  }
+  .next-card .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--red); font-weight: 600; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .next-card a { color: var(--red); font-weight: 600; }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on · Shrnutí</p>
+    <h1>Fáze zapojení AI: <em>kde</em> vstupuje do vyhledávání</h1>
+    <p class="hero-subtitle">
+      „AI vyhledávání" není jedna černá skříňka. Je to řetězec pěti fází a AI může vstoupit do každé z nich jinak — a s jinou mírou rizika. Tahle strana spojuje celé setkání do jedné mapy a přidává klíčovou otázku: <em>kdo v které fázi rozhoduje</em> — vy, systém, nebo AI. Od toho se odvíjí, kde máte kontrolu a kde musíte být ostražití.
+    </p>
+    <div class="definition">
+      <strong>Hledání zdrojů × hledání informací.</strong> První čtyři fáze pracují se <em>zdroji</em> (najít a seřadit dokumenty — to jde ověřit). Poslední fáze, syntéza, vám dává <em>informaci</em> (hotovou odpověď, kterou AI vygenerovala a interpretovala). Tohle rozlišení je jádro celé strany: kde dostáváte dohledatelné zdroje a kde už interpretaci.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Pět fází řetězce vyhledávání</h2>
+    <p class="section-lead">
+      Od zadání dotazu po hotovou odpověď projde vyhledávání pěti fázemi. Klikněte na fázi a podívejte se, co se v ní děje, kde do ní vstupuje AI, kdo rozhoduje a na co si dát pozor.
+    </p>
+
+    <div class="ph-wrap">
+      <div class="ph-tabs" id="ph-tabs">
+        <button class="ph-tab active" data-ph="query"><span class="pn">1</span>Dotazování</button>
+        <button class="ph-tab" data-ph="retrieval"><span class="pn">2</span>Vyhledávání</button>
+        <button class="ph-tab" data-ph="ranking"><span class="pn">3</span>Řazení</button>
+        <button class="ph-tab" data-ph="enrichment"><span class="pn">4</span>Rozšíření</button>
+        <button class="ph-tab" data-ph="synthesis"><span class="pn">5</span>Syntéza</button>
+      </div>
+
+      <div class="ph-grid">
+        <div class="ph-panel">
+          <p class="panel-label">Co se děje</p>
+          <div class="ph-name" id="ph-name"></div>
+          <div class="ph-en" id="ph-en"></div>
+          <div class="ph-block">
+            <h5>Co se v této fázi odehrává</h5>
+            <p id="ph-what"></p>
+          </div>
+          <div class="ph-block">
+            <h5>Kde do ní vstupuje AI</h5>
+            <p id="ph-ai"></p>
+          </div>
+        </div>
+        <div class="ph-panel">
+          <p class="panel-label">Kdo rozhoduje a na co pozor</p>
+          <div class="ph-block">
+            <h5>Kdo rozhoduje</h5>
+            <div class="ph-decider"><span class="decider-badge" id="ph-badge"></span><span id="ph-decider-text"></span></div>
+          </div>
+          <div class="ph-block">
+            <h5>Pracuje se</h5>
+            <p id="ph-area"></p>
+          </div>
+          <div class="ph-watch" id="ph-watch"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdo drží kontrolu v každé fázi</h2>
+    <p class="section-lead">
+      Když fáze seřadíme za sebe, vyjde najevo důležitý vzorec: kontrolu máte na začátku (formulace dotazu) a uprostřed (ověření ve fázi rozšíření). Mezitím rozhoduje systém a na konci interpretuje AI. Čím blíž k syntéze, tím méně řídíte a tím víc se interpretuje.
+    </p>
+
+    <div class="strip">
+      <div class="strip-seg user">
+        <div class="strip-ph">1 · Dotazování</div>
+        <div class="strip-who">Uživatel</div>
+      </div>
+      <div class="strip-seg system">
+        <div class="strip-ph">2 · Vyhledávání</div>
+        <div class="strip-who">Systém</div>
+      </div>
+      <div class="strip-seg system">
+        <div class="strip-ph">3 · Řazení</div>
+        <div class="strip-who">Systém</div>
+      </div>
+      <div class="strip-seg user">
+        <div class="strip-ph">4 · Rozšíření</div>
+        <div class="strip-who">Uživatel ověří</div>
+      </div>
+      <div class="strip-seg ai">
+        <div class="strip-ph">5 · Syntéza</div>
+        <div class="strip-who">AI</div>
+      </div>
+    </div>
+    <div class="strip-legend">
+      <span><span class="lg-dot user"></span> Rozhodujete vy</span>
+      <span><span class="lg-dot system"></span> Rozhoduje systém</span>
+      <span><span class="lg-dot ai"></span> Rozhoduje a interpretuje AI</span>
+    </div>
+
+    <table class="ph-table">
+      <thead>
+        <tr><th>Fáze</th><th>Pracuje se</th><th>Kdo rozhoduje</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1 · Dotazování</strong></td><td><span class="tag zdroj">zdroj</span></td><td>Uživatel — formulace a schválení dotazu</td></tr>
+        <tr><td><strong>2 · Vyhledávání</strong></td><td><span class="tag zdroj">zdroj</span></td><td>Systém — rozhoduje, co vrátí</td></tr>
+        <tr><td><strong>3 · Řazení</strong></td><td><span class="tag zdroj">zdroj</span></td><td>Systém — rozhoduje o relevanci (pořadí)</td></tr>
+        <tr><td><strong>4 · Rozšíření</strong></td><td><span class="tag zdroj">zdroj</span> <span class="tag info">informace</span></td><td>Uživatel — ověření ve zdroji</td></tr>
+        <tr><td><strong>5 · Syntéza</strong></td><td><span class="tag info">informace</span></td><td>AI — výběr, interpretace a generování</td></tr>
+      </tbody>
+    </table>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Vaše dvě páky: dotaz na začátku a ověření před syntézou</summary>
+      <div class="tip-body">
+        <p>Z mapy plyne praktická strategie. Máte dvě místa, kde reálně držíte otěže: <strong>fázi 1</strong> (jak formulujete dotaz) a <strong>fázi 4</strong> (než necháte AI syntetizovat, ověříte si nalezené zdroje). Mezi nimi rozhoduje systém a vy jeho rozhodnutí jen těžko ovlivníte.</p>
+        <p>Závěr: investujte do formulace dotazu a <strong>zastavte se před fází 5</strong>. Když si projdete nalezené zdroje sami (fáze 4), máte ověřený materiál. Když rovnou skočíte na vygenerovanou odpověď (fáze 5), dostanete interpretaci, kterou už nikdo nezkontroloval.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co z toho plyne pro praxi</h2>
+    <p class="section-lead">
+      Mapa fází není samoúčelná. Každá fáze má svůj typický způsob, jak může selhat — a podle toho se k jejímu výstupu chovejte.
+    </p>
+
+    <table class="ph-table">
+      <thead>
+        <tr><th>Fáze</th><th>Typické riziko</th><th>Co s tím</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dotazování</strong></td>
+          <td>AI přepíše váš dotaz jinak, než jste mysleli. U akademických asistentů se vygenerovaný booleovský dotaz pro stejný vstup změní zhruba v 1 z 5 případů.</td>
+          <td>Nechte si vygenerovaný dotaz ukázat a zkontrolujte ho. Hlídejte oborovou terminologii a názvy léčiv.</td>
+        </tr>
+        <tr>
+          <td><strong>Vyhledávání + Řazení</strong></td>
+          <td>Systém rozhoduje, co uvidíte a co zůstane upozaděné — a proč. Co se nedostane nahoru, snadno přehlédnete.</td>
+          <td>Neberte první výsledky jako úplný obraz. U důležité rešerše zkuste víc formulací a víc nástrojů.</td>
+        </tr>
+        <tr>
+          <td><strong>Rozšíření</strong></td>
+          <td>Sumarizace zjednodušuje a může vynechat výhrady. Pracuje ale nad jednotlivými články, takže jde dobře ověřit.</td>
+          <td>Tohle je váš kontrolní bod. Shrnutí porovnejte s originálem — právě tady se ověřuje nejlíp.</td>
+        </tr>
+        <tr>
+          <td><strong>Syntéza</strong></td>
+          <td>Největší riziko. Ztráta kontextu, zploštění protichůdných závěrů a sebejistě znějící nesmysl. Hotová odpověď uspává kritické myšlení.</td>
+          <td>K vygenerované odpovědi přistupujte jako k návrhu, ne k výsledku. Ověřte citace (<a href="4.5-overovani-zdroju.html">strana 4.5</a>).</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Zdroje: přehledy architektury RAG a IR pipeline (query expansion → retrieval → re-ranking → syntéza); analýzy akademických AI asistentů (Scopus AI, Web of Science Research Assistant) k reprodukovatelnosti generovaných dotazů a atribuci citací. Ověřeno 6/2026; konkrétní čísla se u verzí nástrojů mění.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Vyhledávání s AI je řetězec, ne jeden krok. Když víte, kde v něm jste a kdo právě rozhoduje, víte i to, čemu věřit a kde přibrzdit.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Pět fází, ne černá skříňka.</strong> Dotazování → Vyhledávání → Řazení → Rozšíření → Syntéza. AI vstupuje do každé jinak. Vědět, ve které fázi jste, je půlka úspěchu.
+      </div>
+      <div class="takeaway-card">
+        <strong>Kdo rozhoduje, se v řetězci mění.</strong> Vy (dotaz) → systém (co vrátí a v jakém pořadí) → vy (ověření) → AI (syntéza). Čím blíž ke konci, tím víc se interpretuje a tím míň řídíte.
+      </div>
+      <div class="takeaway-card">
+        <strong>Zdroj vs informace.</strong> Fáze 1–4 dávají dohledatelné zdroje. Fáze 5 dává interpretaci. Spolehlivější je opřít se o zdroje než o hotovou vygenerovanou odpověď.
+      </div>
+      <div class="takeaway-card">
+        <strong>Vaše dvě páky.</strong> Formulace dotazu (fáze 1) a ověření před syntézou (fáze 4). Zastavte se před fází 5 a projděte si zdroje sami — pak máte ověřený materiál, ne nezkontrolovanou interpretaci.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <div class="lbl">Navazuje · Setkání 5</div>
+      <p>Fáze syntézy ukazuje, kde AI interpretuje a kde vzniká největší riziko. Jak systematicky posuzovat důvěryhodnost toho, co AI vygeneruje, je tématem <a href="../index.html#s5">Setkání 5 — Kritické myšlení při práci s AI</a>.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Vychází ze stejnojmenné části přednášky setkání 4 a doplňuje ji o praktická vodítka.</em>
+  </footer>
+
+</main>
+
+<script>
+const phases = {
+  query: {
+    name: 'Dotazování', en: 'Query · uživatel zadá dotaz',
+    what: 'Zadáte dotaz. Systém ho může před hledáním přeformulovat nebo rozšířit — třeba doplnit synonyma nebo z přirozeného jazyka složit booleovský dotaz.',
+    ai: 'Rozšíření dotazu (doplnění klíčových slov), generování rešeršního dotazu s operátory i poli, překlad přirozeného jazyka na databázový dotaz.',
+    badge: 'user', decider: 'Uživatel — formulace a schválení dotazu',
+    area: 'Zdroj. Pořád jste ve fázi hledání dokumentů, ne odpovědi.',
+    watch: '<strong>Pozor:</strong> AI vygenerovaný booleovský dotaz se pro stejný vstup změní zhruba v 1 z 5 případů a může mít nevalidní syntax. Nechte si ho ukázat a zkontrolujte — hlavně u oborové terminologie a názvů léčiv.'
+  },
+  retrieval: {
+    name: 'Vyhledávání', en: 'Retrieval · hledání kandidátních dokumentů',
+    what: 'Systém prohledá korpus a vytáhne dokumenty, které by mohly odpovídat. Tady se rozhoduje, co se vůbec dostane do hry.',
+    ai: 'Sémantický embedding (hledání podle významu) a hybridní hledání kombinující klasická klíčová slova s vektory — detailně na <a href="4.2-klasicke-vs-semanticke.html">straně 4.2</a>.',
+    badge: 'system', decider: 'Systém — rozhoduje, co vrátí',
+    area: 'Zdroj. Stále jde o dokumenty, ne o hotovou odpověď.',
+    watch: '<strong>Pozor:</strong> co se sem nedostane, model „nevidí" — kvalita všeho dalšího je shora omezená tímto výběrem. A sémantické hledání tápe u přesných termínů (názvy léčiv, zkratky).'
+  },
+  ranking: {
+    name: 'Řazení', en: 'Ranking · seřazení podle relevance',
+    what: 'Nalezené dokumenty se seřadí podle odhadované relevance. To, co skončí nahoře, čtete jako „nejdůležitější".',
+    ai: 'Klasický ranking (BM25, deterministický), learning-to-rank (model se učí prioritizaci, např. Semantic Scholar) nebo LLM re-ranking (kvalitativní, ale nedeterministický).',
+    badge: 'system', decider: 'Systém — rozhoduje o relevanci',
+    area: 'Zdroj. Pořadí dokumentů, ne tvrzení.',
+    watch: '<strong>Pozor:</strong> kdo určuje, co je relevantní? Pořadí může nést systematické zkreslení. Co je upozaděné, snadno přehlédnete — a o tom, co se neukázalo, se nedozvíte.'
+  },
+  enrichment: {
+    name: 'Rozšíření', en: 'Enrichment · obohacení výsledků',
+    what: 'Výsledky se obohatí: krátká shrnutí, vytažení klíčových údajů (metodologie, vzorek, typ studie) nad jednotlivými dokumenty.',
+    ai: 'Sumarizace jednotlivých článků a extrakce hlavních bodů do přehledných kategorií.',
+    badge: 'user', decider: 'Uživatel — ověření ve zdroji',
+    area: 'Zdroj i informace. Přechod od dokumentů k jejich obsahu.',
+    watch: '<strong>Tohle je váš kontrolní bod:</strong> sumarizace zjednodušuje a může vynechat výhrady, ale pracuje nad konkrétními články, takže jde dobře ověřit. Shrnutí porovnejte s originálem.'
+  },
+  synthesis: {
+    name: 'Syntéza', en: 'Synthesis · generování odpovědi (RAG)',
+    what: 'Z více zdrojů se poskládá souvislá odpověď. Tady AI poprvé skutečně píše text — vybírá, interpretuje a generuje.',
+    ai: 'RAG (Retrieval-Augmented Generation) nad vybranými úseky (chunks) dokumentů. Model rozhoduje, co použít a jak to zformulovat.',
+    badge: 'ai', decider: 'AI — výběr, interpretace a generování',
+    area: 'Informace. Dostáváte hotovou odpověď, ne zdroje.',
+    watch: '<strong>Pozor — největší riziko:</strong> ztráta kontextu, zploštění protichůdných závěrů a sebejistě znějící nesmysl. Hotová odpověď uspává kritické myšlení. Berte ji jako návrh a ověřte citace (<a href="4.5-overovani-zdroju.html">strana 4.5</a>).'
+  }
+};
+
+const phTabs = document.querySelectorAll('.ph-tab');
+const elName = document.getElementById('ph-name');
+const elEn = document.getElementById('ph-en');
+const elWhat = document.getElementById('ph-what');
+const elAi = document.getElementById('ph-ai');
+const elBadge = document.getElementById('ph-badge');
+const elDeciderText = document.getElementById('ph-decider-text');
+const elArea = document.getElementById('ph-area');
+const elWatch = document.getElementById('ph-watch');
+
+const badgeLabels = { user: 'Uživatel', system: 'Systém', ai: 'AI' };
+
+function renderPhase(key) {
+  const p = phases[key];
+  elName.textContent = p.name;
+  elEn.textContent = p.en;
+  elWhat.textContent = p.what;
+  elAi.innerHTML = p.ai;
+  elBadge.textContent = badgeLabels[p.badge];
+  elBadge.className = 'decider-badge ' + p.badge;
+  elDeciderText.textContent = p.decider.replace(/^[^—]*—\s*/, '');
+  elArea.textContent = p.area;
+  elWatch.innerHTML = p.watch;
+  phTabs.forEach(b => b.classList.toggle('active', b.dataset.ph === key));
+}
+
+phTabs.forEach(btn => btn.addEventListener('click', () => renderPhase(btn.dataset.ph)));
+renderPhase('query');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

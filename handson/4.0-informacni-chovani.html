@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Informační chování a princip minimální námahy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #5b3f7a; --accent-hover: #46305f; --accent-soft: #ede5f3;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── REFLEX PICKER ──────────────────────────────────── */
+  .rx-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .rx-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .rx-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .rx-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .rx-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .rx-panel { background: var(--bg); border: 1px solid var(--line); padding: 20px 22px; }
+  .rx-headline {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .rx-headline em { font-style: normal; color: var(--accent); }
+  .rx-sub { font-size: 12.5px; color: var(--muted); font-style: italic; margin-bottom: 16px; }
+  .rx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .rx-row { grid-template-columns: 1fr; } }
+  .rx-cell h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
+  }
+  .rx-cell.risk h5 { color: var(--warm); }
+  .rx-cell.fix h5 { color: var(--green); }
+  .rx-cell p { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); }
+  .rx-cell.risk { background: var(--warm-soft); border-left: 3px solid var(--warm); padding: 12px 14px; }
+  .rx-cell.fix { background: var(--green-soft); border-left: 3px solid var(--green); padding: 12px 14px; }
+
+  /* ── COMPETENCE ─────────────────────────────────────── */
+  .comp {
+    background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+    border-left: 4px solid var(--accent); padding: 20px 24px; margin-bottom: 20px;
+  }
+  .comp p { font-size: 14.5px; line-height: 1.6; color: var(--ink); }
+  .comp strong { color: var(--accent-hover); }
+  .comp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 880px) { .comp-cards { grid-template-columns: 1fr; } }
+  .comp-card {
+    background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .comp-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 700;
+    margin-bottom: 6px; color: var(--ink);
+  }
+  .comp-card p { font-size: 12.8px; line-height: 1.55; color: var(--ink-soft); }
+  .comp-foot {
+    margin-top: 16px; font-size: 13px; color: var(--ink-soft); font-style: italic; text-align: center;
+  }
+  .comp-foot strong { color: var(--accent); font-style: normal; }
+
+  /* ── STABLE LIST ────────────────────────────────────── */
+  .stable { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .stable { grid-template-columns: 1fr; } }
+  .stable-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--green);
+    padding: 14px 18px;
+  }
+  .stable-card h5 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px; font-weight: 700;
+    margin-bottom: 4px; color: var(--ink);
+  }
+  .stable-card p { font-size: 12.8px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ── MAP / NEXT ─────────────────────────────────────── */
+  .map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+  @media (max-width: 880px) { .map { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .map { grid-template-columns: 1fr; } }
+  .map-card {
+    background: var(--bg); border: 1px solid var(--line); padding: 14px 16px;
+    transition: border-color 0.15s ease;
+  }
+  .map-card:hover { border-color: var(--accent); }
+  .map-card .mn {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--accent);
+    font-weight: 600; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .map-card h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 14.5px; font-weight: 700;
+    margin-bottom: 4px; color: var(--ink); line-height: 1.25;
+  }
+  .map-card p { font-size: 12px; line-height: 1.5; color: var(--muted); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on · Úvod</p>
+    <h1>Než začnete hledat: <em>návyky</em> a princip nejmenší námahy</h1>
+    <p class="hero-subtitle">
+      Dřív než se bavíme o nástrojích, stojí za to podívat se na sebe. To, jak hledáme informace, řídí z velké části jeden tichý zákon: jdeme cestou nejmenšího odporu. AI tenhle reflex ještě posiluje, protože dává hotově vypadající odpověď na jedno kliknutí. Tahle úvodní strana pojmenovává, co se hledáním nemění, ať máme jakýkoliv nástroj.
+    </p>
+    <div class="definition">
+      <strong>Informační potřeba</strong> = rozpor mezi tím, co vím, a tím, co potřebuji vědět pro vyřešení konkrétního problému. Od běžných potřeb v životě po velmi specifické profesní. Kvalita rešerše se pozná podle toho, jak dobře tu potřebu nejdřív vymezíme — ne podle toho, jak rychle dostaneme nějakou odpověď.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Princip minimální námahy</h2>
+    <p class="section-lead">
+      Princip minimální námahy (Principle of Least Effort) formuloval George Kingsley Zipf v roce 1949: lidé volí cestu nejmenšího odporu při dosahování svých cílů. V informačním chování se to projevuje čtyřmi reflexy. Každý z nich nám šetří čas — a každý nese pro odbornou práci konkrétní riziko. Klikněte na reflex.
+    </p>
+
+    <div class="rx-wrap">
+      <div class="rx-tabs" id="rx-tabs">
+        <button class="rx-tab active" data-rx="known">Známé před neznámými</button>
+        <button class="rx-tab" data-rx="available">Dostupné před přesnými</button>
+        <button class="rx-tab" data-rx="simple">Jednoduché před složitými</button>
+        <button class="rx-tab" data-rx="fast">Rychlé před důkladnými</button>
+      </div>
+
+      <div class="rx-panel">
+        <div class="rx-headline" id="rx-headline"></div>
+        <div class="rx-sub" id="rx-sub"></div>
+        <div class="rx-row">
+          <div class="rx-cell risk">
+            <h5>Riziko pro odbornou práci</h5>
+            <p id="rx-risk"></p>
+          </div>
+          <div class="rx-cell fix">
+            <h5>Vědomá protiváha</h5>
+            <p id="rx-fix"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> Reflex není chyba — jen ho nesmíme nechat rozhodovat za nás</summary>
+      <div class="tip-body">
+        <p>Princip minimální námahy je rozumný. U většiny každodenních potřeb je správné sáhnout po tom, co je po ruce. Problém nastává, když ho necháme řídit i tam, kde mají výstupy reálné následky — u regulatorního rozhodnutí, odborné rešerše, posouzení dokumentace.</p>
+        <p>Cílem není přestat hledat pohodlně. Cílem je <strong>poznat, kdy si pohodlí dovolit můžeme a kdy ne</strong>. To rozlišení je jádro celého setkání.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Digitální kompetence není o nástrojích</h2>
+    <p class="section-lead">
+      Snadno se zamění: „umím s AI" vypadá jako „znám správné nástroje". Ale skutečná digitální kompetence je něco jiného — je to schopnost vědomě přerušit reflex prvního dostupného nástroje a zvolit ten vhodný.
+    </p>
+
+    <div class="comp">
+      <p><strong>Princip minimální námahy nás táhne k prvnímu dostupnému nástroji. Digitální kompetence je schopnost tento reflex vědomě přerušit.</strong> Nejde o to znát nejvíc nástrojů, ale o to umět mezi nimi vybírat podle problému.</p>
+    </div>
+
+    <div class="comp-cards">
+      <div class="comp-card">
+        <h4>Po ruce ≠ vhodný</h4>
+        <p>Znát rozdíl mezi nástrojem, který je právě otevřený, a nástrojem, který se na danou úlohu hodí. To, že je něco rychle dostupné, není argument pro jeho použití.</p>
+      </div>
+      <div class="comp-card">
+        <h4>Pro jaký problém vznikl</h4>
+        <p>Vědět, k čemu byl nástroj navržen. Vyhledávač, databáze, chatbot i deep research vznikly pro jiný typ úlohy. Použít je mimo jejich účel znamená koledovat si o špatný výsledek.</p>
+      </div>
+      <div class="comp-card">
+        <h4>Co nástroj nevidí</h4>
+        <p>Rozumět tomu, co nástroj <em>nezahrnuje</em> — ne jen tomu, co vrací. Každý nástroj má slepé místo: zdroje, kam nedosáhne, obsah, který přehlédne. To nevidíte ve výsledcích.</p>
+      </div>
+    </div>
+
+    <p class="comp-foot">To platí pro <strong>Google</strong>, <strong>Boolean vyhledávání</strong> i <strong>AI nástroje</strong> úplně stejně.</p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co se s příchodem AI nemění</h2>
+    <p class="section-lead">
+      Snadno vzniká dojem, že AI mění úplně všechno. Mění hodně — ale několik věcí zůstává přesně tam, kde byly. Právě ony drží rešerši pohromadě bez ohledu na nástroj.
+    </p>
+
+    <div class="stable">
+      <div class="stable-card">
+        <h5>Potřeba definovat potřebu</h5>
+        <p>Než hledáte, musíte vědět, co vlastně potřebujete zjistit. Vágní potřeba dá vágní výsledek u Googlu i u AI.</p>
+      </div>
+      <div class="stable-card">
+        <h5>Kritický přístup k sobě i k nástrojům</h5>
+        <p>Nedůvěřovat slepě výsledku — ani vlastní první formulaci dotazu. Obojí může být mimo.</p>
+      </div>
+      <div class="stable-card">
+        <h5>Digitální kompetence</h5>
+        <p>Vybrat vhodný nástroj a vědět, co nevidí. Víc nástrojů bez tohoto úsudku spíš škodí.</p>
+      </div>
+      <div class="stable-card">
+        <h5>Vhodnost iterace</h5>
+        <p>Dobrý výsledek málokdy přijde napoprvé. Upřesňování dotazu zůstává klíčové i u AI.</p>
+      </div>
+      <div class="stable-card">
+        <h5>Znalost rešeršních postupů</h5>
+        <p>Vědět, kde a jak se v oboru hledá, je pořád výhoda. AI ji nenahrazuje, jen doplňuje.</p>
+      </div>
+      <div class="stable-card">
+        <h5>Ověření ve zdroji</h5>
+        <p>Poslední slovo má primární zdroj a člověk, který ho přečte. To se nezměnilo ani trochu.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kam dál v tomhle setkání</h2>
+    <p class="section-lead">
+      Tahle strana je rozcestník. Zbytek hands-on materiálů setkání 4 rozvíjí jednotlivé kroky od principu k praxi.
+    </p>
+
+    <div class="map">
+      <a class="map-card" href="4.1-jak-ai-vyhledava.html">
+        <div class="mn">4.1</div>
+        <h4>Jak AI vyhledává</h4>
+        <p>Čtyři režimy hledání a jak poznat, který běží.</p>
+      </a>
+      <a class="map-card" href="4.2-klasicke-vs-semanticke.html">
+        <div class="mn">4.2</div>
+        <h4>Klasické vs sémantické vyhledávání</h4>
+        <p>Klíčová slova vs význam. Proč AI tápe u názvů léčiv.</p>
+      </a>
+      <a class="map-card" href="4.3-nastroje-resere.html">
+        <div class="mn">4.3</div>
+        <h4>Nástroje pro AI rešerši</h4>
+        <p>Dvě rodiny nástrojů a kdy který použít.</p>
+      </a>
+      <a class="map-card" href="4.4-legislativa-literatura.html">
+        <div class="mn">4.4</div>
+        <h4>Legislativa a literatura</h4>
+        <p>AI najde, primární zdroj potvrdí.</p>
+      </a>
+      <a class="map-card" href="4.5-overovani-zdroju.html">
+        <div class="mn">4.5</div>
+        <h4>Ověřování zdrojů a citací</h4>
+        <p>Klíčová strana: jak poznat skutečný nález.</p>
+      </a>
+      <a class="map-card" href="4.6-klasicka-vs-ai.html">
+        <div class="mn">4.6</div>
+        <h4>Klasická vs. AI rešerše</h4>
+        <p>Kdy co a jak je spojit do jednoho postupu.</p>
+      </a>
+      <a class="map-card" href="4.7-faze-zapojeni-ai.html">
+        <div class="mn">4.7</div>
+        <h4>Fáze zapojení AI</h4>
+        <p>Pět fází řetězce a kdo v které rozhoduje.</p>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Vyhledávání s AI začíná u návyků, ne u nástrojů. Když rozumíte vlastnímu reflexu, dokážete ho vědomě přerušit tam, kde na přesnosti záleží.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Nejdřív definujte potřebu.</strong> Informační potřeba je rozpor mezi tím, co víte, a co potřebujete. Vágně vymezená potřeba dá vágní výsledek u jakéhokoliv nástroje.
+      </div>
+      <div class="takeaway-card">
+        <strong>Princip nejmenší námahy nás táhne k pohodlí.</strong> Známé, dostupné, jednoduché, rychlé. U běžných věcí v pořádku — u rozhodnutí s následky reflex vědomě přerušte.
+      </div>
+      <div class="takeaway-card">
+        <strong>Kompetence není znát nástroje.</strong> Je to umět vybrat vhodný, vědět, k čemu vznikl, a rozumět tomu, co nevidí. Platí pro Google, Boolean i AI stejně.
+      </div>
+      <div class="takeaway-card">
+        <strong>Co se nemění.</strong> Definovat potřebu, kriticky přistupovat, iterovat, znát postupy, ověřit ve zdroji. AI tyhle věci nenahrazuje — jen je nově zarámuje.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Doplňuje stejnojmennou přednášku setkání 4.</em>
+  </footer>
+
+</main>
+
+<script>
+const reflexes = {
+  known: {
+    headline: 'Volíme <em>známé</em> před neznámými',
+    sub: 'Sáhneme po nástroji a zdroji, který už známe, i když existuje vhodnější.',
+    risk: 'Zůstáváme u jednoho nástroje na všechno. Pro rešerši odborné literatury otevřeme tentýž chatbot jako na e-maily — a mineme nástroj, který hledá v databázi studií.',
+    fix: 'Před rešerší se ptejte: existuje pro tenhle typ úlohy vhodnější nástroj než ten, který mám zrovna otevřený? Mapu nástrojů dává strana 4.3.'
+  },
+  available: {
+    headline: 'Preferujeme <em>dostupné</em> před přesnými',
+    sub: 'Vezmeme první zdroj, který je po ruce, místo toho nejpřesnějšího.',
+    risk: 'Spokojíme se s tím, co AI vrátí jako první, místo abychom šli do primárního zdroje. U předpisu nebo studie to znamená rozhodovat podle sekundárního převyprávění.',
+    fix: 'U závazných věcí dojděte k primárnímu zdroji — EUR-Lex, EMA, originál studie. Dostupné použijte k orientaci, přesné k rozhodnutí (strana 4.4).'
+  },
+  simple: {
+    headline: 'Preferujeme <em>jednoduché</em> před složitými',
+    sub: 'Volíme jednodušší postup, i když složitější dá spolehlivější výsledek.',
+    risk: 'Napíšeme jeden vágní dotaz místo strukturované rešerše. AI ráda vyhoví i nejasnému zadání — a vrátí plynulou, ale mělkou odpověď.',
+    fix: 'Investujte do formulace dotazu a do iterace. Pár upřesnění navíc dá řádově lepší výsledek (strany 4.1 a 4.4).'
+  },
+  fast: {
+    headline: 'Upřednostňujeme <em>rychlé</em> před důkladnými',
+    sub: 'Vezmeme rychlou odpověď a přeskočíme ověření.',
+    risk: 'Hotově vypadající AI odpověď svádí k tomu skončit dřív, než ověříme. Právě tady vznikají smyšlené citace, které se dostanou dál (strana 4.5).',
+    fix: 'Zaveďte si pevný poslední krok: než výstup použiju, otevřu zdroj a najdu v něm tvrzení. Dvouminutová rutina ze strany 4.5.'
+  }
+};
+
+const rxTabs = document.querySelectorAll('.rx-tab');
+const elHeadline = document.getElementById('rx-headline');
+const elSub = document.getElementById('rx-sub');
+const elRisk = document.getElementById('rx-risk');
+const elFix = document.getElementById('rx-fix');
+
+function renderReflex(key) {
+  const r = reflexes[key];
+  elHeadline.innerHTML = r.headline;
+  elSub.textContent = r.sub;
+  elRisk.textContent = r.risk;
+  elFix.innerHTML = r.fix;
+  rxTabs.forEach(b => b.classList.toggle('active', b.dataset.rx === key));
+}
+
+rxTabs.forEach(btn => btn.addEventListener('click', () => renderReflex(btn.dataset.rx)));
+renderReflex('known');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

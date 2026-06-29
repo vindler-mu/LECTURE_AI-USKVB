@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Jak AI vyhledává: čtyři režimy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a;
+    --ink-soft: #2c3e50;
+    --bg: #ffffff;
+    --paper: #f7f6f2;
+    --line: #e3e0d8;
+    --line-strong: #c8c3b6;
+    --muted: #6b6f76;
+    --accent: #5b3f7a;
+    --accent-hover: #46305f;
+    --accent-soft: #ede5f3;
+    --warm: #b5651d;
+    --warm-soft: #fbf3e7;
+    --green: #4a7c59;
+    --green-soft: #e7f0ea;
+    --red: #a04a4a;
+    --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px;
+    background: var(--paper); border-left: 3px solid var(--accent);
+    font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted);
+    line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── MODE PICKER ────────────────────────────────────── */
+  .mode-picker-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 26px 28px;
+  }
+  .mode-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .mode-tab {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 9px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mode-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .mode-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .mode-tab .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--line-strong);
+  }
+  .mode-tab.active .dot { background: #fff; }
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 880px) { .mode-grid { grid-template-columns: 1fr; } }
+  .mode-panel {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    min-height: 340px;
+  }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .mode-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 19px; font-weight: 700; margin-bottom: 4px; color: var(--ink);
+  }
+  .mode-tagline {
+    font-size: 12px; color: var(--accent); font-weight: 500;
+    margin-bottom: 14px; letter-spacing: 0.2px;
+  }
+  .mode-desc {
+    font-size: 13.5px; line-height: 1.65; color: var(--ink-soft);
+    margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--line);
+  }
+  .mode-meta { font-size: 13px; line-height: 1.7; color: var(--ink); }
+  .mode-meta dt {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted);
+    font-weight: 600; margin-top: 10px;
+  }
+  .mode-meta dt:first-child { margin-top: 0; }
+  .mode-meta dd { margin-bottom: 2px; }
+  .signal {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    background: var(--accent-soft); color: var(--accent-hover);
+    padding: 1px 6px; border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  }
+  .mode-pitfall {
+    margin-top: 12px; padding: 10px 12px;
+    background: var(--warm-soft); border-left: 3px solid var(--warm);
+    font-size: 12.5px; line-height: 1.55; color: var(--ink);
+  }
+  .mode-pitfall strong { color: var(--warm); }
+
+  /* ── SIGNALS TABLE ──────────────────────────────────── */
+  .sig-table {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 8px;
+  }
+  .sig-table th, .sig-table td {
+    padding: 12px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.55;
+  }
+  .sig-table th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .sig-table td strong { color: var(--ink); }
+  .sig-table tr:nth-child(even) td { background: var(--paper); }
+  .sig-table code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    background: var(--accent-soft); padding: 1px 5px;
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line));
+  }
+
+  /* ── PIPELINE ───────────────────────────────────────── */
+  .pipeline {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    margin-top: 8px; border: 1px solid var(--line); background: var(--bg);
+  }
+  @media (max-width: 760px) { .pipeline { grid-template-columns: 1fr; } }
+  .pipe-step { padding: 18px 18px; border-right: 1px solid var(--line); position: relative; }
+  .pipe-step:last-child { border-right: none; }
+  @media (max-width: 760px) {
+    .pipe-step { border-right: none; border-bottom: 1px solid var(--line); }
+    .pipe-step:last-child { border-bottom: none; }
+  }
+  .pipe-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--accent); font-weight: 600; letter-spacing: 1.5px; margin-bottom: 8px;
+  }
+  .pipe-step h5 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15px;
+    font-weight: 700; margin-bottom: 6px; color: var(--ink);
+  }
+  .pipe-step p { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); }
+  .pipe-step.danger { background: var(--warm-soft); }
+  .pipe-step.danger .pipe-num { color: var(--warm); }
+  .pipe-flag {
+    display: inline-block; margin-top: 8px; font-size: 11px;
+    font-weight: 600; color: var(--warm);
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;
+  }
+
+  /* ── STAT STRIP ─────────────────────────────────────── */
+  .stat-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px;
+  }
+  @media (max-width: 720px) { .stat-strip { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: var(--paper); border: 1px solid var(--line);
+    border-top: 3px solid var(--red); padding: 16px 18px;
+  }
+  .stat-num {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 34px;
+    font-weight: 700; color: var(--red); line-height: 1; margin-bottom: 6px;
+  }
+  .stat-card p { font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); }
+  .stat-card .who { font-weight: 600; color: var(--ink); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center;
+    gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  /* ── PROGRESS / NUMBERS / REVEAL ────────────────────── */
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500; color: var(--accent);
+    letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-enabled');
+  }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on</p>
+    <h1>Jak AI <em>vyhledává</em>: čtyři režimy hledání</h1>
+    <p class="hero-subtitle">
+      Když řeknete „ať to AI najde", může se pod kapotou dít několik úplně různých věcí. AI buď odpoví zpaměti, nebo si pustí živé hledání na webu, nebo prohledá vaše vlastní dokumenty, nebo se rozjede na desítky minut jako badatel. Každý režim má jinou spolehlivost a jinak se ověřuje. Schopnost poznat, který režim zrovna běží, je první dovednost AI rešerše.
+    </p>
+    <div class="definition">
+      <strong>Grounding</strong> (ukotvení) = okamžik, kdy se odpověď AI opírá o konkrétní nalezený text, ne jen o to, co se model „naučil". Když AI ukotvená je, vidíte odkazy na zdroje. Když ukotvená není, mluví z paměti — a právě tam vzniká nejvíc smyšlených zdrojů.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Čtyři režimy, jak AI „hledá"</h2>
+    <p class="section-lead">
+      Pojem „AI vyhledávání" zahrnuje čtyři technicky odlišné věci. Liší se v tom, kde berou informace, jak dlouho trvají a nakolik se jim dá věřit. Klikněte na režim a podívejte se, co se v něm reálně děje, jak ho v rozhraní poznáte a kde má slabinu.
+    </p>
+
+    <div class="mode-picker-wrap">
+      <div class="mode-tabs" id="mode-tabs">
+        <button class="mode-tab active" data-mode="memory"><span class="dot"></span>Jen z paměti</button>
+        <button class="mode-tab" data-mode="websearch"><span class="dot"></span>Živé hledání na webu</button>
+        <button class="mode-tab" data-mode="rag"><span class="dot"></span>Vaše dokumenty</button>
+        <button class="mode-tab" data-mode="deep"><span class="dot"></span>Deep research</button>
+      </div>
+
+      <div class="mode-grid">
+        <div class="mode-panel">
+          <p class="panel-label">Co se reálně děje</p>
+          <div class="mode-name" id="mode-name"></div>
+          <div class="mode-tagline" id="mode-tagline"></div>
+          <div class="mode-desc" id="mode-desc"></div>
+          <div class="mode-pitfall" id="mode-pitfall"></div>
+        </div>
+        <div class="mode-panel">
+          <p class="panel-label">Jak to poznáte a kdy to použít</p>
+          <dl class="mode-meta" id="mode-meta"></dl>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> Režimy se v jednom nástroji míchají</summary>
+      <div class="tip-body">
+        <p>Moderní nástroje mezi režimy přepínají samy, často bez výrazného upozornění. ChatGPT i Claude se z běžné konverzace (paměť) přepnou do živého hledání, jakmile usoudí, že je potřeba aktuální informace — nebo když ho ručně zapnete. Gemini má hledání propojené s Googlem napevno. Perplexity hledá skoro vždy.</p>
+        <p>Praktický důsledek: <strong>nemůžete předpokládat, že AI vždy hledala.</strong> Stejný nástroj vám na jednu otázku odpoví zpaměti a na druhou si pustí web. Pokud výslovně nevidíte odkazy nebo hlášku „vyhledávám", počítejte s tím, že odpověď je z paměti — se vším, co k tomu patří (zastaralost, smyšlené zdroje).</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Jak poznáte, který režim běží</h2>
+    <p class="section-lead">
+      Tohle je jádro celé strany. Důvěryhodnost odpovědi se liší režim od režimu, takže než výstup použijete, potřebujete vědět, odkud pochází. Naštěstí každý režim zanechává v rozhraní stopy.
+    </p>
+
+    <table class="sig-table">
+      <thead>
+        <tr>
+          <th>Signál v rozhraní</th>
+          <th>Co znamená</th>
+          <th>Důvěra ve zdroje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Žádné odkazy, okamžitá odpověď</strong><br><span style="font-size:12px;color:var(--muted)">„Podle dostupných informací…", obecné formulace</span></td>
+          <td>Model odpovídá <strong>z paměti</strong>. Nic nehledal.</td>
+          <td>Nejnižší. Zdroje, čísla i citace mohou být smyšlené. Data končí u tréninkového cutoffu.</td>
+        </tr>
+        <tr>
+          <td><strong>Hláška <code>Hledám…</code> / <code>Searching</code></strong><br><span style="font-size:12px;color:var(--muted)">ikona zeměkoule, název prohledávaných webů</span></td>
+          <td>Probíhá <strong>živé hledání</strong> (grounding přes web).</td>
+          <td>Střední. Zdroje existují, ale tvrzení nemusí sedět k odkazu, který je u něj uvedený.</td>
+        </tr>
+        <tr>
+          <td><strong>Citace s čísly [1] [2] a klikací odkazy</strong></td>
+          <td>Odpověď je <strong>ukotvená</strong> v nalezených stránkách.</td>
+          <td>Střední až dobrá — ale jen když odkaz skutečně otevřete a tvrzení v něm najdete.</td>
+        </tr>
+        <tr>
+          <td><strong>Odkazuje na „nahraný soubor" / „projekt"</strong></td>
+          <td>Prohledává <strong>vaše dokumenty</strong> (RAG), ne web.</td>
+          <td>Dobrá pro to, co v dokumentech je. Nevidí ven a nemusí vidět celý dokument najednou.</td>
+        </tr>
+        <tr>
+          <td><strong>Tlačítko „Deep research", běh na minuty</strong><br><span style="font-size:12px;color:var(--muted)">průběžný plán, počet prohlížených stránek</span></td>
+          <td>Běží <strong>badatelský agent</strong>: víc kol hledání.</td>
+          <td>Nejširší pokrytí, ale delší zpráva = víc míst k ověření. Chyby se schovají v objemu.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Jednoduchý test: zeptejte se „hledal jsi, nebo odpovídáš zpaměti?"</summary>
+      <div class="tip-body">
+        <p>Když si nejste jistí, který režim běžel, zeptejte se přímo: <code>Vycházela tahle odpověď z živého vyhledávání, nebo z tvých tréninkových dat? Pokud jsi hledal, vypiš mi konkrétní zdroje a u každého tvrzení uveď, ze kterého pochází.</code></p>
+        <p>Když AI hledala, doloží odkazy. Když ne, většinou to přizná („vycházel jsem ze svých znalostí"). Není to stoprocentní — model se může mýlit i o sobě — ale je to rychlý první filtr. Ověřování samotných zdrojů je téma <a href="4.5-overovani-zdroju.html">strany 4.5</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Proč chyba vzniká i při živém hledání</h2>
+    <p class="section-lead">
+      Mohlo by se zdát, že jakmile AI hledá a ukazuje odkazy, je vyhráno. Není. I ukotvená odpověď vzniká ve dvou krocích a v tom druhém se rodí nejčastější chyba: tvrzení připsané ke špatnému zdroji.
+    </p>
+
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">01 · DOTAZ</div>
+        <h5>Z vaší otázky se stane vyhledávací dotaz</h5>
+        <p>Model přeformuluje, co jste napsali, do jednoho nebo více dotazů do vyhledávače. Už tady se může „minout téma", když otázku pochopí jinak, než jste mysleli.</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">02 · RETRIEVAL</div>
+        <h5>Vyhledávač vrátí pár stránek</h5>
+        <p>Nalezené stránky (typicky jednotky až desítky) se načtou jako kontext. Co se sem nedostane, model „nevidí" — a kvalita celé odpovědi je shora omezená kvalitou tohoto výběru.</p>
+      </div>
+      <div class="pipe-step danger">
+        <div class="pipe-num">03 · GENEROVÁNÍ</div>
+        <h5>Model napíše odpověď a sám rozhodne, kam vloží citace</h5>
+        <p>Tady je slabé místo. Model skládá plynulý text a teprve dodatečně k větám přiřazuje odkazy. Citaci může připsat ke zdroji, který danou věc neříká.</p>
+        <span class="pipe-flag">⚠ Zdroj sedí, tvrzení ne</span>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">04 · VÝSTUP</div>
+        <h5>Vidíte plynulou odpověď s odkazy</h5>
+        <p>Výsledek působí ukotveně a sebejistě. Sebejistota ale není kalibrovaná na pravdu — text zní stejně přesvědčivě, ať je atribuce správná, nebo ne.</p>
+      </div>
+    </div>
+
+    <p class="section-lead" style="margin-top: 24px;">
+      Není to okrajový jev. Když nezávislá studie systematicky proklepla, jak AI vyhledávače uvádějí zdroje, výsledky byly střízlivé:
+    </p>
+
+    <div class="stat-strip">
+      <div class="stat-card">
+        <div class="stat-num">60 %+</div>
+        <p><span class="who">Napříč osmi AI vyhledávači</span> byl u dotazů uveden nesprávný nebo smyšlený zdroj. Tow Center, Columbia (1 600 dotazů).</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">37 %</div>
+        <p><span class="who">Perplexity</span> — nejlepší z testovaných, a přesto třetina chybných atribucí. ChatGPT Search 67 %.</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">94 %</div>
+        <p><span class="who">Nejhorší z testovaných</span> (Grok 3). Některé nástroje vyrobily víc nefunkčních či smyšlených odkazů než správných.</p>
+      </div>
+    </div>
+    <p class="footnote">
+      Zdroj: Tow Center for Digital Journalism / Columbia Journalism Review, studie přesnosti citací AI vyhledávačů (3/2025). Konkrétní procenta se u novějších verzí nástrojů mění; klíčový je řád, ne desetina. Ověřeno 6/2026.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> „Sebejistě špatně" je nejnebezpečnější kombinace</summary>
+      <div class="tip-body">
+        <p>Studie opakovaně narazila na to, že nástroje odpovídaly stejně sebejistým tónem, ať měly pravdu, nebo ne. Nepřipojily „nejsem si jistý" tam, kde si jisté být neměly. To je pro odbornou práci zrádné: jako čtenář nemáte z formy odpovědi jak poznat, že právě tahle věta stojí na vodě.</p>
+        <p>Praktický závěr pro celé setkání: <strong>odkaz u tvrzení není důkaz, je to pozvánka k ověření.</strong> Dokud jste odkaz neotevřeli a tvrzení v něm nenašli, máte nepotvrzenou informaci, ne potvrzenou. Jak to dělat efektivně, ukazuje <a href="4.5-overovani-zdroju.html">strana 4.5</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      „AI vyhledávání" není jedna věc. Než výstup použijete, zjistěte, který režim ho vytvořil — od toho se odvíjí, jak moc mu můžete věřit a jak ho ověřit.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Čtyři režimy, čtyři spolehlivosti.</strong> Paměť (nejméně spolehlivá, bez odkazů), živé hledání (odkazy, ale ověřujte atribuci), vaše dokumenty (RAG), deep research (široké, ale dlouhé). Každý se ověřuje jinak.
+      </div>
+      <div class="takeaway-card">
+        <strong>Nejdřív poznejte režim.</strong> Žádné odkazy = nejspíš paměť. Hláška „hledám" a citace = živé hledání. Tlačítko deep research = agent. Když si nejste jistí, přímo se zeptejte, jestli AI hledala.
+      </div>
+      <div class="takeaway-card">
+        <strong>Odkaz ≠ důkaz.</strong> I ukotvená odpověď připisuje citace dodatečně a může je přiřadit špatně. 60 %+ chybných atribucí napříč nástroji není výjimka, ale měřený stav.
+      </div>
+      <div class="takeaway-card">
+        <strong>Sebejistota není kalibrovaná na pravdu.</strong> AI zní stejně přesvědčivě, ať má pravdu nebo ne. Tón odpovědi vám neřekne, čemu věřit. To řekne až otevřený zdroj.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Fakta o nástrojích jsou orientační a v čase se mění — u citlivých rešerší ověřte aktuální stav.</em>
+  </footer>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   MODE PICKER: 4 modes of AI search
+   ────────────────────────────────────────────────────────── */
+const modes = {
+  memory: {
+    name: 'Jen z paměti',
+    tagline: 'Model bez webu · odpovídá z trénovacích dat',
+    desc: 'Nejjednodušší režim: žádné hledání. Model odpoví z toho, co se „naučil" během tréninku. Je to rychlé a pro obecné znalosti často stačí, ale data končí u tréninkového cutoffu a model nemá jak ověřit, co tvrdí.',
+    pitfall: '<strong>Pozor:</strong> Tady vzniká nejvíc smyšlených zdrojů. Když poprosíte o „odkaz" nebo „citaci" a model nehledá, často si plausibilně znějící zdroj vymyslí — název, autora i rok, který neexistuje.',
+    meta: [
+      ['Jak to poznáte', 'Odpověď přijde okamžitě a bez odkazů. Formulace typu „obecně platí", „podle dostupných informací".'],
+      ['Kdy je to v pořádku', 'Ustálené obecné znalosti, brainstorming, přeformulování textu, vysvětlení pojmu. Tam, kde nejde o konkrétní aktuální fakt.'],
+      ['Kde selhává', 'Aktuální události, čísla, konkrétní předpisy a citace. Cokoliv po tréninkovém cutoffu model nezná a může to zakrýt domyšlením.']
+    ]
+  },
+  websearch: {
+    name: 'Živé hledání na webu',
+    tagline: 'Web search / grounding · sekundy',
+    desc: 'Model spustí dotaz do vyhledávače, načte několik stránek a z nich složí odpověď s odkazy. Tohle je „AI search", jak ho znáte z Perplexity, ChatGPT se zapnutým hledáním nebo Gemini. Vrací aktuální informace v řádu sekund.',
+    pitfall: '<strong>Pozor:</strong> Odkazy existují, ale tvrzení nemusí k odkazu sedět (viz sekce 03 níže). Navíc model „vidí" jen pár stránek, které vyhledávač vrátil — když je výběr špatný, je špatná i odpověď.',
+    meta: [
+      ['Jak to poznáte', 'Hláška „vyhledávám / searching", ikona zeměkoule, číslované citace [1] [2] s klikacími odkazy.'],
+      ['Kdy je to v pořádku', 'Aktuální fakta, rychlá orientace v tématu, „co je nového v…", první přehled zdrojů k dalšímu čtení.'],
+      ['Kde selhává', 'Hloubka. Pár stránek nestačí na pořádnou rešerši. A atribuci citací je vždy potřeba ověřit otevřením odkazu.']
+    ]
+  },
+  rag: {
+    name: 'Hledání ve vašich dokumentech',
+    tagline: 'RAG nad nahraným obsahem · neprohledává web',
+    desc: 'Místo webu prohledává obsah, který jste nahráli — PDF v chatu, soubory v Projektu (Claude) nebo Custom GPT, zápisníky v NotebookLM. AI dokument rozdělí na části a podle dotazu vybere relevantní úseky.',
+    pitfall: '<strong>Pozor:</strong> U velkých dokumentů model nevidí celý text najednou, ale jen vybrané úseky (RAG). Funguje skvěle na bodové dotazy „najdi mi v tom…", hůř na celkové otázky „jaká je hlavní myšlenka".',
+    meta: [
+      ['Jak to poznáte', 'Odpovědi odkazují na nahraný soubor, citují pasáže, název projektu. Nejsou tu odkazy na web.'],
+      ['Kdy je to v pořádku', 'Práce s vlastními spisy, smlouvami, interními předpisy. Když chcete odpověď výhradně z konkrétních dokumentů, ne z internetu.'],
+      ['Kde selhává', 'Celkový pohled na dlouhý dokument a porovnání dvou verzí. Detailně v <a href="3.4-prace-s-dokumenty.html">3.4</a>.']
+    ]
+  },
+  deep: {
+    name: 'Deep research (badatelský agent)',
+    tagline: 'Agentický režim · minuty, ne sekundy',
+    desc: 'Model si sám napíše plán rešerše, položí víc kol vyhledávacích dotazů, prochází desítky až stovky stránek, průběžně přečtené upravuje a nakonec sepíše dlouhou zprávu s citacemi. Trvá to jednotky až desítky minut.',
+    pitfall: '<strong>Pozor:</strong> Delší a sebevědoměji vypadající zpráva neznamená spolehlivější. Naopak — víc tvrzení = víc míst, kde se může schovat chyba. Objem zprávy uspává ostražitost.',
+    meta: [
+      ['Jak to poznáte', 'Tlačítko „Deep research / Research", běh na minuty, průběžně zobrazený plán a počet prohlížených stránek.'],
+      ['Kdy je to v pořádku', 'Širší rešerše, kde chcete pokrýt víc zdrojů: přehled tématu, srovnání, podklad k delšímu textu. Dobrý start, ne hotový výstup.'],
+      ['Kde selhává', 'Přesnost v detailu. Zpráva je tak dobrá, jak dobré jsou zdroje, které agent našel — a těch je hodně k ověření.']
+    ]
+  }
+};
+
+const modeTabs = document.querySelectorAll('.mode-tab');
+const elName = document.getElementById('mode-name');
+const elTagline = document.getElementById('mode-tagline');
+const elDesc = document.getElementById('mode-desc');
+const elPitfall = document.getElementById('mode-pitfall');
+const elMeta = document.getElementById('mode-meta');
+
+function renderMode(key) {
+  const m = modes[key];
+  elName.textContent = m.name;
+  elTagline.textContent = m.tagline;
+  elDesc.textContent = m.desc;
+  elPitfall.innerHTML = m.pitfall;
+  elMeta.innerHTML = m.meta.map(([dt, dd]) => `<dt>${dt}</dt><dd>${dd}</dd>`).join('');
+  modeTabs.forEach(b => b.classList.toggle('active', b.dataset.mode === key));
+}
+
+modeTabs.forEach(btn => btn.addEventListener('click', () => renderMode(btn.dataset.mode)));
+renderMode('memory');
+
+/* ──────────────────────────────────────────────────────────
+   Reading progress + reveal on scroll
+   ────────────────────────────────────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

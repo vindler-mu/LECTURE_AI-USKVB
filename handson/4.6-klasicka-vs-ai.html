@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Klasická vs. AI rešerše</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #5b3f7a; --accent-hover: #46305f; --accent-soft: #ede5f3;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── VERSUS ─────────────────────────────────────────── */
+  .versus { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .versus { grid-template-columns: 1fr; } }
+  .vs-col { background: var(--paper); border: 1px solid var(--line); padding: 20px 22px; }
+  .vs-col.classic { border-top: 3px solid var(--ink-soft); }
+  .vs-col.ai { border-top: 3px solid var(--accent); }
+  .vs-col h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700;
+    margin-bottom: 4px; color: var(--ink);
+  }
+  .vs-col .sub { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 14px; }
+  .vs-group { margin-bottom: 12px; }
+  .vs-group h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 6px;
+  }
+  .vs-group.plus h5 { color: var(--green); }
+  .vs-group.minus h5 { color: var(--warm); }
+  .vs-group ul { list-style: none; }
+  .vs-group li { font-size: 12.8px; line-height: 1.5; padding: 3px 0 3px 16px; position: relative; color: var(--ink-soft); }
+  .vs-group li::before { position: absolute; left: 0; font-weight: 700; }
+  .vs-group.plus li::before { content: "+"; color: var(--green); }
+  .vs-group.minus li::before { content: "−"; color: var(--warm); }
+
+  /* ── ANALOGY ────────────────────────────────────────── */
+  .analogy { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .analogy { grid-template-columns: 1fr; } }
+  .an-card { background: var(--paper); border: 1px solid var(--line); padding: 20px 22px; }
+  .an-card.hunter { border-top: 3px solid var(--ink-soft); }
+  .an-card.farmer { border-top: 3px solid var(--green); }
+  .an-icon { font-size: 24px; line-height: 1; margin-bottom: 8px; }
+  .an-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700;
+    margin-bottom: 2px; color: var(--ink);
+  }
+  .an-card .who2 { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 14px; }
+  .an-card ul { list-style: none; }
+  .an-card li {
+    font-size: 12.9px; line-height: 1.55; padding: 5px 0 5px 18px; position: relative; color: var(--ink-soft);
+  }
+  .an-card li::before { content: "›"; position: absolute; left: 0; font-weight: 700; }
+  .an-card.hunter li::before { color: var(--ink-soft); }
+  .an-card.farmer li::before { color: var(--green); }
+  .an-card li strong { color: var(--ink); }
+
+  .subhead {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 700;
+    margin-top: 32px; margin-bottom: 8px; color: var(--ink);
+  }
+  .ops-table {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 8px;
+  }
+  .ops-table th, .ops-table td {
+    padding: 10px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .ops-table th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .ops-table tr:nth-child(even) td { background: var(--paper); }
+  .ops-table code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    background: var(--accent-soft); padding: 1px 6px;
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line)); white-space: nowrap;
+  }
+
+  /* ── DECISION TABLE ─────────────────────────────────── */
+  .dec-table {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 8px;
+  }
+  .dec-table th, .dec-table td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.55;
+  }
+  .dec-table th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .dec-table td strong { color: var(--ink); }
+  .dec-table tr:nth-child(even) td { background: var(--paper); }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+    padding: 2px 8px; white-space: nowrap; display: inline-block;
+  }
+  .pill.ai { background: var(--accent-soft); color: var(--accent-hover); }
+  .pill.classic { background: #e7e9ec; color: var(--ink-soft); }
+
+  /* ── WORKFLOW ───────────────────────────────────────── */
+  .flow { margin-top: 8px; }
+  .flow-step {
+    display: grid; grid-template-columns: 56px 1fr; gap: 18px; align-items: start;
+    padding: 18px 0; border-bottom: 1px dashed var(--line); position: relative;
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-badge {
+    width: 56px; height: 56px; border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; line-height: 1;
+  }
+  .flow-badge .n { font-size: 18px; }
+  .flow-badge .who { font-size: 8px; letter-spacing: 0.5px; margin-top: 3px; text-transform: uppercase; }
+  .flow-badge.ai { background: var(--accent-soft); color: var(--accent-hover); border: 2px solid var(--accent); }
+  .flow-badge.classic { background: #eceef0; color: var(--ink-soft); border: 2px solid var(--line-strong); }
+  .flow-badge.human { background: var(--green-soft); color: var(--green); border: 2px solid var(--green); }
+  .flow-body h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700;
+    margin-bottom: 4px; color: var(--ink);
+  }
+  .flow-body p { font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+  .flow-body .tool {
+    font-size: 11.5px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── SERIES NEXT ────────────────────────────────────── */
+  .next-card {
+    margin-top: 28px; background: var(--red-soft);
+    border: 1px solid color-mix(in srgb, var(--red) 25%, var(--line));
+    border-left: 4px solid var(--red); padding: 18px 22px;
+  }
+  .next-card .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--red); font-weight: 600; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .next-card a { color: var(--red); font-weight: 600; }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 4 · Hands-on</p>
+    <h1>Klasická vs. AI rešerše: kdy co a jak je <em>spojit</em></h1>
+    <p class="hero-subtitle">
+      Není to souboj, ve kterém jeden vyhraje. Klasické vyhledávání a AI rešerše jsou dva nástroje s opačnými silnými stránkami. AI je rychlá a umí syntézu, ale je nespolehlivá v detailu. Klasika je pomalejší, ale dává jistotu a kontrolu. Nejlepší rešerše obě střídá. Tahle strana spojuje celé setkání do jednoho postupu.
+    </p>
+    <div class="definition">
+      <strong>Pointa dopředu:</strong> nepoužívejte AI <em>místo</em> klasické rešerše, ale <em>kolem</em> ní. AI ať určí směr a poskládá přehled, klasické nástroje ať dodají přesnost a poslední slovo. Kdo umí přepínat, ušetří čas i si udrží spolehlivost.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Dvě metody s opačnými silnými stránkami</h2>
+    <p class="section-lead">
+      Klasická a AI rešerše nejsou lepší a horší verze téhož. Každá je dobrá přesně v tom, v čem je ta druhá slabá. Proto se vyplatí mít obě a vědět, kdy sáhnout po které.
+    </p>
+
+    <div class="versus">
+      <div class="vs-col classic">
+        <h3>Klasická rešerše</h3>
+        <div class="sub">vyhledávač, databáze, klíčová slova, operátory</div>
+        <div class="vs-group plus">
+          <h5>V čem je silná</h5>
+          <ul>
+            <li>Vidíte přesně, co jste našli — žádná syntéza mezi vámi a zdrojem</li>
+            <li>Zdroj je vždy reálný, nic se nevymýšlí</li>
+            <li>Plná kontrola: operátory, filtry, přesné fráze</li>
+            <li>Opakovatelnost — stejný dotaz dá stejné výsledky</li>
+          </ul>
+        </div>
+        <div class="vs-group minus">
+          <h5>V čem je slabá</h5>
+          <ul>
+            <li>Pomalejší, vyžaduje umět formulovat dotaz</li>
+            <li>Nesumarizuje — přečíst a propojit musíte sami</li>
+            <li>Hůř hledá podle významu, spíš podle slov</li>
+          </ul>
+        </div>
+      </div>
+      <div class="vs-col ai">
+        <h3>AI rešerše</h3>
+        <div class="sub">chatbot s hledáním, deep research, odborné nástroje</div>
+        <div class="vs-group plus">
+          <h5>V čem je silná</h5>
+          <ul>
+            <li>Rychlá orientace v neznámém tématu</li>
+            <li>Hledá podle významu, ne jen podle klíčových slov</li>
+            <li>Umí shrnout, porovnat, poskládat přehled</li>
+            <li>Zvládne přirozený jazyk — nepotřebuje operátory</li>
+          </ul>
+        </div>
+        <div class="vs-group minus">
+          <h5>V čem je slabá</h5>
+          <ul>
+            <li>Nespolehlivá v detailu: čísla, citace, paragrafy</li>
+            <li>Umí vymyslet zdroj nebo ho připsat ke špatnému tvrzení</li>
+            <li>Sebejistá i když se mýlí — tón neprozradí chybu</li>
+            <li>Méně opakovatelná — odpověď se může lišit</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Lovec a zemědělec: dvě řemesla hledání</h2>
+    <p class="section-lead">
+      Užitečná představa, proč každá metoda potřebuje jiné dovednosti. Klasická rešerše je jako lov: znáte teritorium a jdete po přesné stopě. AI rešerše je jako hospodaření: zaséváte kontext a sklízíte to, co vypěstujete. Ani jedno není „lepší" — jen se dělají jinak.
+    </p>
+
+    <div class="analogy">
+      <div class="an-card hunter">
+        <div class="an-icon">🏹</div>
+        <h3>Lovec</h3>
+        <div class="who2">klasická rešerše — přesnost a kontrola</div>
+        <ul>
+          <li><strong>Znalost teritoria</strong> — víte, kde se v oboru hledá (struktura databáze, kde co leží)</li>
+          <li><strong>Specifické nástroje pro úlovek</strong> — booleovské operátory, filtry, facety</li>
+          <li><strong>Lov podle přesných stop</strong> — klíčová slova musí „sedět", jinak kořist mine</li>
+          <li><strong>Úspěch závisí na zkušenosti</strong> s terénem a technikách lovu</li>
+        </ul>
+      </div>
+      <div class="an-card farmer">
+        <div class="an-icon">🌾</div>
+        <h3>Zemědělec</h3>
+        <div class="who2">AI rešerše — záběr a přirozený jazyk</div>
+        <ul>
+          <li><strong>Více plodin zaráz</strong> — můžete vést několik vyhledávání najednou</li>
+          <li><strong>Přirozený jazyk</strong> místo operátorů — popíšete celou situaci</li>
+          <li><strong>Hnojení = kontext</strong> — čím víc kontextu dáte, tím bohatší sklizeň</li>
+          <li><strong>Zavlažování = follow-up</strong> — výsledky průběžně „opečováváte" upřesněními</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="subhead">Nástroje lovce: operátory, které se pořád vyplatí</h3>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 6px; max-width: 820px; line-height: 1.6;">
+      AI zvládá přirozený jazyk, ale klasické operátory dávají přesnost, kterou AI nezaručí. Fungují v Googlu i ve většině odborných databází a hodí se přesně tam, kde potřebujete „lovit" cíleně.
+    </p>
+    <table class="ops-table">
+      <thead>
+        <tr><th>Operátor</th><th>Co dělá</th><th>Příklad</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>site:</code></td><td>Omezí hledání na jednu doménu</td><td><code>nařízení 2019/6 site:eur-lex.europa.eu</code></td></tr>
+        <tr><td><code>filetype:</code></td><td>Jen daný typ souboru</td><td><code>pokyny GMP filetype:pdf</code></td></tr>
+        <tr><td><code>"fráze"</code></td><td>Přesná fráze ve správném pořadí</td><td><code>"good manufacturing practice"</code></td></tr>
+        <tr><td><code>-slovo</code></td><td>Vyloučí výsledky s daným slovem</td><td><code>rezistence -humánní</code></td></tr>
+        <tr><td><code>OR</code></td><td>Jedno, nebo druhé</td><td><code>vakcína OR imunoprofylaxe</code></td></tr>
+        <tr><td>Časový filtr</td><td>Omezí stáří výsledků</td><td>Nástroje → poslední rok</td></tr>
+      </tbody>
+    </table>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> I „obyčejný Google" je dnes AI a má svá zkreslení</summary>
+      <div class="tip-body">
+        <p>Google je v pořádku na rychlý přehled, faktické dotazy („kdy se narodil…", „kolik měří…"), ověření autority zdroje a právě na pokročilé operátory. Stojí ale za to vědět, co se pod ním děje:</p>
+        <p><strong>AI je všude.</strong> Google Search dnes vrací AI shrnutí (AI Overviews, snippety). I když „jen googlíte", čtete často AI výtah — se vším, co k tomu patří (může se mýlit, ověřujte u zdroje).</p>
+        <p><strong>Algoritmické zkreslení.</strong> Výsledky nejsou „nejrelevantnější", ale z velké části SEO-optimalizované. Co je nahoře, není nutně nejlepší — jen nejlépe optimalizované.</p>
+        <p><strong>Informační bublina.</strong> Personalizace znamená, že dva lidé na stejný dotaz vidí jiné výsledky. U citlivých rešerší to zkuste v anonymním okně nebo porovnejte víc zdrojů.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kde začít: vyberte podle situace</h2>
+    <p class="section-lead">
+      Rychlé vodítko, čím začít podle toho, co máte před sebou. „Začít" neznamená „skončit" — skoro vždy se obě metody potkají v jednom postupu (sekce 3).
+    </p>
+
+    <table class="dec-table">
+      <thead>
+        <tr>
+          <th>Když potřebujete…</th>
+          <th>Začněte</th>
+          <th>Proč</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Zorientovat se v neznámém tématu</strong></td>
+          <td><span class="pill ai">AI</span></td>
+          <td>Rychle dá mapu pojmů a hlavních zdrojů, ze které pak cíleně hledáte klasicky.</td>
+        </tr>
+        <tr>
+          <td><strong>Přesné znění předpisu nebo paragrafu</strong></td>
+          <td><span class="pill classic">Klasika</span></td>
+          <td>EUR-Lex / e-Sbírka dají závazné znění. AI ho jen najde, neručí za něj.</td>
+        </tr>
+        <tr>
+          <td><strong>Najít, co říká věda na otázku</strong></td>
+          <td><span class="pill ai">AI</span></td>
+          <td>Consensus / Elicit nad databází studií dají rychlý přehled důkazů s odkazy.</td>
+        </tr>
+        <tr>
+          <td><strong>Ověřit konkrétní citaci nebo údaj</strong></td>
+          <td><span class="pill classic">Klasika</span></td>
+          <td>DOI, PubMed, originál článku. Tady AI nedůvěřujte — ověření je ruční.</td>
+        </tr>
+        <tr>
+          <td><strong>Shrnout dlouhý dokument, který máte</strong></td>
+          <td><span class="pill ai">AI</span></td>
+          <td>Sumarizace a extrakce nad vlastním dokumentem (viz <a href="3.4-prace-s-dokumenty.html">3.4</a>).</td>
+        </tr>
+        <tr>
+          <td><strong>Mít jistotu pro rozhodnutí s následky</strong></td>
+          <td><span class="pill classic">Klasika</span></td>
+          <td>Závazné výstupy stojí na primárním zdroji, který si přečte a podepíše člověk.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 class="section-title">Spojený postup: jak to běží dohromady</h2>
+    <p class="section-lead">
+      Takhle vypadá rešerše, která využije rychlost AI i jistotu klasiky. Všimněte si, kdo dělá který krok: AI, klasické nástroje, nebo vy.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-badge ai"><span class="n">1</span><span class="who">AI</span></div>
+        <div class="flow-body">
+          <h4>Rozhled a směr</h4>
+          <p>AI použijete k rychlé orientaci: o čem téma je, jaké jsou hlavní pojmy, kde se nejspíš hledá dál. Cílem není odpověď, ale mapa.</p>
+          <div class="tool">Perplexity · ChatGPT/Gemini Deep research · Consensus</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-badge classic"><span class="n">2</span><span class="who">Klasika</span></div>
+        <div class="flow-body">
+          <h4>Dohledání primárních zdrojů</h4>
+          <p>Pojmy a zdroje z kroku 1 použijete jako vodítko a najdete primární zdroj klasicky — předpis v EUR-Lex, studii v PubMed. Tady získáte přesné znění.</p>
+          <div class="tool">EUR-Lex · e-Sbírka · EMA · PubMed · Google Scholar</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-badge ai"><span class="n">3</span><span class="who">AI</span></div>
+        <div class="flow-body">
+          <h4>Syntéza nad ověřeným materiálem</h4>
+          <p>AI nechte poskládat přehled, porovnání nebo shrnutí — ale jen z toho, co jste v kroku 2 ověřili. Ne z volného webu, ale z vašich potvrzených zdrojů.</p>
+          <div class="tool">Claude / ChatGPT nad nahranými zdroji · NotebookLM</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-badge human"><span class="n">4</span><span class="who">Vy</span></div>
+        <div class="flow-body">
+          <h4>Ověření a podpis</h4>
+          <p>Projdete citace a klíčové údaje proti primárním zdrojům (postup ze <a href="4.5-overovani-zdroju.html">strany 4.5</a>). Co jde do závazného výstupu, čte a schvaluje člověk. Tenhle krok se nepřenáší.</p>
+          <div class="tool">Dvouminutová rutina · „cituj přesnou pasáž" · primární zdroj</div>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Poznáte si, kdy AI rešerši nezačínat vůbec</summary>
+      <div class="tip-body">
+        <p>U některých úkolů je AI rešerše ztráta času nebo přímo riziko. Když potřebujete <strong>jediný autoritativní údaj</strong> (přesné datum účinnosti, číslo paragrafu, konkrétní hodnotu z registru), jděte rovnou do primárního zdroje. Oklika přes AI vám přidá jen riziko, že číslo bude špatně, a stejně ho budete muset ověřit.</p>
+        <p>AI se vyplatí tam, kde je <em>prostor k prohledání</em>: neznáte téma, hledáte víc zdrojů, potřebujete přehled nebo srovnání. Čím přesnější a závaznější jednotlivý údaj, tím dřív přepněte na klasiku.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Klasická a AI rešerše se nevylučují, doplňují. AI dává rychlost a rozhled, klasika přesnost a jistotu. Dobrá rešerše obě střídá podle toho, co zrovna potřebuje.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Opačné silné stránky.</strong> AI: rychlost, význam, syntéza. Klasika: přesnost, reálné zdroje, kontrola. Každá je dobrá v tom, v čem je druhá slabá.
+      </div>
+      <div class="takeaway-card">
+        <strong>AI kolem klasiky, ne místo ní.</strong> AI určí směr a poskládá přehled, klasické nástroje dodají přesnost a poslední slovo. Závazný výstup vždy stojí na primárním zdroji.
+      </div>
+      <div class="takeaway-card">
+        <strong>Spojený postup má čtyři kroky.</strong> AI na rozhled → klasika na primární zdroj → AI na syntézu ověřeného → člověk na ověření a podpis. Role se střídají záměrně.
+      </div>
+      <div class="takeaway-card">
+        <strong>Čím přesnější údaj, tím dřív klasika.</strong> Na jediný závazný fakt (datum, paragraf, hodnota) jděte rovnou do primárního zdroje. Oklika přes AI přidá jen riziko.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <div class="lbl">Navazuje · Setkání 5</div>
+      <p>Ověřování zdrojů je vstupní brána k širšímu tématu: jak systematicky posuzovat, čemu z AI výstupů věřit. Tomu se věnuje <a href="../index.html#s5">Setkání 5 — Kritické myšlení při práci s AI</a>.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 4 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů).</em>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>
