@@ -124,7 +124,7 @@ const sessions = [
     why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o&nbsp;tom, abyste odešli s&nbsp;alespoň jedním konkrétním postupem, který reálně použijete ve své práci.",
     topics: ["Vhodnost úkolu pro AI", "Ověřování výstupu proti zdroji", "Triage vlastních úkolů", "Recept pro opakované úlohy"],
     prep: "Nic si předem chystat nemusíte — úkoly najdeme společně na místě. Vezměte si ale notebook a&nbsp;přihlášení do své AI (Claude, ChatGPT — cokoli používáte); budeme si vše rovnou zkoušet.",
-    practice: "Dílna: rozehřejeme se na společné úloze, vytipujeme vaše vlastní úkoly vhodné pro AI a&nbsp;jeden si každý reálně vyzkouší od zadání po ověření. Odejdete s&nbsp;hotovou věcí a&nbsp;s&nbsp;„receptem" pro opakované použití.",
+    practice: "Dílna: rozehřejeme se na společné úloze, vytipujeme vaše vlastní úkoly vhodné pro AI a&nbsp;jeden si každý reálně vyzkouší od zadání po ověření. Odejdete s&nbsp;hotovou věcí a&nbsp;s&nbsp;„receptem“ pro opakované použití.",
     materials: [
       { label: "Vhodnost úkolu pro AI: čtyři otázky, které rozhodnou", href: "handson/6.1-vhodnost-ukolu.html" },
       { label: "Workshop: vyzkoušejte AI na vlastním úkolu", href: "handson/6.2-workshop.html" }
