@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>AI Act: co z něj plyne pro úřad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #0d1b2a; --accent-hover: #000000; --accent-soft: #dde0e4;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --purple: #5b3f7a; --purple-soft: #ede5f3;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── STALE WARNING ──────────────────────────────────── */
+  .stale {
+    margin-top: 18px; padding: 14px 18px; background: var(--warm-soft);
+    border-left: 3px solid var(--warm); font-size: 13.5px; line-height: 1.6; max-width: 760px;
+  }
+  .stale strong { color: var(--warm); }
+
+  /* ── RISK PYRAMID ───────────────────────────────────── */
+  .rk-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .rk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 880px) { .rk-grid { grid-template-columns: 1fr; } }
+  .rk-stack { display: flex; flex-direction: column; gap: 5px; }
+  .rk-level {
+    border: 1px solid var(--line); background: var(--bg); cursor: pointer;
+    font-family: 'Inter', sans-serif; text-align: left; padding: 12px 16px;
+    transition: all 0.15s ease; display: flex; align-items: center; gap: 12px;
+    color: var(--ink-soft); width: 100%;
+  }
+  .rk-level:hover { border-color: var(--accent); color: var(--accent); }
+  .rk-level.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .rk-level .rk-nm { font-size: 13.5px; font-weight: 600; }
+  .rk-level .rk-sub { font-size: 11.5px; opacity: 0.75; display: block; margin-top: 2px; font-weight: 400; }
+  .rk-bar { width: 4px; align-self: stretch; background: var(--line-strong); flex-shrink: 0; }
+  .rk-level[data-rk="zakazane"] .rk-bar { background: #7a2e2e; }
+  .rk-level[data-rk="vysoke"] .rk-bar { background: var(--red); }
+  .rk-level[data-rk="transparence"] .rk-bar { background: var(--warm); }
+  .rk-level[data-rk="minimalni"] .rk-bar { background: var(--green); }
+  .rk-level[data-rk="gpai"] .rk-bar { background: var(--purple); }
+  .rk-level.active .rk-bar { background: rgba(255,255,255,0.5); }
+  .rk-sep {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--muted); margin: 10px 0 4px; font-weight: 600;
+  }
+  .rk-panel { background: var(--bg); border: 1px solid var(--line); padding: 20px 22px; min-height: 330px; }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  }
+  .rk-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 700;
+    color: var(--ink); margin-bottom: 2px;
+  }
+  .rk-art { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); margin-bottom: 16px; }
+  .rk-block { margin-bottom: 14px; }
+  .rk-block h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 4px;
+  }
+  .rk-block p { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); }
+  .rk-us {
+    margin-top: 14px; padding: 11px 13px; background: var(--accent-soft);
+    border-left: 3px solid var(--accent); font-size: 12.8px; line-height: 1.55; color: var(--ink);
+  }
+  .rk-us strong { color: var(--accent-hover); }
+
+  /* ── ROLE SWITCH ────────────────────────────────────── */
+  .rl-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .rl-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .rl-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 10px 15px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .rl-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .rl-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .rl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 880px) { .rl-grid { grid-template-columns: 1fr; } }
+  .rl-panel { background: var(--bg); border: 1px solid var(--line); padding: 18px 20px; min-height: 250px; }
+  .rl-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700;
+    color: var(--ink); margin-bottom: 2px;
+  }
+  .rl-en { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
+  .rl-list { list-style: none; }
+  .rl-list li {
+    font-size: 13.2px; line-height: 1.6; color: var(--ink-soft);
+    padding-left: 18px; position: relative; margin-bottom: 9px;
+  }
+  .rl-list li::before {
+    content: "·"; position: absolute; left: 4px; color: var(--accent);
+    font-weight: 700; font-size: 17px; line-height: 1.2;
+  }
+  .rl-verdict {
+    margin-top: 14px; padding: 11px 13px; font-size: 12.8px; line-height: 1.55; color: var(--ink);
+    border-left: 3px solid var(--green); background: var(--green-soft);
+  }
+  .rl-verdict.warn { border-left-color: var(--warm); background: var(--warm-soft); }
+  .rl-verdict strong { color: var(--ink); }
+
+  /* ── TABLES ─────────────────────────────────────────── */
+  .tbl {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 20px;
+  }
+  .tbl th, .tbl td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .tbl th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .tbl td strong { color: var(--ink); }
+  .tbl tr:nth-child(even) td { background: var(--paper); }
+  .tbl td.dt { font-family: 'JetBrains Mono', monospace; font-size: 12px; white-space: nowrap; }
+  tr.now td { background: var(--accent-soft) !important; }
+  tr.now td.dt { font-weight: 600; color: var(--accent-hover); }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; white-space: nowrap;
+  }
+  .tag.plati { background: var(--green-soft); color: var(--green); }
+  .tag.blizi { background: var(--accent-soft); color: var(--accent-hover); }
+  .tag.posun { background: var(--warm-soft); color: var(--warm); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  /* ── NEXT ───────────────────────────────────────────── */
+  .next-card {
+    margin-top: 28px; background: var(--warm-soft);
+    border: 1px solid color-mix(in srgb, var(--warm) 25%, var(--line));
+    border-left: 4px solid var(--warm); padding: 18px 22px;
+  }
+  .next-card .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--warm); font-weight: 600; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .next-card a { color: var(--warm); font-weight: 600; }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 7 · Hands-on</p>
+    <h1>AI Act: co z&nbsp;něj plyne <em>pro úřad</em></h1>
+    <p class="hero-subtitle">
+      První horizontální regulace AI na světě. Neříká, jestli je konkrétní odpověď pravdivá — to zůstává na&nbsp;vás. Říká, za&nbsp;jakých podmínek smí systém vůbec běžet a&nbsp;kdo za&nbsp;něj odpovídá. Tahle strana vysvětluje, kde se v&nbsp;té stavbě nachází ÚSKVBL, a&nbsp;to hned dvakrát: jako organizace, která AI používá, a&nbsp;jako úřad, kterému chodí na&nbsp;stůl dokumentace, v&nbsp;nichž AI použil někdo jiný.
+    </p>
+    <div class="definition">
+      <strong>Compliance není totéž co pravdivost.</strong> AI Act reguluje <em>použití</em> systému, ne <em>obsah</em> jeho výstupu. Systém může být plně v&nbsp;souladu s&nbsp;nařízením a&nbsp;přesto vám vygenerovat nesmysl. Regulace tedy nenahrazuje kritické čtení výstupů (to bylo téma <a href="../index.html#s5">setkání&nbsp;5</a>) — vymezuje jen to, kdo za&nbsp;systém nese odpovědnost a&nbsp;co musí instituce ošetřit organizačně.
+    </div>
+    <div class="stale">
+      <strong>Ověřeno 7/2026.</strong> Tahle strana zastarává rychleji než ostatní. V&nbsp;létě 2026 posunul balíček <em>Digital Omnibus on AI</em> klíčové termíny nařízení o&nbsp;více než rok. Než se na&nbsp;cokoli tady odvoláte v&nbsp;úředním kontextu, ověřte si aktuální znění v&nbsp;EUR-Lex. Že to platí i&nbsp;pro tenhle materiál, je součást sdělení.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Pyramida rizik</h2>
+    <p class="section-lead">
+      AI Act nereguluje technologii, ale <strong>použití</strong>. Tentýž jazykový model může být v&nbsp;jednom nasazení bez jakýchkoli povinností a&nbsp;v&nbsp;jiném vysoce rizikový. Rozhoduje účel, kontext a&nbsp;dopad na&nbsp;lidi. Klikněte na&nbsp;úroveň a&nbsp;podívejte se, co znamená a&nbsp;jak se nás týká.
+    </p>
+
+    <div class="rk-wrap">
+      <div class="rk-grid">
+        <div class="rk-stack" id="rk-stack">
+          <button class="rk-level active" data-rk="zakazane">
+            <span class="rk-bar"></span>
+            <span><span class="rk-nm">Zakázané praktiky</span><span class="rk-sub">neslučitelné se&nbsp;základními právy</span></span>
+          </button>
+          <button class="rk-level" data-rk="vysoke">
+            <span class="rk-bar"></span>
+            <span><span class="rk-nm">Vysoké riziko</span><span class="rk-sub">příloha III a&nbsp;příloha I</span></span>
+          </button>
+          <button class="rk-level" data-rk="transparence">
+            <span class="rk-bar"></span>
+            <span><span class="rk-nm">Povinnost transparence</span><span class="rk-sub">člověk musí vědět, že jde o&nbsp;stroj</span></span>
+          </button>
+          <button class="rk-level" data-rk="minimalni">
+            <span class="rk-bar"></span>
+            <span><span class="rk-nm">Minimální riziko</span><span class="rk-sub">bez zvláštních povinností</span></span>
+          </button>
+          <p class="rk-sep">Vedle pyramidy — vlastní režim</p>
+          <button class="rk-level" data-rk="gpai">
+            <span class="rk-bar"></span>
+            <span><span class="rk-nm">Obecné modely (GPAI)</span><span class="rk-sub">GPT, Claude, Gemini a&nbsp;spol.</span></span>
+          </button>
+        </div>
+
+        <div class="rk-panel">
+          <p class="panel-label">Detail úrovně</p>
+          <div class="rk-name" id="rk-name"></div>
+          <div class="rk-art" id="rk-art"></div>
+          <div class="rk-block">
+            <h5>Co do&nbsp;kategorie patří</h5>
+            <p id="rk-what"></p>
+          </div>
+          <div class="rk-block">
+            <h5>Jaké povinnosti z&nbsp;toho plynou</h5>
+            <p id="rk-duty"></p>
+          </div>
+          <div class="rk-us" id="rk-us"></div>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> Většina toho, co reálně používáme, je úplně dole</summary>
+      <div class="tip-body">
+        <p>Nejčastější mylná představa o&nbsp;AI Actu zní, že „teď se nesmí používat ChatGPT". Opak je pravdou: <strong>drtivá většina běžného kancelářského použití spadá do&nbsp;minimálního rizika</strong> nebo nanejvýš do&nbsp;povinnosti transparence. Shrnout si podklad, přeložit text, nechat si přeformulovat odstavec — nic z&nbsp;toho AI Act zvlášť neupravuje.</p>
+        <p>Vysoké riziko nastupuje, teprve když AI vstupuje do&nbsp;rozhodování o&nbsp;lidech: přístup ke&nbsp;vzdělání, zaměstnání, veřejným službám, migrace, vymáhání práva. To je jiný svět než denní práce s&nbsp;dokumenty.</p>
+        <p><strong>Pozor ale na&nbsp;obrácenou chybu:</strong> „AI Act to neřeší" neznamená „můžu tam nahrát cokoli". Ochranu osobních údajů řeší GDPR, neveřejné informace vnitřní režim úřadu. K&nbsp;tomu se vracíme v&nbsp;sekci 05.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Poskytovatel vs. provozovatel</h2>
+    <p class="section-lead">
+      AI Act rozděluje povinnosti podle role. Naprostá většina jich leží na&nbsp;tom, kdo systém vyrobil a&nbsp;uvedl na&nbsp;trh — ne na&nbsp;tom, kdo ho používá. Pro úřad je proto klíčové vědět, ve&nbsp;které roli právě je a&nbsp;kdy se to může nepozorovaně změnit.
+    </p>
+
+    <div class="rl-wrap">
+      <div class="rl-tabs" id="rl-tabs">
+        <button class="rl-tab active" data-rl="provider">Poskytovatel</button>
+        <button class="rl-tab" data-rl="deployer">Provozovatel</button>
+        <button class="rl-tab" data-rl="switch">Když se role přeskočí</button>
+      </div>
+      <div class="rl-grid">
+        <div class="rl-panel">
+          <p class="panel-label">Kdo to je</p>
+          <div class="rl-name" id="rl-name"></div>
+          <div class="rl-en" id="rl-en"></div>
+          <p id="rl-who" style="font-size:13.2px; line-height:1.6; color:var(--ink-soft);"></p>
+          <div class="rl-verdict" id="rl-verdict"></div>
+        </div>
+        <div class="rl-panel">
+          <p class="panel-label">Co z&nbsp;toho plyne</p>
+          <ul class="rl-list" id="rl-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Vlastní asistent nad firemním API není „jen používání"</summary>
+      <div class="tip-body">
+        <p>Otázka, která na&nbsp;setkání obvykle vyvolá debatu: <em>„Kdyby si u&nbsp;nás někdo postavil vlastního asistenta nad API a&nbsp;nasadil ho kolegům, jsme pořád provozovatel?"</em></p>
+        <p>Odpověď zní: záleží na&nbsp;tom, co se tím mění. Nakoupená licence používaná podle návodu = provozovatel. Nadstavba, která systém přejmenuje pod vlastní značku, podstatně ho upraví nebo <strong>změní jeho zamýšlený účel</strong>, může z&nbsp;úřadu udělat poskytovatele — se&nbsp;vším, co k&nbsp;tomu patří.</p>
+        <p>Praktický důsledek: interní pravidla je lepší mít <em>dřív</em>, než takový nástroj vznikne. Nikoli proto, že by šlo o&nbsp;něco zakázaného, ale proto, že se tím tiše mění právní postavení úřadu — a&nbsp;obvykle to nikdo nezaznamená, protože se to stalo „jen" v&nbsp;IT.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Časová osa po Digital Omnibusu</h2>
+    <p class="section-lead">
+      Nařízení nabíhá po&nbsp;etapách. V&nbsp;létě 2026 se ale osa přepsala: balíček <em>Digital Omnibus on AI</em> odložil povinnosti pro vysoce rizikové systémy o&nbsp;více než rok. Důvod byl praktický — nestihly se harmonizované normy, metodické nástroje ani určení dozorových orgánů v&nbsp;členských státech.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Datum</th><th>Co nabíhá</th><th>Stav</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dt">1. 8. 2024</td>
+          <td>Nařízení (EU) 2024/1689 vstupuje v&nbsp;platnost</td>
+          <td><span class="tag plati">platí</span></td>
+        </tr>
+        <tr>
+          <td class="dt">2. 2. 2025</td>
+          <td><strong>Zákazy</strong> podle čl.&nbsp;5 · povinnost k&nbsp;<strong>AI gramotnosti</strong> (čl.&nbsp;4)</td>
+          <td><span class="tag plati">platí</span></td>
+        </tr>
+        <tr>
+          <td class="dt">2. 8. 2025</td>
+          <td>Povinnosti poskytovatelů <strong>obecných modelů (GPAI)</strong> · správní struktura · sankce</td>
+          <td><span class="tag plati">platí</span></td>
+        </tr>
+        <tr class="now">
+          <td class="dt">2. 8. 2026</td>
+          <td><strong>Transparenční povinnosti (čl.&nbsp;50)</strong> — označení AI-generovaného obsahu, informování, že uživatel mluví se&nbsp;strojem. <em>Neposunuly se.</em></td>
+          <td><span class="tag blizi">blíží se</span></td>
+        </tr>
+        <tr>
+          <td class="dt">2. 12. 2026</td>
+          <td>Nový zákaz generování nekonsenzuálního intimního obsahu a&nbsp;CSAM · doběh odkladu pro strojově čitelné značení obsahu (čl.&nbsp;50 odst.&nbsp;2)</td>
+          <td><span class="tag blizi">blíží se</span></td>
+        </tr>
+        <tr>
+          <td class="dt">2. 12. 2027</td>
+          <td><strong>Vysoce rizikové systémy — příloha III</strong> (samostatné systémy)</td>
+          <td><span class="tag posun">posunuto z&nbsp;2.&nbsp;8.&nbsp;2026</span></td>
+        </tr>
+        <tr>
+          <td class="dt">2. 8. 2028</td>
+          <td><strong>Vysoce rizikové systémy — příloha I</strong> (zabudované v&nbsp;regulovaných výrobcích)</td>
+          <td><span class="tag posun">posunuto</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Digital Omnibus on AI: Evropský parlament 16.&nbsp;6.&nbsp;2026, Rada 29.&nbsp;6.&nbsp;2026, akt podepsán 8.&nbsp;7.&nbsp;2026; platnost třetím dnem po&nbsp;vyhlášení v&nbsp;Úředním věstníku EU. Zdroje: tisková zpráva Rady EU z&nbsp;29.&nbsp;6.&nbsp;2026; Freskolegální analýzy (Freshfields, Gibson Dunn, DLA Piper). Ověřeno 7/2026 — stav vyhlášení prosím přeověřte.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> Odklad není zrušení — a&nbsp;proč je to lekce o&nbsp;zastarávání zdrojů</summary>
+      <div class="tip-body">
+        <p>Omnibus posunul termíny a&nbsp;<strong>změkčil čl.&nbsp;4</strong>: z&nbsp;tvrdé povinnosti zajistit dostatečnou úroveň AI gramotnosti u&nbsp;zaměstnanců se stala povinnost gramotnost institucionálně podporovat přiměřenými opatřeními. Neznamená to, že se povinnost vypařila — očekávání, že organizace své lidi vybaví, zůstává.</p>
+        <p>Zajímavější je ale metasdělení. Kdo si v&nbsp;roce 2025 vytiskl přehlednou časovou osu AI Actu a&nbsp;pověsil ji na&nbsp;nástěnku, <strong>drží dnes v&nbsp;ruce nepravdivý dokument</strong>. Nic se nepokazilo, nikdo nelhal — jen se změnil svět a&nbsp;papír to nezaznamenal.</p>
+        <p>Přesně tohle dělá AI model se&nbsp;svými trénovacími daty. Když se ho dnes zeptáte na&nbsp;termíny AI Actu, s&nbsp;velkou pravděpodobností vám sebejistě řekne <code>2. 8. 2026</code> — protože to je datum, které bylo pravdivé po&nbsp;většinu doby, kdy vznikaly texty, na&nbsp;nichž se učil. Nebude to halucinace v&nbsp;pravém smyslu. Bude to <em>zastaralá pravda podaná s&nbsp;plnou jistotou</em>, což je nebezpečnější, protože to nezní podezřele.</p>
+        <p><strong>Vyzkoušejte si to na&nbsp;setkání.</strong> Zeptejte se své AI, odkdy platí povinnosti pro vysoce rizikové systémy. Odpověď porovnejte s&nbsp;tabulkou výše — a&nbsp;pak si všimněte, jak přesvědčivě zněla. Je to učebnicová ukázka toho, o&nbsp;čem bylo <a href="../index.html#s5">setkání&nbsp;5</a>, akorát na&nbsp;materiálu, který se dotýká přímo nás.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co platí už teď — a&nbsp;co AI Act vůbec neřeší</h2>
+    <p class="section-lead">
+      Odklady se týkají vysoce rizikových systémů. Tři věci ale platí bez ohledu na&nbsp;ně a&nbsp;dotýkají se každého, kdo AI v&nbsp;práci používá. Stejně důležité je vědět, kde končí dosah nařízení a&nbsp;začínají jiná pravidla.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Co</th><th>Od kdy</th><th>Praktický dopad na&nbsp;úřad</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Zákazy (čl. 5)</strong></td>
+          <td class="dt">2. 2. 2025</td>
+          <td>Platí bez výjimky a&nbsp;bez přechodného období. Riziko, že na&nbsp;ně v&nbsp;naší praxi narazíme, je nízké — ale nulové není, například u&nbsp;nástrojů slibujících odhad emocí nebo důvěryhodnosti osob.</td>
+        </tr>
+        <tr>
+          <td><strong>AI gramotnost (čl. 4)</strong></td>
+          <td class="dt">2. 2. 2025</td>
+          <td>Organizace má své lidi vybavit tak, aby AI rozuměli na&nbsp;úrovni odpovídající jejich roli. <em>Tahle série seminářů je přesně takové opatření</em> — a&nbsp;je dobré ji tak i&nbsp;evidovat.</td>
+        </tr>
+        <tr>
+          <td><strong>Transparence (čl. 50)</strong></td>
+          <td class="dt">2. 8. 2026</td>
+          <td>Pokud by úřad nasadil chatbota směrem k&nbsp;veřejnosti, musí být zřejmé, že jde o&nbsp;stroj. Týká se i&nbsp;označování generovaného obsahu. Tahle povinnost se <strong>neposunula</strong>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Co AI Act neřeší</th><th>Čím se to řídí</th><th>Proč na&nbsp;tom záleží</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Osobní údaje ve&nbsp;vstupech</strong></td>
+          <td>GDPR</td>
+          <td>Nahrání dokumentu s&nbsp;osobními údaji do&nbsp;komerčního nástroje je problém i&nbsp;tehdy, když je systém z&nbsp;pohledu AI Actu bez rizika.</td>
+        </tr>
+        <tr>
+          <td><strong>Neveřejné a&nbsp;citlivé informace</strong></td>
+          <td>Vnitřní režim úřadu, zákon o&nbsp;svobodném přístupu k&nbsp;informacím, obchodní tajemství žadatelů</td>
+          <td>Dokumentace k&nbsp;registraci přípravku obsahuje data třetích stran. AI Act o&nbsp;tom mlčí; vaše povinnost mlčenlivosti nikoli.</td>
+        </tr>
+        <tr>
+          <td><strong>Autorská práva k&nbsp;výstupům</strong></td>
+          <td>Autorský zákon, licenční podmínky nástroje</td>
+          <td>Kdo „vlastní" text, který napsal model, není otázka AI Actu.</td>
+        </tr>
+        <tr>
+          <td><strong>Jestli je výstup pravdivý</strong></td>
+          <td><strong>Nikdo. Zůstává to na&nbsp;vás.</strong></td>
+          <td>Nařízení nikde neříká, že odpověď modelu musí být správná. Žádné institucionální pravidlo tohle nepřevezme — proto mu bylo věnované celé <a href="../index.html#s5">setkání&nbsp;5</a>.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Přehled povinností podle nařízení (EU) 2024/1689 ve&nbsp;znění Digital Omnibus on AI. Poslední řádek druhé tabulky je autorská interpretace, ne citace ustanovení. Ověřeno 7/2026.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Druhá role: když AI použil někdo jiný</h2>
+    <p class="section-lead">
+      Předchozí sekce se týkaly ÚSKVBL jako uživatele. Jenže úřad je hlavně regulátor — a&nbsp;AI se stále častěji objevuje v&nbsp;materiálech, které chodí na&nbsp;stůl k&nbsp;posouzení. Tady už rámcem není AI Act, ale regulatorní vodítka pro léčivé přípravky.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Kde se AI objevuje</th><th>Typický způsob použití</th><th>Co by nás mělo zajímat</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Vývoj a&nbsp;objevování</strong></td>
+          <td>Predikce vlastností molekul, výběr kandidátů, in&nbsp;silico modelování</td>
+          <td>Vzdálené od&nbsp;našeho rozhodování. Nároky nízké — jde o&nbsp;fázi před daty, která posuzujeme.</td>
+        </tr>
+        <tr>
+          <td><strong>Zpracování dat ze&nbsp;studií</strong></td>
+          <td>Analýza obrazu, klasifikace nálezů, statistické modely</td>
+          <td>Přímý vliv na&nbsp;doložení bezpečnosti a&nbsp;účinnosti. <strong>Vysoké nároky</strong> na&nbsp;validaci, popis dat a&nbsp;reprodukovatelnost.</td>
+        </tr>
+        <tr>
+          <td><strong>Příprava textu dokumentace</strong></td>
+          <td>Formulace, překlad, shrnutí publikací</td>
+          <td>Samo o&nbsp;sobě nezávadné. Riziko je nepřímé: nepřesná parafráze zdroje nebo vymyšlená citace v&nbsp;odborném přehledu.</td>
+        </tr>
+        <tr>
+          <td><strong>Farmakovigilance</strong></td>
+          <td>Třídění hlášení, detekce signálů, zpracování textu z&nbsp;hlášení</td>
+          <td>Rostoucí využití. Klíčová otázka: co se stane s&nbsp;hlášením, které model chybně vyhodnotí jako nezajímavé?</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Reflection paper EMA vzniklo i&nbsp;pro veterinární stranu</summary>
+      <div class="tip-body">
+        <p>EMA vydala <em>Reflection paper on the use of Artificial Intelligence (AI) in the medicinal product lifecycle</em> (EMA/CHMP/CVMP/83833/2023). Číslo dokumentu stojí za&nbsp;pozornost: vznikl <strong>společně výborem pro humánní (CHMP) i&nbsp;veterinární přípravky (CVMP)</strong>. Etické principy se podle něj na&nbsp;veterinární přípravky uplatní „v&nbsp;přiměřené míře".</p>
+        <p>Základní princip je <strong>přístup podle rizika a&nbsp;kontextu</strong>: čím blíž je výstup AI k&nbsp;rozhodnutí o&nbsp;bezpečnosti nebo účinnosti, tím vyšší nároky na&nbsp;doložitelnost, validaci a&nbsp;lidský dohled. Od&nbsp;žadatele se očekává transparentnost — co bylo použito, na&nbsp;jakých datech, jak validováno.</p>
+        <p><strong>Otázka do&nbsp;diskuse:</strong> poznali bychom v&nbsp;dokumentaci, že část textu psal jazykový model? A&nbsp;vadilo by nám to? Rozdíl mezi <em>AI jako nástrojem psaní</em> a&nbsp;<em>AI jako zdrojem tvrzení o&nbsp;bezpečnosti</em> je přesně ten rozdíl, na&nbsp;kterém záleží. První je otázka stylu. Druhé je otázka důkazu.</p>
+      </div>
+    </details>
+    <p class="footnote">
+      EMA, Reflection paper on the use of AI in the medicinal product lifecycle, EMA/CHMP/CVMP/83833/2023. Rozdělení do&nbsp;čtyř oblastí v&nbsp;tabulce je vlastní strukturování pro potřeby semináře, nikoli členění převzaté z&nbsp;dokumentu. Ověřeno 7/2026.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdo to bude u&nbsp;nás vymáhat</h2>
+    <p class="section-lead">
+      AI Act je nařízení — platí přímo, bez transpozice. Členské státy ale musí doplnit vlastní adaptační zákon: kdo dohlíží, jak probíhá řízení, jaké jsou sankce. V&nbsp;Česku návrh připravilo MPO.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Orgán</th><th>Role podle návrhu</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ČTÚ</strong></td><td>Primární dozorový orgán a&nbsp;jednotné kontaktní místo</td></tr>
+        <tr><td><strong>ÚOOÚ</strong></td><td>Tam, kde se vysoce riziková AI potkává s&nbsp;osobními údaji a&nbsp;základními právy</td></tr>
+        <tr><td><strong>ÚNMZ</strong></td><td>Oznamující orgán pro&nbsp;oznámené subjekty; zřizovatel regulatorního sandboxu</td></tr>
+        <tr><td><strong>ČNB</strong></td><td>Subjekty, které již podléhají jejímu dohledu, používají-li AI v&nbsp;regulované činnosti</td></tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Zdroj: tisková zpráva MPO k&nbsp;návrhu zákona o&nbsp;umělé inteligenci; shrnutí adaptačního zákona (LeitnerLaw). Ověřeno 7/2026 — <strong>zákon v&nbsp;době přípravy materiálu nebyl vyhlášen</strong>, legislativní proces probíhá a&nbsp;role se mohou změnit. Před citováním ověřte ve&nbsp;Sbírce zákonů.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      AI Act je užitečné znát, ale ne proto, aby zodpověděl otázku „můžu tomu věřit". Na&nbsp;tu neodpovídá. Odpovídá na&nbsp;otázku, kdo za&nbsp;systém odpovídá — a&nbsp;tím ohraničuje prostor, ve&nbsp;kterém zůstáváte odpovědní vy.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Compliance ≠ pravdivost.</strong> Nařízení říká, za&nbsp;jakých podmínek smí systém běžet. Neříká nic o&nbsp;tom, jestli je konkrétní odpověď správná. Ověřování zůstává na&nbsp;vás — a&nbsp;žádná regulace to nepřevezme.
+      </div>
+      <div class="takeaway-card">
+        <strong>Většina naší praxe je v&nbsp;minimálním riziku.</strong> AI Act není důvod AI nepoužívat. Je to důvod vědět, co používáme a&nbsp;v&nbsp;jaké roli. Vysoké riziko nastupuje až tam, kde AI vstupuje do&nbsp;rozhodování o&nbsp;lidech.
+      </div>
+      <div class="takeaway-card">
+        <strong>Role rozhoduje o&nbsp;povinnostech.</strong> Dokud nakupujeme a&nbsp;používáme podle návodu, jsme provozovatel a&nbsp;povinností je málo. Jakmile stavíme vlastní nadstavbu nebo měníme účel, může se to změnit.
+      </div>
+      <div class="takeaway-card">
+        <strong>Termíny se posouvají.</strong> Ověřujte datum u&nbsp;každého zdroje o&nbsp;AI Actu — včetně téhle strany. Zastaralá pravda podaná s&nbsp;jistotou je zákeřnější než zjevná chyba, protože nezní podezřele.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <div class="lbl">Kam s&nbsp;tím dál</div>
+      <p>Tohle je poslední setkání série, takže žádné další „navazuje" nepřijde — navazovat bude úřad sám. Tři věci, které z&nbsp;téhle strany plynou do&nbsp;interních pravidel: <strong>(1)</strong> evidovat vzdělávání jako opatření podle čl.&nbsp;4, <strong>(2)</strong> mít pravidlo pro&nbsp;stavbu vlastních nástrojů dřív, než první vznikne, a&nbsp;<strong>(3)</strong> určit, kdo termíny AI Actu sleduje a&nbsp;jak často. Rozhodnutí „hodí se na&nbsp;tenhle úkol AI?" pak zůstává na&nbsp;jednotlivci — viz <a href="6.1-vhodnost-ukolu.html">strana 6.1</a>.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 7 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Fakta o legislativě ověřena k 7/2026; nejde o právní poradenství.</em>
+  </footer>
+
+</main>
+
+<script>
+const risks = {
+  zakazane: {
+    name: 'Zakázané praktiky', art: 'čl. 5 · platí od 2. 2. 2025',
+    what: 'Použití neslučitelná se základními právy: sociální skórování, necílený sběr obličejů z internetu pro rozpoznávací databáze, odhad emocí na pracovišti a ve školách, manipulativní techniky zneužívající zranitelnost. Od 12/2026 přibývá generování nekonsenzuálního intimního obsahu a CSAM.',
+    duty: 'Žádné podmínky, za kterých by to šlo. Zákaz platí bez výjimky a bez přechodného období — jako jediná kategorie neměl odklad.',
+    us: '<strong>Nás se to týká takto:</strong> riziko je nízké, ale ne nulové. Pozor na nástroje, které slibují „odhad důvěryhodnosti", „detekci stresu" nebo hodnocení osob podle chování — marketingové sliby se sem dostanou snáz, než by člověk čekal.'
+  },
+  vysoke: {
+    name: 'Vysoké riziko', art: 'příloha III (samostatné) a příloha I (zabudované)',
+    what: 'Systémy zasahující do života lidí: biometrie, kritická infrastruktura, vzdělávání, výběr zaměstnanců, přístup k základním veřejným službám, migrace, vymáhání práva, soudnictví. Zvlášť pak AI zabudovaná v regulovaných výrobcích (příloha I).',
+    duty: 'Nejtěžší kategorie: řízení rizik, správa dat, technická dokumentace, logování, lidský dohled, posouzení shody, registrace. Veřejné orgány jako provozovatelé navíc registrují použití a zpracovávají posouzení dopadů na základní práva (FRIA).',
+    us: '<strong>Nás se to týká takto:</strong> běžná kancelářská AI sem nespadá. Pozornost by si zasloužil až systém, který by vstupoval do rozhodování o subjektech — například automatizované předtřídění podání. Termín se navíc posunul na 12/2027, což je čas na přípravu, ne důvod téma odložit.'
+  },
+  transparence: {
+    name: 'Povinnost transparence', art: 'čl. 50 · od 2. 8. 2026',
+    what: 'Systémy, u nichž hrozí, že si člověk splete stroj s člověkem nebo generovaný obsah se skutečným: chatboti, deepfakes, syntetický text, obraz a zvuk.',
+    duty: 'Informovat, že jde o interakci s AI. Označovat generovaný obsah strojově čitelným způsobem. U deepfake obsahu zveřejnit, že je umělý.',
+    us: '<strong>Nás se to týká takto:</strong> tohle je nejbližší reálný termín — a jako jeden z mála se <em>neposunul</em>. Pokud by úřad nasadil chatbota směrem k veřejnosti nebo publikoval materiály s generovanou grafikou, spadá to sem.'
+  },
+  minimalni: {
+    name: 'Minimální riziko', art: 'bez zvláštních povinností podle AI Actu',
+    what: 'Všechno ostatní. Sumarizace podkladu, překlad, přeformulování textu, brainstorming, pomoc s rešerší, korektura — tedy naprostá většina toho, co v kanceláři reálně děláme.',
+    duty: 'AI Act zde neukládá zvláštní povinnosti. Doporučuje dobrovolné kodexy chování, nic víc.',
+    us: '<strong>Nás se to týká takto:</strong> sem spadá drtivá většina naší praxe. Pozor ale na falešný klid — „AI Act to neřeší" neznamená „můžu tam nahrát spis". Osobní údaje, obchodní tajemství žadatelů a mlčenlivost řídí jiná pravidla.'
+  },
+  gpai: {
+    name: 'Obecné modely (GPAI)', art: 'kap. V · od 2. 8. 2025',
+    what: 'Modely použitelné k široké škále úloh, ne k jednomu účelu — GPT, Claude, Gemini, Llama a další. Nestojí v pyramidě, mají vlastní režim navázaný na poskytovatele modelu.',
+    duty: 'Technická dokumentace, informace pro navazující poskytovatele, politika dodržování autorského práva, souhrn trénovacích dat. U modelů se systémovým rizikem navíc hodnocení, testování a hlášení incidentů.',
+    us: '<strong>Nás se to týká takto:</strong> povinnosti leží na poskytovateli modelu, ne na nás jako uživatelích. Prakticky nám z toho plyne jedna užitečná věc — dokumentace, kterou poskytovatelé musí zveřejňovat, je legitimní zdroj informací o tom, co model umí a kde má limity.'
+  }
+};
+
+const roles = {
+  provider: {
+    name: 'Poskytovatel', en: 'provider · kdo systém vyvine a uvede na trh',
+    who: 'Vyvine systém nebo ho nechá vyvinout a uvede ho na trh či do provozu pod svým jménem nebo ochrannou známkou. Typicky OpenAI, Anthropic, Microsoft — nebo kdokoli, kdo postaví a nasadí vlastní systém.',
+    verdict: '<strong>ÚSKVBL touto rolí standardně není.</strong> Dokud nakupujeme hotová řešení, povinnosti z této kategorie na nás nedopadají.',
+    warn: false,
+    list: [
+      'Nese naprostou většinu povinností podle nařízení',
+      'U vysoce rizikových systémů: systém řízení rizik, správa dat, technická dokumentace, posouzení shody, označení CE',
+      'Zajišťuje, aby systém umožnil lidský dohled a vedení logů',
+      'Registruje vysoce rizikový systém v databázi EU',
+      'Poskytuje provozovatelům návod k použití a informace o limitech systému'
+    ]
+  },
+  deployer: {
+    name: 'Provozovatel', en: 'deployer · kdo systém používá ve své činnosti',
+    who: 'Používá AI systém v rámci své činnosti (mimo čistě osobní neprofesní použití). Tohle je standardní role ÚSKVBL i kteréhokoli jiného úřadu, který si koupí licenci a pracuje s ní.',
+    verdict: '<strong>Tady se ÚSKVBL nachází.</strong> Povinností je výrazně méně a u systémů mimo vysoké riziko jsou v podstatě minimální.',
+    warn: false,
+    list: [
+      'Používat systém v souladu s návodem k použití od poskytovatele',
+      'Zajistit lidský dohled tam, kde ho nařízení vyžaduje',
+      'U vysoce rizikových systémů: informovat dotčené osoby, uchovávat logy, sledovat provoz',
+      'Veřejné orgány navíc: registrace použití a posouzení dopadů na základní práva (FRIA)',
+      'Zajišťovat AI gramotnost svých lidí (čl. 4) — po Omnibusu formulováno měkčeji'
+    ]
+  },
+  switch: {
+    name: 'Když se role přeskočí', en: 'čl. 25 · z provozovatele se stává poskytovatel',
+    who: 'Nařízení počítá s tím, že provozovatel může do role poskytovatele „spadnout" — a to i nechtěně. Stačí, aby se systémem naložil způsobem, který ho z pohledu nařízení dělá jeho tvůrcem.',
+    verdict: '<strong>Tohle je pro úřad nejpraktičtější poznatek celé sekce.</strong> Přeskok se obvykle stane v IT, tiše, a nikdo si nevšimne, že se změnilo právní postavení organizace.',
+    warn: true,
+    list: [
+      'Uvedení systému pod vlastním jménem nebo značkou',
+      'Podstatná úprava vysoce rizikového systému, který už je na trhu',
+      'Změna zamýšleného účelu systému — včetně situace, kdy se systém neurčený jako vysoce rizikový začne používat k účelu, který vysoce rizikový je',
+      'Praktický důsledek: interní pravidla pro stavbu vlastních nástrojů je lepší mít dřív, než takový nástroj vznikne',
+      'Nakoupená licence používaná podle návodu k přeskoku nevede'
+    ]
+  }
+};
+
+const rkTabs = document.querySelectorAll('.rk-level');
+const rkEls = {
+  name: document.getElementById('rk-name'), art: document.getElementById('rk-art'),
+  what: document.getElementById('rk-what'), duty: document.getElementById('rk-duty'),
+  us: document.getElementById('rk-us')
+};
+
+function renderRisk(key) {
+  const r = risks[key];
+  rkEls.name.textContent = r.name;
+  rkEls.art.textContent = r.art;
+  rkEls.what.textContent = r.what;
+  rkEls.duty.textContent = r.duty;
+  rkEls.us.innerHTML = r.us;
+  rkTabs.forEach(b => b.classList.toggle('active', b.dataset.rk === key));
+}
+rkTabs.forEach(btn => btn.addEventListener('click', () => renderRisk(btn.dataset.rk)));
+renderRisk('zakazane');
+
+const rlTabs = document.querySelectorAll('.rl-tab');
+const rlEls = {
+  name: document.getElementById('rl-name'), en: document.getElementById('rl-en'),
+  who: document.getElementById('rl-who'), verdict: document.getElementById('rl-verdict'),
+  list: document.getElementById('rl-list')
+};
+
+function renderRole(key) {
+  const r = roles[key];
+  rlEls.name.textContent = r.name;
+  rlEls.en.textContent = r.en;
+  rlEls.who.textContent = r.who;
+  rlEls.verdict.innerHTML = r.verdict;
+  rlEls.verdict.className = 'rl-verdict' + (r.warn ? ' warn' : '');
+  rlEls.list.innerHTML = r.list.map(i => '<li>' + i + '</li>').join('');
+  rlTabs.forEach(b => b.classList.toggle('active', b.dataset.rl === key));
+}
+rlTabs.forEach(btn => btn.addEventListener('click', () => renderRole(btn.dataset.rl)));
+renderRole('provider');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

@@ -111,8 +111,13 @@ const sessions = [
     desc: "Jak systematicky hodnotit důvěryhodnost toho, co AI vygeneruje. Rozpoznávání typických chyb, zkreslení a&nbsp;slepých míst. Praktický rámec pro ověřování výstupů v&nbsp;odborném kontextu.",
     why: "AI výstupy vypadají přesvědčivě, i&nbsp;když obsahují chyby. V&nbsp;odborném prostředí, kde mají výstupy reálné důsledky, je schopnost kriticky posoudit AI odpověď stejně důležitá jako schopnost ji získat. Tento seminář buduje návyk, ne jen znalost.",
     topics: ["Halucinace a&nbsp;chyby v&nbsp;praxi", "Jak ověřovat výstupy", "Zkreslení a&nbsp;slepá místa AI", "Kdy AI (ne)důvěřovat"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Dostáváte AI-generované výstupy a&nbsp;hledáte v&nbsp;nich chyby. Následně sdílíte strategie, které vám fungují ve vaší konkrétní práci."
+    prep: "Vezměte si jeden AI výstup z&nbsp;vlastní práce, který vás něčím zaskočil — buď byl překvapivě dobrý, nebo naopak obsahoval chybu. Na něm budeme společně trénovat, jak výstupy ověřovat a&nbsp;kdy jim (ne)věřit.",
+    practice: "Dostáváte AI-generované výstupy a&nbsp;hledáte v&nbsp;nich chyby. Následně sdílíte strategie, které vám fungují ve vaší konkrétní práci.",
+    toolkit: [
+      { label: "EUR-Lex (ověření legislativy)", href: "https://eur-lex.europa.eu" },
+      { label: "Google Scholar (ověření citací)", href: "https://scholar.google.com" },
+      { label: "PubMed (ověření literatury)", href: "https://pubmed.ncbi.nlm.nih.gov" }
+    ]
   },
   {
     n: 6,
@@ -128,6 +133,13 @@ const sessions = [
     materials: [
       { label: "Vhodnost úkolu pro AI: čtyři otázky, které rozhodnou", href: "handson/6.1-vhodnost-ukolu.html" },
       { label: "Workshop: vyzkoušejte AI na vlastním úkolu", href: "handson/6.2-workshop.html" }
+    ],
+    toolkit: [
+      { label: "Claude", href: "https://claude.ai" },
+      { label: "ChatGPT", href: "https://chatgpt.com" },
+      { label: "Gemini", href: "https://gemini.google.com" },
+      { label: "Microsoft Copilot", href: "https://copilot.microsoft.com" },
+      { label: "NotebookLM (shrnutí se zdroji)", href: "https://notebooklm.google.com" }
     ]
   },
   {
@@ -140,6 +152,14 @@ const sessions = [
     why: "Bez institucionálního ukotvení zůstane AI individuálním experimentem jednotlivců. Jako regulatorní úřad navíc ÚSKVBL potřebuje rozumět regulaci AI, protože ovlivní i&nbsp;regulované subjekty.",
     topics: ["Regulace AI v&nbsp;EU", "Bezpečnost dat při práci s&nbsp;AI", "Uzavřené vs. veřejné nástroje, licence", "Interní pravidla a&nbsp;odpovědnosti", "Budování kompetencí do budoucna"],
     prep: "Bude upřesněno před setkáním.",
-    practice: "Návrat k&nbsp;potřebám z&nbsp;prvního semináře. Co se za dobu série změnilo? Společná formulace prvních doporučení pro další kroky instituce."
+    practice: "Návrat k&nbsp;potřebám z&nbsp;prvního semináře. Co se za dobu série změnilo? Společná formulace prvních doporučení pro další kroky instituce.",
+    materials: [
+      { label: "AI Act: co z&nbsp;něj plyne pro úřad", href: "handson/7.1-ai-act.html" }
+    ],
+    toolkit: [
+      { label: "EUR-Lex — nařízení (EU) 2024/1689", href: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj" },
+      { label: "AI Act Service Desk (EK)", href: "https://ai-act-service-desk.ec.europa.eu" },
+      { label: "Digitální Česko — AI Akt", href: "https://digitalnicesko.gov.cz/ai-akt/" }
+    ]
   }
 ];
