@@ -82,7 +82,7 @@ const sessions = [
     desc: "Jak AI mění způsob vyhledávání a&nbsp;zpracování odborných informací. Přehled dostupných nástrojů, porovnání s&nbsp;klasickým vyhledáváním a&nbsp;klíčová otázka: jak ověřovat to, co AI najde.",
     why: "Významná část odborné práce zahrnuje vyhledávání, čtení a&nbsp;vyhodnocování informací. AI-asistované vyhledávání může tento proces zrychlit, ale jen pokud umíte ověřit, že nalezené informace a&nbsp;zdroje jsou skutečné a&nbsp;relevantní.",
     topics: ["Nástroje pro AI rešerše", "Vyhledávání v&nbsp;legislativě a&nbsp;odborné literatuře", "Ověřování zdrojů a&nbsp;citací", "Klasická vs. AI rešerše"],
-    prep: "Bude upřesněno před setkáním.",
+    prep: "Připravte si jeden konkrétní rešeršní dotaz z&nbsp;vaší praxe: otázku nebo téma, které byste reálně potřebovali dohledat — ať už v&nbsp;legislativě, v&nbsp;odborné literatuře, nebo v&nbsp;interních podkladech. Zkuste ho zapsat tak, jak by vás přirozeně napadlo zadat ho do vyhledávače; nemusí být přesně ani „správně" formulovaný, naopak je užitečné vzít dotaz v&nbsp;té podobě, ve které vám vytane. Na setkání s&nbsp;ním budeme společně pracovat: porovnáme klasické a&nbsp;AI-asistované vyhledávání a&nbsp;uvidíte, jak se stejný dotaz chová v&nbsp;různých nástrojích a&nbsp;jak ho krok za krokem zpřesnit.",
     practice: "Zkoušíte vyhledávací nástroje na vlastních rešeršních úkolech ze své praxe.",
     materials: [
       { label: "Informační chování a&nbsp;princip minimální námahy", href: "handson/4.0-informacni-chovani.html" },
@@ -120,11 +120,15 @@ const sessions = [
     title: "AI v&nbsp;pracovních procesech: od teorie k&nbsp;praxi",
     date: "2026-07-20",
     timing: "20.&nbsp;července 2026, 13:00 · 90&nbsp;minut",
-    desc: "Přenesení všeho dosavadního do vašich konkrétních pracovních situací. Společná práce nad reálnými úkoly, sdílení zkušeností z&nbsp;mezidobí a&nbsp;hledání postupů, které fungují v&nbsp;praxi.",
+    desc: "Praktická dílna. Vše dosavadní přeneseme do vašich konkrétních úkolů: jak poznat, které se pro AI hodí, jak si výstup ověřit a&nbsp;jak si postup uložit pro příště. Každý si jeden úkol reálně vyzkouší.",
     why: "Obecná AI gramotnost má smysl, jen pokud se promítne do každodenní praxe. Tento seminář je o&nbsp;tom, abyste odešli s&nbsp;alespoň jedním konkrétním postupem, který reálně použijete ve své práci.",
-    topics: ["Řešení vašich reálných úkolů", "Sdílení zkušeností", "Co funguje a&nbsp;co ne", "Postupy pro opakované úlohy"],
-    prep: "Bude upřesněno před setkáním.",
-    practice: "Přinesete konkrétní pracovní situaci. Společně procházíme celý postup od zadání po ověření výstupu."
+    topics: ["Vhodnost úkolu pro AI", "Ověřování výstupu proti zdroji", "Triage vlastních úkolů", "Recept pro opakované úlohy"],
+    prep: "Nic si předem chystat nemusíte — úkoly najdeme společně na místě. Vezměte si ale notebook a&nbsp;přihlášení do své AI (Claude, ChatGPT — cokoli používáte); budeme si vše rovnou zkoušet.",
+    practice: "Dílna: rozehřejeme se na společné úloze, vytipujeme vaše vlastní úkoly vhodné pro AI a&nbsp;jeden si každý reálně vyzkouší od zadání po ověření. Odejdete s&nbsp;hotovou věcí a&nbsp;s&nbsp;„receptem" pro opakované použití.",
+    materials: [
+      { label: "Vhodnost úkolu pro AI: čtyři otázky, které rozhodnou", href: "handson/6.1-vhodnost-ukolu.html" },
+      { label: "Workshop: vyzkoušejte AI na vlastním úkolu", href: "handson/6.2-workshop.html" }
+    ]
   },
   {
     n: 7,

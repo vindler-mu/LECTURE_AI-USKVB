@@ -28,3 +28,6 @@ desktop.ini
 .env
 .env.local
 *.secret
+
+# Facilitátorské podklady (soukromé, jen pro vedení workshopu, nepatří do repa)
+facilitator/

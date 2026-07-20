@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Dnešní dílna: krok za krokem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #b5651d; --accent-hover: #8e4a18; --accent-soft: #fbf3e7;
+    --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 720px; }
+
+  /* ── PREP + OVERVIEW ────────────────────────────────── */
+  .prep {
+    margin-top: 20px; padding: 14px 18px; background: var(--accent-soft);
+    border-left: 3px solid var(--accent); font-size: 14px; color: var(--ink); max-width: 720px;
+  }
+  .prep strong { color: var(--accent-hover); }
+  .overview { margin-top: 22px; }
+  .overview-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 10px;
+  }
+  .overview ol { list-style: none; counter-reset: ov; display: grid; gap: 6px; }
+  .overview li {
+    counter-increment: ov; position: relative; padding-left: 34px; font-size: 13.6px; color: var(--ink-soft);
+  }
+  .overview li::before {
+    content: counter(ov); position: absolute; left: 0; top: -1px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: var(--accent-soft); color: var(--accent-hover);
+  }
+  .overview li b { color: var(--ink); }
+
+  /* ── STEP ───────────────────────────────────────────── */
+  section.step { margin-bottom: 52px; }
+  .step-badge {
+    display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  }
+  .step-badge .n {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+    background: var(--accent); color: #fff; width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  }
+  .step-badge .clock {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.8px;
+    color: var(--muted);
+  }
+  .step h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 25px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 10px; line-height: 1.2;
+  }
+  .step-lead { font-size: 15px; color: var(--ink-soft); line-height: 1.6; max-width: 780px; margin-bottom: 20px; }
+  .step-lead strong { color: var(--ink); }
+
+  .do {
+    background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+    padding: 18px 22px 18px 20px; margin-bottom: 20px;
+  }
+  .do-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent-hover); font-weight: 600; margin-bottom: 12px;
+  }
+  .do ol { list-style: none; counter-reset: doi; display: grid; gap: 12px; }
+  .do li {
+    counter-increment: doi; position: relative; padding-left: 32px; font-size: 14.2px;
+    color: var(--ink); line-height: 1.55;
+  }
+  .do li::before {
+    content: counter(doi); position: absolute; left: 0; top: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    width: 21px; height: 21px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: var(--bg); border: 1.5px solid var(--accent); color: var(--accent-hover);
+  }
+  .do li b { color: var(--ink); }
+  .do code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.8px; background: var(--bg);
+    padding: 2px 7px; border: 1px solid var(--line); display: inline-block; color: var(--ink);
+  }
+  .prompt-quote {
+    display: block; margin-top: 8px; background: var(--bg); border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--accent); padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12.8px; line-height: 1.55; color: var(--ink);
+  }
+
+  /* ── DOC ────────────────────────────────────────────── */
+  .doc {
+    background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--ink-soft);
+    padding: 22px 24px;
+  }
+  .doc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .doc-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600;
+  }
+  .copy-btn {
+    background: var(--bg); border: 1px solid var(--line-strong); color: var(--ink-soft);
+    padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    cursor: pointer; transition: all 0.14s ease;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.done { background: var(--green); border-color: var(--green); color: #fff; }
+  .doc-body { font-size: 13.4px; line-height: 1.62; color: var(--ink); }
+  .doc-body h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 700;
+    margin: 14px 0 4px; color: var(--ink);
+  }
+  .doc-body h4:first-child { margin-top: 0; }
+  .doc-body .meta { font-size: 12.6px; color: var(--ink-soft); }
+  .doc-body .meta b { color: var(--ink); }
+  .doc-note { font-size: 11.8px; color: var(--muted); font-style: italic; margin-top: 14px; }
+
+  /* ── ERROR SUMMARY ──────────────────────────────────── */
+  .err-list { list-style: none; counter-reset: eline; }
+  .err-list li {
+    counter-increment: eline; position: relative; padding: 7px 0 7px 30px;
+    font-size: 13.4px; line-height: 1.55; color: var(--ink); border-bottom: 1px dashed var(--line);
+  }
+  .err-list li:last-child { border-bottom: none; }
+  .err-list li::before {
+    content: counter(eline); position: absolute; left: 0; top: 7px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: #e7e9ec; color: var(--ink-soft);
+  }
+
+  /* ── ZONES ──────────────────────────────────────────── */
+  .zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 720px) { .zones { grid-template-columns: 1fr; } }
+  .zone { border: 1px solid var(--line); padding: 16px 18px; background: var(--paper); }
+  .zone.z-ai { border-top: 3px solid var(--green); }
+  .zone.z-mid { border-top: 3px solid var(--accent); }
+  .zone.z-hum { border-top: 3px solid var(--red); }
+  .zone h4 { font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .zone.z-ai h4 { color: var(--green); }
+  .zone.z-mid h4 { color: var(--accent-hover); }
+  .zone.z-hum h4 { color: var(--red); }
+  .zone p { font-size: 12.6px; line-height: 1.5; color: var(--ink-soft); }
+
+  .warn {
+    background: var(--red-soft); border: 1px solid color-mix(in srgb, var(--red) 25%, var(--line));
+    border-left: 4px solid var(--red); padding: 14px 18px; font-size: 13.6px; color: var(--ink); line-height: 1.6;
+  }
+  .warn strong { color: var(--red); }
+
+  /* ── RECIPE CARD ────────────────────────────────────── */
+  .print-card { border: 2px solid var(--ink-soft); padding: 22px 26px; background: var(--bg); }
+  .print-card .pc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 2px; }
+  .print-card h3 { font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700; color: var(--ink); }
+  .print-card .pc-sub { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .pc-field { margin-top: 16px; }
+  .pc-field .pc-lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent-hover); font-weight: 600; display: block; margin-bottom: 4px;
+  }
+  .pc-field .pc-hint { font-size: 12px; color: var(--muted); font-style: italic; }
+  .pc-lines { border-bottom: 1px solid var(--line-strong); height: 26px; }
+  .pc-lines + .pc-lines { margin-top: 4px; }
+  .pc-actions { margin-top: 16px; }
+
+  /* ── TIP TOGGLE ─────────────────────────────────────── */
+  .tip-toggle { border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body .ans { color: var(--red); font-weight: 600; }
+
+  .footer {
+    margin-top: 52px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .step { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .js-enabled .step.in-view { opacity: 1; transform: translateY(0); }
+  }
+  @media print {
+    body * { visibility: hidden; }
+    #recipe-card, #recipe-card * { visibility: visible; }
+    #recipe-card { position: absolute; left: 0; top: 0; width: 100%; border: 2px solid #000; }
+    .pc-actions { display: none; }
+    .read-progress { display: none; }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 6 · Dílna</p>
+    <h1>Dnešní dílna: <em>krok za krokem</em></h1>
+    <p class="hero-subtitle">
+      Tahle stránka je váš návod pro dnešek. Jděte podle kroků shora dolů. Na konci odejdete s jedním úkolem reálně udělaným přes AI a s kartou, jak ho příště zopakovat.
+    </p>
+    <div class="prep">
+      <strong>Než začneme:</strong> mějte otevřený notebook a přihlášení do své AI (Claude, ChatGPT — cokoli používáte).
+    </div>
+    <div class="overview">
+      <div class="overview-label">Pět kroků dneška</div>
+      <ol>
+        <li><b>Rozehřátí</b> — všichni společně shrneme jednu cvičnou zprávu.</li>
+        <li><b>Najdi chybu</b> — zkontrolujeme, kde AI lže.</li>
+        <li><b>Vaše úkoly na lístky</b> — a na zeď.</li>
+        <li><b>Váš úkol</b> — jeden opravdu uděláte.</li>
+        <li><b>Recept</b> — zapíšete si, jak ho zopakovat.</li>
+      </ol>
+    </div>
+  </header>
+
+  <section class="step">
+    <div class="step-badge"><span class="n">1</span><span class="clock">rozehřátí · ~20 min</span></div>
+    <h2>Společně: shrňte jednu zprávu</h2>
+    <p class="step-lead">
+      Rozehřejeme se na stejném úkolu pro všechny. Níže je <strong>cvičná hodnoticí zpráva</strong> (smyšlená). Necháte AI, ať ji shrne — a pak si ověříte, jestli to udělala dobře.
+    </p>
+
+    <div class="do">
+      <div class="do-label">Co teď udělat</div>
+      <ol>
+        <li>Klikněte na <b>Kopírovat text</b> u zprávy níže.</li>
+        <li>Vložte ji do své AI a za ni napište tento příkaz:
+          <span class="prompt-quote">Shrň tuto hodnoticí zprávu do 10 stručných bodů pro kolegu, který ji nečetl. U klíčových čísel (dávka, ochranná lhůta, účinnost) je uveď přesně.</span>
+        </li>
+        <li>Přečtěte si výstup a <b>porovnejte ho se zprávou</b>: sedí čísla? Nepřidala AI něco, co ve zprávě vůbec není?</li>
+      </ol>
+    </div>
+
+    <div class="doc">
+      <div class="doc-head">
+        <span class="doc-tag">Cvičná hodnoticí zpráva · smyšlená data</span>
+        <button class="copy-btn" data-copy="seed-doc">Kopírovat text</button>
+      </div>
+      <div class="doc-body" id="seed-doc">
+        <p class="meta"><b>Přípravek:</b> Boviflor 300&nbsp;mg/ml, injekční roztok pro skot &nbsp;·&nbsp; <b>Účinná látka:</b> florfenikol 300&nbsp;mg/ml &nbsp;·&nbsp; <b>Žadatel:</b> VetPharma Nova s.r.o. (fiktivní)</p>
+        <p class="meta"><b>Indikace:</b> léčba respiračních infekcí skotu (BRD) vyvolaných původci citlivými na florfenikol.</p>
+
+        <h4>1. Kvalita</h4>
+        <p>Léková forma je stabilní 24 měsíců při teplotě do 25&nbsp;°C. Po prvním otevření je doba použitelnosti 28 dní. Výrobní proces i kontrola šarží odpovídají požadavkům; nebyly zjištěny nedostatky.</p>
+
+        <h4>2. Bezpečnost pro cílový druh</h4>
+        <p>V toleranční studii bylo 24 telat sledováno při trojnásobku doporučené dávky. U přibližně 5&nbsp;% zvířat se objevil přechodný otok v místě vpichu, který odezněl do 72 hodin. Zaznamenán byl mírný přechodný pokles příjmu krmiva. Závažné nežádoucí účinky nebyly pozorovány.</p>
+
+        <h4>3. Bezpečnost pro uživatele</h4>
+        <p>Doporučuje se zabránit náhodnému samopodání injekce a kontaktu přípravku s očima. Při aplikaci se používají ochranné pomůcky.</p>
+
+        <h4>4. Rezidua a ochranné lhůty</h4>
+        <p>Na základě reziduálních studií byla stanovena ochranná lhůta pro maso 64 dní. Přípravek není určen pro krávy, jejichž mléko je určeno pro lidskou spotřebu; u těchto zvířat se nepoužívá.</p>
+
+        <h4>5. Účinnost</h4>
+        <p>V terénní klinické studii bylo zařazeno 240 zvířat. Klinické vyléčení bylo dosaženo u 87&nbsp;% léčených zvířat oproti 62&nbsp;% ve skupině s placebem. Dávkování: 20&nbsp;mg/kg živé hmotnosti podkožně, druhá dávka po 48 hodinách.</p>
+
+        <h4>6. Farmakovigilance (za sledované mezidobí)</h4>
+        <p>Za poslední období nebyl hlášen žádný nový bezpečnostní signál. Poměr přínos/riziko zůstává příznivý.</p>
+
+        <h4>7. Závěr posuzovatele</h4>
+        <p>Posuzovatel doporučuje registraci schválit za podmínky doplnění aktualizovaného textu příbalové informace k bezpečnosti uživatele.</p>
+      </div>
+      <p class="doc-note">Data jsou zcela smyšlená a slouží jen k nácviku. Přípravek ani žadatel neexistují.</p>
+    </div>
+  </section>
+
+  <section class="step">
+    <div class="step-badge"><span class="n">2</span><span class="clock">najdi chybu · ~10 min</span></div>
+    <h2>Najděte, kde AI lže</h2>
+    <p class="step-lead">
+      Tohle shrnutí napsala AI ke stejné zprávě. Vypadá věrohodně — ale <strong>tři body jsou špatně</strong>. Najděte je porovnáním se zprávou z kroku 1. Řešení si rozbalte až potom.
+    </p>
+
+    <div class="do">
+      <div class="do-label">Co teď udělat</div>
+      <ol>
+        <li>Přečtěte si 10 bodů níže.</li>
+        <li>U každého se vraťte do zprávy nahoře a ověřte: <b>je to tam takhle napsané?</b></li>
+        <li>Označte si tři body, které nesedí. Pak rozbalte <b>Řešení</b>.</li>
+      </ol>
+    </div>
+
+    <div class="doc" style="margin-bottom:18px;">
+      <div class="doc-head">
+        <span class="doc-tag">Shrnutí od AI · tři body jsou špatně</span>
+      </div>
+      <ol class="err-list">
+        <li>Boviflor 300&nbsp;mg/ml je injekční roztok s účinnou látkou florfenikol pro skot.</li>
+        <li>Je určen k léčbě respiračních infekcí skotu (BRD).</li>
+        <li>Přípravek je stabilní 24 měsíců, po otevření 28 dní.</li>
+        <li>V klinické studii dosáhla účinnost 87&nbsp;% oproti 62&nbsp;% u placeba, na vzorku 240 zvířat.</li>
+        <li>Dávkování je 20&nbsp;mg/kg podkožně, druhá dávka po 48 hodinách.</li>
+        <li>Ochranná lhůta pro maso je 46 dní.</li>
+        <li>Ochranná lhůta pro mléko je 7 dní.</li>
+        <li>V toleranční studii se u přibližně 5&nbsp;% telat objevil přechodný otok v místě vpichu.</li>
+        <li>Přípravek je schválen i pro prasata a drůbež.</li>
+        <li>Poměr přínos/riziko zůstává příznivý; posuzovatel doporučuje registraci schválit.</li>
+      </ol>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Řešení</span> Rozbalit až po hledání</summary>
+      <div class="tip-body">
+        <p><span class="ans">Bod 6 — špatné číslo.</span> Ochranná lhůta pro maso je <strong>64 dní</strong>, ne 46 (přehozené číslice).</p>
+        <p><span class="ans">Bod 7 — smyšlený a nebezpečný údaj.</span> Zpráva žádnou lhůtu pro mléko neuvádí — naopak říká, že přípravek se u dojnic <strong>nepoužívá</strong>. „7 dní" si AI vymyslela.</p>
+        <p><span class="ans">Bod 9 — přidaný druh.</span> Zpráva mluví <strong>jen o skotu</strong>. Prasata a drůbež si model doplnil sám.</p>
+        <p><strong>Pointa:</strong> shrnutí bylo většinou správně a znělo suverénně i tam, kde lhalo. Ověřit čísla a fakta proti zdroji není formalita — je to vaše práce.</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="step">
+    <div class="step-badge"><span class="n">3</span><span class="clock">vaše úkoly · ~15 min</span></div>
+    <h2>Napište svoje úkoly na lístky</h2>
+    <p class="step-lead">
+      Teď od cvičné úlohy k vašim. Nemusíte mít nic promyšleného — pomůžou konkrétní otázky. Dostanete lístky a fixu.
+    </p>
+
+    <div class="do">
+      <div class="do-label">Co teď udělat</div>
+      <ol>
+        <li>Vzpomeňte si na poslední týden. <b>Co se opakovalo? Co trvalo dýl, než mělo? Co často kopírujete? Čeho se v práci děsíte?</b></li>
+        <li>Napište <b>2–3 takové úkoly</b> na lístky — jeden úkol na jeden lístek.</li>
+        <li>Nalepte každý lístek do jedné ze tří zón na zdi (podle toho, jestli se na úkol AI hodí):</li>
+      </ol>
+    </div>
+
+    <div class="zones">
+      <div class="zone z-ai">
+        <h4>AI</h4>
+        <p>Práce s textem, snese návrh ke kontrole, opakuje se, chybu poznám. → Vezmu na AI.</p>
+      </div>
+      <div class="zone z-mid">
+        <h4>Hraniční</h4>
+        <p>Něco hraje pro, něco proti. → Zkusím opatrně a víc kontroluji.</p>
+      </div>
+      <div class="zone z-hum">
+        <h4>Člověk</h4>
+        <p>Nese úsudek a odpovědnost, nebo chybu nepoznám. → Nechávám na sobě.</p>
+      </div>
+    </div>
+    <p class="doc-note">Nevíte, do které zóny? Pomůže filtr čtyř otázek ze strany <a href="6.1-vhodnost-ukolu.html">6.1</a>.</p>
+  </section>
+
+  <section class="step">
+    <div class="step-badge"><span class="n">4</span><span class="clock">váš úkol · ~25 min</span></div>
+    <h2>Jeden svůj úkol opravdu udělejte</h2>
+    <p class="step-lead">
+      Vyberte si ze zóny <strong>AI</strong> (nebo hraniční) jeden svůj lístek a udělejte ho teď s AI naostro. Ne teoreticky — napište zadání, dostaňte výstup, dolaďte, ověřte.
+    </p>
+
+    <div class="do">
+      <div class="do-label">Co teď udělat</div>
+      <ol>
+        <li>Vyberte <b>jeden</b> svůj úkol ze zóny AI.</li>
+        <li>Napište AI zadání — přidejte <b>roli, kontext a formát</b> (jako na setkání 3), ne jen holou větu.</li>
+        <li>Výstup si přečtěte, nechte doladit a <b>ověřte</b> ho.</li>
+        <li>Hotovi dřív? Zkuste druhý úkol nebo pomozte sousedovi.</li>
+      </ol>
+    </div>
+
+    <div class="warn">
+      <strong>Pozor na data:</strong> do veřejné AI <strong>nevkládejte citlivé ani neveřejné údaje</strong>. Dnes si vezměte úkol, který jde udělat na veřejném nebo smyšleném podkladu. Bezpečnost dat rozebereme na setkání 7.
+    </div>
+  </section>
+
+  <section class="step">
+    <div class="step-badge"><span class="n">5</span><span class="clock">recept · ~15 min</span></div>
+    <h2>Zapište si recept</h2>
+    <p class="step-lead">
+      Aby dnešek nebyl naposledy: zapište si svůj postup do <strong>karty receptu</strong>. Až budete příště dělat totéž, nezačínáte od nuly. Kartu dostanete vytištěnou, nebo si ji vyplňte tady a vytiskněte.
+    </p>
+
+    <div class="print-card" id="recipe-card">
+      <div class="pc-head">
+        <h3>Karta receptu</h3>
+        <span class="pc-sub">AI pro ÚSKVBL · Setkání 6</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--muted);">Postup pro jeden opakovaný úkol, který teď svěřuji AI.</p>
+
+      <div class="pc-field">
+        <span class="pc-lbl">Úkol</span> <span class="pc-hint">co přesně chci udělat</span>
+        <div class="pc-lines"></div>
+      </div>
+      <div class="pc-field">
+        <span class="pc-lbl">Prompt (šablona)</span> <span class="pc-hint">role · kontext · zadání · formát</span>
+        <div class="pc-lines"></div>
+        <div class="pc-lines"></div>
+        <div class="pc-lines"></div>
+      </div>
+      <div class="pc-field">
+        <span class="pc-lbl">Vstup</span> <span class="pc-hint">co do AI vkládám (a co tam NIKDY nedám)</span>
+        <div class="pc-lines"></div>
+      </div>
+      <div class="pc-field">
+        <span class="pc-lbl">Jak ověřím výstup</span> <span class="pc-hint">proti čemu si ho zkontroluju</span>
+        <div class="pc-lines"></div>
+      </div>
+      <div class="pc-field">
+        <span class="pc-lbl">Kdy tenhle recept NEpoužít</span> <span class="pc-hint">hranice, za kterou nejdu</span>
+        <div class="pc-lines"></div>
+      </div>
+
+      <div class="pc-actions">
+        <button class="copy-btn" onclick="window.print()">Vytisknout kartu</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 6 · Dílna
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Cvičná data jsou smyšlená a slouží jen k nácviku.</em>
+  </footer>
+
+</main>
+
+<script>
+function extractText(el) {
+  return [...el.children]
+    .map(node => node.textContent.trim().replace(/\s+/g, ' '))
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const src = document.getElementById(btn.dataset.copy);
+    if (!src) return;
+    const text = extractText(src);
+    const done = () => {
+      const orig = btn.textContent;
+      btn.textContent = 'Zkopírováno ✓';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('done'); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  });
+});
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.step').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

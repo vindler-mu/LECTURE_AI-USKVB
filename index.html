@@ -1085,7 +1085,7 @@ updateNavButtons();
   const months = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
   const today = new Date();
   const todayIso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  const idx = sessions.findIndex(s => s.date && s.date > todayIso);
+  const idx = sessions.findIndex(s => s.date && s.date >= todayIso);
   if (idx === -1) return;
   const s = sessions[idx];
   const [y, m, d] = s.date.split('-').map(Number);
