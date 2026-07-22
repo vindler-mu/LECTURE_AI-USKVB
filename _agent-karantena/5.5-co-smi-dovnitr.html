@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Co smí dovnitř</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #b5651d; --accent-hover: #8e4a18; --accent-soft: #fbf3e7;
+    --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── DISCLAIMER ─────────────────────────────────────── */
+  .disclaimer {
+    background: var(--red-soft); border: 1px solid color-mix(in srgb, var(--red) 25%, var(--line));
+    border-left: 4px solid var(--red); padding: 18px 22px; max-width: 860px;
+  }
+  .disclaimer .d-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--red); font-weight: 600; display: block; margin-bottom: 8px;
+  }
+  .disclaimer p { font-size: 13.6px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 9px; }
+  .disclaimer p:last-child { margin-bottom: 0; }
+  .disclaimer strong { color: var(--ink); }
+
+  /* ── SITUATION FACTS ────────────────────────────────── */
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 4px; }
+  @media (max-width: 860px) { .facts { grid-template-columns: 1fr; } }
+  .fact {
+    background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--accent);
+    padding: 16px 18px;
+  }
+  .fact h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15.5px;
+    font-weight: 700; color: var(--ink); margin-bottom: 6px;
+  }
+  .fact p { font-size: 12.9px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ── THE TEST ───────────────────────────────────────── */
+  .test-box {
+    background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+    padding: 28px 30px; max-width: 900px;
+  }
+  .test-q {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: clamp(20px, 2.6vw, 27px);
+    font-weight: 700; line-height: 1.3; color: var(--ink); margin-bottom: 14px;
+  }
+  .test-q em { font-style: italic; color: var(--accent-hover); }
+  .test-body { font-size: 14px; line-height: 1.7; color: var(--ink-soft); }
+  .test-body strong { color: var(--ink); }
+  .test-body p { margin-bottom: 10px; }
+  .test-body p:last-child { margin-bottom: 0; }
+
+  /* ── GATE VS SCALE ──────────────────────────────────── */
+  .gatecmp { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .gatecmp { grid-template-columns: 1fr; } }
+  .gc-card { border: 1px solid var(--line); padding: 20px 22px; background: var(--paper); }
+  .gc-card.is-gate { border-top: 3px solid var(--red); }
+  .gc-card.is-scale { border-top: 3px solid var(--green); }
+  .gc-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.3px;
+    text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 8px;
+  }
+  .gc-card.is-gate .gc-tag { color: var(--red); }
+  .gc-card.is-scale .gc-tag { color: var(--green); }
+  .gc-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 17px;
+    font-weight: 700; color: var(--ink); margin-bottom: 8px;
+  }
+  .gc-card p { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 8px; }
+  .gc-card p:last-child { margin-bottom: 0; }
+  .gc-card strong { color: var(--ink); }
+
+  /* ── PAIR TABS ──────────────────────────────────────── */
+  .pair-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .pair-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .pair-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .pair-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .pair-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pair-same {
+    font-size: 13.6px; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 12px 16px; margin-bottom: 16px;
+  }
+  .pair-same span {
+    color: var(--muted); font-size: 10.5px; display: block; margin-bottom: 4px;
+    letter-spacing: 0.9px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase;
+  }
+  .pair-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .pair-grid { grid-template-columns: 1fr; } }
+  .pair-side { background: var(--bg); border: 1px solid var(--line); padding: 16px 18px; }
+  .pair-side.ok { border-top: 3px solid var(--green); }
+  .pair-side.bad { border-top: 3px solid var(--red); }
+  .pair-verdict {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; display: inline-block;
+    padding: 4px 10px; color: #fff;
+  }
+  .pair-side.ok .pair-verdict { background: var(--green); }
+  .pair-side.bad .pair-verdict { background: var(--red); }
+  .pair-side h4 { font-size: 13.8px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+  .pair-side p { font-size: 12.9px; line-height: 1.6; color: var(--ink-soft); }
+  .pair-note {
+    margin-top: 14px; font-size: 13px; line-height: 1.65; color: var(--ink-soft);
+    background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 12px 16px;
+  }
+  .pair-note strong { color: var(--accent-hover); }
+
+  /* ── CATALOG ────────────────────────────────────────── */
+  .cat { display: grid; gap: 14px; }
+  .cat-item {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--green);
+    padding: 18px 22px;
+  }
+  .cat-item.star { border-left-color: var(--accent); background: var(--accent-soft); }
+  .cat-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .cat-head h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 700; color: var(--ink);
+  }
+  .cat-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.2px;
+    text-transform: uppercase; font-weight: 600; color: #fff; background: var(--accent); padding: 3px 8px;
+  }
+  .cat-item p { font-size: 13.3px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 8px; }
+  .cat-item p:last-child { margin-bottom: 0; }
+  .cat-item strong { color: var(--ink); }
+  .cat-list { margin: 6px 0 0 18px; font-size: 13.1px; color: var(--ink-soft); line-height: 1.6; }
+  .cat-list li { margin-bottom: 4px; }
+
+  /* ── HARD LIMITS ────────────────────────────────────── */
+  .limits { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 760px) { .limits { grid-template-columns: 1fr; } }
+  .limit {
+    background: var(--red-soft); border: 1px solid color-mix(in srgb, var(--red) 20%, var(--line));
+    border-left: 3px solid var(--red); padding: 14px 18px;
+  }
+  .limit h4 { font-size: 13.8px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .limit p { font-size: 12.7px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body ul { margin: 4px 0 10px 18px; }
+  .tip-body li { margin-bottom: 5px; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+  .tip-body strong { color: var(--ink); }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 6 · Hands-on</p>
+    <h1>Než se zeptáte, co AI umí — zeptejte se, <em>co jí smíte dát</em></h1>
+    <p class="hero-subtitle">
+      Filtr vhodnosti řeší, jestli AI úkol zvládne. Tahle stránka řeší otázku, která mu <em>předchází</em>: smí ten materiál vůbec opustit úřad? U regulátora, který drží obchodní tajemství žadatelů a osobní údaje hlásitelů, je to ta důležitější polovina rozhodnutí — a zároveň ta, na kterou se zapomíná.
+    </p>
+    <div class="definition">
+      <strong>Vstupní branka</strong> = test <em>před</em> filtrem vhodnosti. Neptá se, jestli je úkol pro AI vhodný, ale jestli mu smíte podstrčit ten konkrétní materiál. Úkol může projít všemi čtyřmi otázkami vhodnosti a přesto být nepřípustný.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Situace, kterou je potřeba pojmenovat nahlas</h2>
+    <p class="section-lead">
+      ÚSKVBL zatím nemá institucionálně pořízený a schválený AI nástroj. Kdo AI používá, používá osobní placený účet u komerční služby. To není detail — mění to všechno, co následuje.
+    </p>
+
+    <div class="facts">
+      <div class="fact">
+        <h3>Žádná smlouva</h3>
+        <p>Mezi úřadem a poskytovatelem služby neexistuje zpracovatelská smlouva. Osobní účet běží na spotřebitelských podmínkách, které s takovým použitím nepočítají.</p>
+      </div>
+      <div class="fact">
+        <h3>Žádný přehled</h3>
+        <p>Úřad neví, co do nástrojů chodí, nemá záznam a nemůže to auditovat. Odpovědnost tím nemizí — jen se přesouvá na jednotlivce.</p>
+      </div>
+      <div class="fact">
+        <h3>Žádná pravidla</h3>
+        <p>Když instituce hranici nenakreslí, nakreslí si ji každý sám a jinak. To není nekázeň, to je předvídatelný důsledek.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-top:20px;">
+      <span class="d-label">Čtěte, prosím, pozorně</span>
+      <p>
+        <strong>Tato stránka není povolení.</strong> Nedává souhlas s používáním osobních účtů na pracovní obsah a nenahrazuje interní pravidla, která zatím neexistují. Je to <strong>snížení škod</strong> pro přechodné období, než bude k dispozici schválený nástroj.
+      </p>
+      <p>
+        Za nakládání s údaji odpovídá i nadále každý sám podle platných předpisů — zejména povinnosti mlčenlivosti a ochrany osobních údajů. Pokud si u konkrétního případu nejste jistí, ptejte se dřív, než něco vložíte do nástroje. <strong>Zpětně už to nejde vzít.</strong>
+      </p>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Restart</span> Co když jsem něco takového už udělal?</summary>
+      <div class="tip-body">
+        <p>
+          Pravděpodobně ano, a pravděpodobně jste u toho neměl pocit, že děláte něco špatně — protože nikdo neřekl, kde je hranice. <strong>Cílem téhle stránky není hledat viníky, ale nakreslit čáru, od které se dá jít dál.</strong>
+        </p>
+        <p>Praktický postup, pokud jste do nástroje vložil něco, co tam nepatřilo:</p>
+        <ul>
+          <li><strong>Nepanikařte a nezametejte to.</strong> Smazání konverzace situaci nevyřeší a znemožní ji posoudit.</li>
+          <li><strong>Zjistěte, o co konkrétně šlo</strong> — osobní údaje, obchodní tajemství žadatele, nebo předrozhodovací obsah? Každé má jiné důsledky.</li>
+          <li><strong>Řekněte to tomu, kdo v úřadu odpovídá za ochranu osobních údajů.</strong> Když se to řeší včas, je to incident. Když se to zjistí později odjinud, je to problém.</li>
+          <li><strong>Zkontrolujte nastavení účtu</strong> — u spotřebitelských tarifů bývá ve výchozím stavu zapnuté využití konverzací k dalšímu vývoji služby. Ověřte si aktuální stav u svého nástroje a vypněte to.</li>
+        </ul>
+        <p>
+          A hlavně: tohle je přesně ten argument, proč úřad potřebuje vlastní nástroj. Nesnažte se to vyřešit větší opatrností jednotlivců — to dlouhodobě nefunguje.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Jedna otázka, která rozhodne</h2>
+    <p class="section-lead">
+      Nepotřebujete tabulku kategorií ani seznam zakázaných dokumentů. Potřebujete jeden test, který si zapamatujete a pustíte na cokoli — a shodou okolností ho jako regulátor už umíte.
+    </p>
+
+    <div class="test-box">
+      <p class="test-q">Prošlo by tohle <em>redakcí, kterou děláte před zveřejněním hodnoticí zprávy?</em></p>
+      <div class="test-body">
+        <p>
+          Když ano, může to do nástroje. Když ne, nesmí. Žádná třetí možnost.
+        </p>
+        <p>
+          Test funguje proto, že se neopírá o nové znalosti, ale o instinkt, který už máte zažitý. Hodnoticí zpráva se podle nařízení zveřejňuje <strong>až po odstranění obchodně důvěrných informací</strong> — a vy přesně tohle odstraňování běžně děláte. Jen ho teď aplikujete o krok dřív: ne před publikací, ale před vložením do nástroje.
+        </p>
+        <p>
+          Praktický převod: <strong>co je už veřejné, nebo co by veřejné klidně být mohlo, jde dovnitř. Cokoli, co držíte proto, že vám to někdo svěřil, zůstává venku.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Branka, ne váha</h2>
+    <p class="section-lead">
+      Tady se nejčastěji chybuje — a je to chyba, proti které se lidé instinktivně brání větou „však já si to pak zkontroluju". Nezkontrolujete. Ne proto, že byste to neuměli, ale proto, že kontrola míří na jiné místo.
+    </p>
+
+    <div class="gatecmp">
+      <div class="gc-card is-scale">
+        <span class="gc-tag">Osa · dá se vyvážit</span>
+        <h3>Kvalita výstupu</h3>
+        <p>
+          Tuhle stranu řeší <a href="6.1-vhodnost-ukolu.html">filtr vhodnosti</a>: snese úkol draft ke kontrole? Poznám chybu, když nastane?
+        </p>
+        <p>
+          Když je odpověď slabší, dá se to <strong>kompenzovat</strong> — pečlivějším ověřením, kratšími kroky, porovnáním se zdrojem. Riziko se dá stlačit prací navíc.
+        </p>
+      </div>
+      <div class="gc-card is-gate">
+        <span class="gc-tag">Branka · vyvážit nejde</span>
+        <h3>Přípustnost vstupu</h3>
+        <p>
+          Tuhle stranu řeší tahle stránka. A tady <strong>žádná pečlivost nepomůže</strong>, protože k úniku nedojde ve chvíli, kdy odpovědi uvěříte — ale ve chvíli, kdy stisknete Enter.
+        </p>
+        <p>
+          Když vložíte dokumentaci žadatele a pak výstup poctivě zkontrolujete, pořád jste ji vložil. Kontrola výstupu neodvolá odeslání vstupu.
+        </p>
+      </div>
+    </div>
+
+    <div class="pair-note" style="margin-top:16px;">
+      <strong>Pořadí je proto pevné:</strong> nejdřív branka, teprve potom filtr vhodnosti. Úkol, který neprojde brankou, nemá smysl posuzovat na vhodnost — je jedno, jak dobře by ho AI zvládla.
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Stejný úkol, dvě verze</h2>
+    <p class="section-lead">
+      Nejzrádnější na tom je, že bezpečná a nebezpečná varianta vypadají z uživatelského pohledu identicky. Obojí je „shrnutí dokumentu". Rozdíl není v úkonu, ale v tom, čí je ten dokument. Klikněte na typ úkolu.
+    </p>
+
+    <div class="pair-wrap">
+      <div class="pair-tabs" id="pair-tabs">
+        <button class="pair-tab active" data-p="summary">Shrnutí</button>
+        <button class="pair-tab" data-p="translate">Překlad</button>
+        <button class="pair-tab" data-p="check">Kontrola úplnosti</button>
+        <button class="pair-tab" data-p="search">Dotaz na fakt</button>
+        <button class="pair-tab" data-p="notes">Poznámky z jednání</button>
+      </div>
+
+      <div class="pair-same"><span>Úkol, jak ho vnímá uživatel</span><span id="pair-same-text" style="color:var(--ink);font-size:13.6px;display:inline;letter-spacing:0;font-family:'Inter',sans-serif;text-transform:none;"></span></div>
+
+      <div class="pair-grid">
+        <div class="pair-side ok">
+          <span class="pair-verdict">Projde</span>
+          <h4 id="ok-title"></h4>
+          <p id="ok-body"></p>
+        </div>
+        <div class="pair-side bad">
+          <span class="pair-verdict">Neprojde</span>
+          <h4 id="bad-title"></h4>
+          <p id="bad-body"></p>
+        </div>
+      </div>
+
+      <div class="pair-note" id="pair-note"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co brankou projde</h2>
+    <p class="section-lead">
+      Zbývá toho víc, než se čeká. Následující použití jsou s osobním účtem v pořádku, protože do nástroje nejde nic, co by nesmělo ven — a zároveň pokrývají většinu reálného užitku.
+    </p>
+
+    <div class="cat">
+      <div class="cat-item star">
+        <div class="cat-head">
+          <h3>Skripty a pomocné programy</h3>
+          <span class="cat-badge">Největší nevyužitý potenciál</span>
+        </div>
+        <p>
+          Klíčový trik, na kterém to celé stojí: <strong>skript se píše proti popisu struktury, ne proti datům.</strong> Řeknete „mám tabulku se sloupci kód balení, počet, ATC kód, datum — napiš mi kontrolu, která najde duplicity a chybějící kódy". Dovnitř nešla ani jedna řádka reálných dat. Skript si stáhnete a spustíte lokálně na ostrých datech, o kterých se model nikdy nedozví.
+        </p>
+        <p>Tím se otevírá agenda, která by jinak byla nedostupná:</p>
+        <ul class="cat-list">
+          <li>kontrola úplnosti a duplicit v hlášeních distributorů před odesláním dál</li>
+          <li>příprava a kontrola formátu dat pro unijní databáze</li>
+          <li>křížové porovnání dvou seznamů a hledání toho, co se rozešlo</li>
+          <li>vytažení strukturovaných údajů z většího množství PDF do přehledové tabulky</li>
+          <li>jednoduchá statistika a hledání anomálií nad daty, která máte</li>
+          <li>kontrola, jestli odkazy v dokumentu ještě fungují</li>
+        </ul>
+        <p style="margin-top:10px;">
+          <strong>Nulová expozice, plná hodnota.</strong> A je to zároveň část, kterou lidé sami od sebe neobjeví, protože „programování" zní jako něco pro IT oddělení. Není — popisujete strukturu česky a dostanete nástroj.
+        </p>
+      </div>
+
+      <div class="cat-item">
+        <div class="cat-head"><h3>Veřejné dokumenty</h3></div>
+        <p>
+          Zveřejněné hodnoticí zprávy, souhrny údajů o registrovaných přípravcích, pokyny a guidelines, legislativa, Věstník, dokumenty evropských agentur. Veřejné z definice — shrnutí, překlad, orientace, vysvětlení, porovnání dvou verzí. Bez váhání.
+        </p>
+      </div>
+
+      <div class="cat-item">
+        <div class="cat-head"><h3>Váš vlastní text bez cizích údajů</h3></div>
+        <p>
+          Vaše poznámky, vaše argumentace, struktura dokumentu, formulace, které teprve vznikají ve vaší hlavě. Přeformulování, zestručnění, kontrola srozumitelnosti, převod pro jiné publikum.
+        </p>
+      </div>
+
+      <div class="cat-item">
+        <div class="cat-head"><h3>Adversariální režim</h3></div>
+        <p>
+          Podceňovaný a přitom nejlepší poměr užitku a rizika. „Jaké námitky by proti takovéhle argumentaci šly vznést?" „Co v tomhle výčtu chybí?" „Najdi slabá místa." Bezpečné je to proto, že model generuje <strong>kandidáty, které posuzujete vy</strong> — falešný poplach stojí minutu, ale občas to chytí něco reálného.
+        </p>
+        <p>
+          Podmínka: formulujte to <strong>obecně</strong>. Popíšete typ problému, ne konkrétní spis.
+        </p>
+      </div>
+
+      <div class="cat-item">
+        <div class="cat-head"><h3>Učení a orientace</h3></div>
+        <p>
+          Vysvětlení odborné oblasti, ve které nejste doma — stabilitní data, farmakokinetika, statistická metoda, cizí část agendy. Veřejné znalosti, žádný citlivý vstup. Pozor jen na to, že vysvětlení principu je něco jiného než konkrétní číslo nebo ustanovení; to si ověřte u zdroje.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Tvrdé hranice</h2>
+    <p class="section-lead">
+      Bez výjimek a bez „jenom kousku". Jakmile se připustí částečná verze, pravidlo přestane fungovat — protože hranici mezi kouskem a celkem si pak každý posune sám.
+    </p>
+
+    <div class="limits">
+      <div class="limit">
+        <h4>Registrační dokumentace</h4>
+        <p>Obsahuje obchodní tajemství žadatele. Není vaše — držíte ji pod povinností mlčenlivosti. V žádném rozsahu, ani „jen ta jedna tabulka".</p>
+      </div>
+      <div class="limit">
+        <h4>Hlášení nežádoucích účinků</h4>
+        <p>Osobní údaje hlásitele i identifikovatelné údaje o chovu. Navíc jde o data, jejichž důvěryhodnost stojí na tom, že se s nimi nakládá předvídatelně.</p>
+      </div>
+      <div class="limit">
+        <h4>Inspekční zjištění před uzavřením</h4>
+        <p>Identifikuje konkrétní subjekt a má pro něj přímé důsledky. Do uzavření a zveřejnění zůstává uvnitř.</p>
+      </div>
+      <div class="limit">
+        <h4>Návrhy rozhodnutí a rozpracovaná posouzení</h4>
+        <p>Předrozhodovací obsah, který navíc skoro vždy obsahuje údaje žadatele. Hotové a zveřejněné je něco jiného než rozepsané.</p>
+      </div>
+      <div class="limit">
+        <h4>Cokoli se jménem</h4>
+        <p>Jméno hlásitele, chovatele, veterinárního lékaře, zaměstnance inspektovaného subjektu. Nejjednodušší pravidlo z celého seznamu a nejčastěji porušené.</p>
+      </div>
+      <div class="limit">
+        <h4>Neveřejná komunikace v evropské síti</h4>
+        <p>Podklady a korespondence, které kolují mezi členskými státy v neveřejném režimu, se veřejnými nestávají tím, že je máte v mailu.</p>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Hraniční případ</span> „Ale já to anonymizuju"</summary>
+      <div class="tip-body">
+        <p>
+          Rozumný nápad, který ale v praxi selhává častěji, než se čeká — a to ze dvou důvodů.
+        </p>
+        <p>
+          <strong>Zaprvé, obchodní tajemství se anonymizovat nedá.</strong> U osobních údajů dává smysl škrtnout jméno. Ale složení přípravku, výrobní postup nebo výsledky studií jsou důvěrné samy o sobě, bez ohledu na to, čí jsou. Vymazání názvu firmy z toho neveřejný dokument neudělá — a často je původce stejně poznat z obsahu.
+        </p>
+        <p>
+          <strong>Zadruhé, anonymizace se dělá ve spěchu a nekompletně.</strong> Škrtnete jméno v záhlaví a přehlédnete ho v třetím odstavci, v popisce tabulky nebo v názvu souboru. Redakce před zveřejněním má proto formální postup a víc než jeden pár očí; rychlé přepsání před vložením do chatu ne.
+        </p>
+        <p>
+          Použitelná varianta existuje, ale je jiná: <strong>nepracujte s upraveným originálem, ale s vlastním abstraktním popisem.</strong> Místo vložení dokumentu popíšete situaci obecně — „mám posouzení, kde se rozchází ochranná lhůta uvedená ve dvou částech dokumentace; jak takový rozpor systematicky prověřit". Žádná data, plná odpověď.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Jedna otázka, jedno pořadí, jeden vzorec pro to nejužitečnější použití. Zbytek si dopočítáte.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Ptejte se na vstup, ne na úkol.</strong> Prošlo by to redakcí před zveřejněním hodnoticí zprávy? Když ano, jde to dovnitř. Když ne, nesmí — a je jedno, jak užitečné by to bylo.
+      </div>
+      <div class="takeaway-card">
+        <strong>Branka je před filtrem.</strong> Nejdřív přípustnost vstupu, teprve pak vhodnost úkolu. Co neprojde brankou, nemá smysl posuzovat dál.
+      </div>
+      <div class="takeaway-card">
+        <strong>Ověřením se to nedožene.</strong> Únik nastává při vložení, ne při uvěření. „Však já si to zkontroluju" řeší úplně jiný problém než ten, o který tady jde.
+      </div>
+      <div class="takeaway-card">
+        <strong>Skript se píše proti struktuře, ne proti datům.</strong> Popíšete, jak tabulka vypadá, a dostanete nástroj, který spustíte doma na ostrých datech. Nulová expozice, největší užitek.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 6 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Popisuje přechodné řešení pro období, kdy úřad nemá vlastní schválený AI nástroj; nenahrazuje interní pravidla ani právní posouzení.</em>
+  </footer>
+
+</main>
+
+<script>
+/* ── Dvojice případů ────────────────────────────────── */
+const pairs = {
+  summary: {
+    same: 'Nech si shrnout dlouhý dokument do deseti bodů.',
+    ok: {
+      t: 'Zveřejněná hodnoticí zpráva',
+      b: 'Dokument je veřejný, kdokoli si ho může stáhnout. Vložením do nástroje nevzniká žádná nová expozice. Shrnutí si pak ověříte proti originálu, který máte po ruce.'
+    },
+    bad: {
+      t: 'Zpráva, kterou právě píšete',
+      b: 'Obsahuje neredigované údaje žadatele a je to předrozhodovací materiál. Že jde o „stejný typ dokumentu" nehraje roli — rozhoduje, že tenhle konkrétní ještě neprošel redakcí.'
+    },
+    note: '<strong>Nejzrádnější dvojice ze všech.</strong> Uživatel v obou případech dělá naprosto identický úkon a rozdíl je pouhým okem neviditelný. Právě proto musí být branka vědomý krok, ne pocit.'
+  },
+  translate: {
+    same: 'Přelož mi tenhle anglický dokument do češtiny.',
+    ok: {
+      t: 'Guideline evropské agentury',
+      b: 'Veřejný dokument, překlad je legitimní pomoc. Jen pozor na výstup: odbornou terminologii porovnejte se schválenými českými vzory, ne s vlastním dojmem — v tomhle oboru je názvosloví právně nosné.'
+    },
+    bad: {
+      t: 'Korespondence s jiným členským státem',
+      b: 'Neveřejná komunikace v rámci sítě. To, že je v angličtině a technická, z ní veřejný dokument nedělá. Totéž platí pro podklady kolující mezi orgány v neveřejném režimu.'
+    },
+    note: '<strong>Překlad je bezpečný vstup, ale rizikový výstup.</strong> Branku většinou projde — a pak nastupuje ověřování terminologie, tedy druhá polovina rozhodnutí.'
+  },
+  check: {
+    same: 'Zkontroluj, jestli mi v tom něco nechybí.',
+    ok: {
+      t: 'Abstraktní popis situace',
+      b: 'Popíšete typ problému vlastními slovy — „posuzuji dokumentaci tohoto typu, na co se u ní typicky zapomíná". Žádná data ven, a odpověď je stejně užitečná, protože jde o metodu, ne o obsah.'
+    },
+    bad: {
+      t: 'Vložený kus dokumentace',
+      b: 'Nejčastější reálný prohřešek a zároveň nejzávažnější. Obchodní tajemství žadatele opustí úřad výměnou za kontrolu, kterou lze pořídit i bez něj.'
+    },
+    note: '<strong>Tady je náhrada obzvlášť dobrá.</strong> Nebezpečná varianta nepřináší téměř žádnou výhodu oproti bezpečné — model vám k typu dokumentace řekne totéž, ať už do něj konkrétní spis vložíte, nebo ne.'
+  },
+  search: {
+    same: 'Který předpis tohle upravuje a co přesně říká?',
+    ok: {
+      t: 'Vstup čistý, výstup nespolehlivý',
+      b: 'Brankou projde bez problému — ptáte se na veřejné právo, nic citlivého neodesíláte. Riziko je jinde: model si ustanovení nebo číslo klidně vymyslí a zní to naprosto věrohodně.'
+    },
+    bad: {
+      t: 'Když odpověď rovnou použijete',
+      b: 'Použít citaci bez otevření primárního zdroje. Ověření tady stojí zhruba tolik co dohledání od začátku, takže se přeskakuje — a přesně proto se tudy do dokumentů dostávají chyby.'
+    },
+    note: '<strong>Jediná dvojice, kde branka není problém.</strong> Ukazuje, že obě otázky jsou nezávislé: čistý vstup nezaručuje spolehlivý výstup. Tuhle stranu řeší <a href="6.1-vhodnost-ukolu.html">filtr vhodnosti</a> a setkání o ověřování.'
+  },
+  notes: {
+    same: 'Udělej mi z nahrávky nebo poznámek zápis.',
+    ok: {
+      t: 'Vaše vlastní poznámky, obecné téma',
+      b: 'Ručně psané body z odborné diskuse bez jmen a bez konkrétních spisů. Přepis do souvislého textu je čistě jazyková práce nad vaším vlastním materiálem.'
+    },
+    bad: {
+      t: 'Nahrávka jednání',
+      b: 'Obsahuje hlasy a jména účastníků, kteří k tomu nedali souhlas, a často i projednávané konkrétní případy. Přepisovací nástroje navíc zvuk zpravidla nahrávají na server poskytovatele.'
+    },
+    note: '<strong>Pozor na nástroje, které nahrávají „na pozadí".</strong> U přepisu řeči a automatických zápisů z porad se vstup odesílá i tehdy, když máte pocit, že jen zapínáte diktafon.'
+  }
+};
+
+const pairTabs = document.querySelectorAll('.pair-tab');
+const pSame = document.getElementById('pair-same-text');
+const okT = document.getElementById('ok-title');
+const okB = document.getElementById('ok-body');
+const badT = document.getElementById('bad-title');
+const badB = document.getElementById('bad-body');
+const pNote = document.getElementById('pair-note');
+
+function renderPair(key) {
+  const p = pairs[key];
+  pSame.textContent = p.same;
+  okT.textContent = p.ok.t;
+  okB.textContent = p.ok.b;
+  badT.textContent = p.bad.t;
+  badB.textContent = p.bad.b;
+  pNote.innerHTML = p.note;
+  pairTabs.forEach(b => b.classList.toggle('active', b.dataset.p === key));
+}
+
+pairTabs.forEach(btn => btn.addEventListener('click', () => renderPair(btn.dataset.p)));
+renderPair('summary');
+
+/* ── Read progress + reveal ─────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

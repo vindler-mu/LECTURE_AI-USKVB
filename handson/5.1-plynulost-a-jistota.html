@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Plynulost a jistota</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #a04a4a; --accent-hover: #7d3838; --accent-soft: #f5e6e6;
+    --green: #4a7c59; --green-soft: #e7f0ea;
+    --warm: #b5651d; --warm-soft: #fbf3e7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+  .builds { margin-top: 14px; font-size: 12.8px; color: var(--muted); font-style: italic; max-width: 760px; }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── TŘI PŘÍČINY ────────────────────────────────────── */
+  .causes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .causes { grid-template-columns: 1fr; } }
+  .cause-card {
+    background: var(--paper); border: 1px solid var(--line);
+    border-top: 3px solid var(--accent); padding: 20px 22px;
+  }
+  .cause-card .c-from {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+    display: block; margin-bottom: 10px; opacity: 0.8;
+  }
+  .cause-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px;
+    font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.25;
+  }
+  .cause-card p { font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 10px; }
+  .cause-card p:last-child { margin-bottom: 0; }
+  .cause-card .c-quote {
+    font-size: 12.8px; line-height: 1.55; color: var(--accent-hover);
+    border-left: 2px solid var(--accent); padding-left: 12px; font-style: italic;
+  }
+
+  /* ── TYPOLOGIE VÝSTUPŮ ──────────────────────────────── */
+  .ty-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .ty-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ty-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .ty-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .ty-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .ty-panel { background: var(--bg); border: 1px solid var(--line); padding: 20px 22px; }
+  .ty-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .ty-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    padding: 5px 12px; color: #fff; letter-spacing: 0.4px;
+  }
+  .ty-badge.ok { background: var(--green); }
+  .ty-badge.mid { background: var(--warm); }
+  .ty-badge.bad { background: var(--accent); }
+  .ty-head .ty-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 700; color: var(--ink);
+  }
+  .ty-sample {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.4px; line-height: 1.65;
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--line-strong);
+    padding: 13px 16px; margin-bottom: 14px; color: var(--ink-soft);
+  }
+  .ty-rows { border-top: 1px solid var(--line); }
+  .ty-row {
+    display: grid; grid-template-columns: 120px 1fr; gap: 16px;
+    padding: 11px 0; border-bottom: 1px solid var(--line); align-items: start;
+  }
+  @media (max-width: 620px) { .ty-row { grid-template-columns: 1fr; gap: 3px; } }
+  .ty-row .ty-k {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; padding-top: 2px;
+  }
+  .ty-row .ty-v { font-size: 13.3px; line-height: 1.6; color: var(--ink-soft); }
+  .ty-row .ty-v strong { color: var(--ink); }
+
+  /* ── STABILITA ──────────────────────────────────────── */
+  .stab { border: 1px solid var(--line); }
+  .stab-row {
+    display: grid; grid-template-columns: 190px 1fr 90px; gap: 0;
+    border-bottom: 1px solid var(--line); align-items: center;
+  }
+  .stab-row:last-child { border-bottom: none; }
+  @media (max-width: 700px) { .stab-row { grid-template-columns: 1fr; } }
+  .stab-row .s-lbl {
+    padding: 14px 18px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase; font-weight: 600;
+    border-right: 1px solid var(--line);
+  }
+  @media (max-width: 700px) { .stab-row .s-lbl { border-right: none; padding-bottom: 2px; } }
+  .stab-row .s-txt { padding: 14px 18px; font-size: 13.3px; line-height: 1.55; color: var(--ink-soft); }
+  .stab-row .s-tag {
+    padding: 14px 18px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.8px; text-transform: uppercase; font-weight: 600; text-align: right;
+  }
+  @media (max-width: 700px) { .stab-row .s-tag { text-align: left; padding-top: 0; } }
+  .stab-row.lv1 { background: var(--green-soft); }
+  .stab-row.lv1 .s-lbl, .stab-row.lv1 .s-tag { color: var(--green); }
+  .stab-row.lv2 { background: #f1f5f2; }
+  .stab-row.lv2 .s-lbl, .stab-row.lv2 .s-tag { color: var(--green); }
+  .stab-row.lv3 { background: var(--warm-soft); }
+  .stab-row.lv3 .s-lbl, .stab-row.lv3 .s-tag { color: var(--warm); }
+  .stab-row.lv4 { background: var(--accent-soft); }
+  .stab-row.lv4 .s-lbl, .stab-row.lv4 .s-tag { color: var(--accent); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  .footnote {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; line-height: 1.65;
+    color: var(--muted); margin-top: 14px; max-width: 860px;
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .next-card {
+    margin-top: 28px; background: var(--accent-soft); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); padding: 16px 20px;
+  }
+  .next-card .nc-lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; display: block; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.4px; line-height: 1.6; color: var(--ink-soft); }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 5 · Hands-on</p>
+    <h1>Proč se to <em>nepozná</em> z textu</h1>
+    <p class="hero-subtitle">
+      Kdyby chybný výstup vypadal jako chybný, žádné kritické myšlení bychom nepotřebovali. Jenže text z AI je hladký a sebejistý bez ohledu na to, jestli je pravdivý — a to není náhoda ani porucha. Jsou to tři konkrétní vlastnosti, které jsme probrali každou zvlášť. Tady se poskládají dohromady.
+    </p>
+    <div class="definition">
+      <strong>Plynulost je výchozí stav, ne signál správnosti.</strong> Hladká, dobře strukturovaná a sebevědomě znějící odpověď je to, co model produkuje <em>vždycky</em>. Nenese proto žádnou informaci o tom, jestli je obsah pravdivý — a právě proto ji nelze použít jako kritérium.
+    </div>
+    <p class="builds">
+      Skládá dohromady tři věci ze setkání 2 a 3: pravděpodobnostní generování (3.1), vliv doladění na tón (2.3) a chybějící vztah k realitě (2.4). Nová látka tu není žádná; nový je způsob, jak to zapadá do sebe.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Tři příčiny, jedna společná vlastnost</h2>
+    <p class="section-lead">
+      Každá z těch tří vlastností by sama o sobě stačila k tomu, aby tón odpovědi nebyl vodítkem. Dohromady dělají z plynulosti naprosto spolehlivý jev — a z pravdivosti jev na ní nezávislý.
+    </p>
+
+    <div class="causes">
+      <div class="cause-card">
+        <span class="c-from">Ze setkání 3 · strana 3.1</span>
+        <h3>Model musí vybrat další slovo</h3>
+        <p>Generování je výběr z pravděpodobnostního rozdělení, slovo po slovu. Když pro tvrzení není v datech opora, model se nezastaví — vybere nejpravděpodobnější pokračování a jede dál.</p>
+        <p class="c-quote">Cílem je plynulé pokračování, ne pravdivé pokračování. Ne proto, že by věděl. Proto, že musí vybrat token.</p>
+      </div>
+      <div class="cause-card">
+        <span class="c-from">Ze setkání 2 · strana 2.3</span>
+        <h3>Sebejistý tón byl odměňován</h3>
+        <p>Při doladění hodnotitelé preferovali odpovědi, které zněly jistě a užitečně, před těmi, které přiznávaly nejistotu. Pokyn „buď užitečný" tak systematicky přebíjí „přiznej, že nevíš".</p>
+        <p class="c-quote">Navíc jsou i&nbsp;trénovací data psaná jistým tónem — encyklopedie, manuály, odborné texty. Věty vyjadřující pochybnost jsou v&nbsp;menšině.</p>
+      </div>
+      <div class="cause-card">
+        <span class="c-from">Ze setkání 2 · strana 2.4</span>
+        <h3>Nemá s čím větu porovnat</h3>
+        <p>Model pracuje se vztahy mezi znaky, ne se vztahem znaků ke skutečnosti. Nemá zkušenost, o kterou by své tvrzení opřel, ani způsob, jak si ho ověřit zevnitř.</p>
+        <p class="c-quote">Plynulost odpovědi není zárukou platnosti. AI nemá s&nbsp;čím porovnat své věty.</p>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> Proto nepomůže zeptat se „jsi si jistý?"</summary>
+      <div class="tip-body">
+        <p>Model nemá vnitřní měřidlo pravdivosti, které by šlo odečíst. Jeho „jistota" je měřitelná jen na úrovni výběru dalšího slova — jak <em>překvapivé</em> to slovo bylo — nikoli na úrovni faktického obsahu. <strong>Kalibrovaný verifikační systém pravdivosti uvnitř modelu neexistuje.</strong></p>
+        <p>Doptávání navíc funguje jako nátlak: na otázku „opravdu si tím stojíš?" model často <strong>ustoupí a změní pozici, aniž by získal jakoukoli novou informaci</strong>. Změna odpovědi tedy není známkou opravy — je to jen reakce na tón vašeho dotazu.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Pět podob jednoho hladkého textu</h2>
+    <p class="section-lead">
+      Chybný výstup nemá jednu podobu. Rozdíl mezi nimi není v mechanismu — ten je pořád stejný — ale v tom, <em>jak chybu poznáte</em>. To je celý praktický smysl toho rozlišení. Klikněte na typ.
+    </p>
+
+    <div class="ty-wrap">
+      <div class="ty-tabs" id="ty-tabs">
+        <button class="ty-tab active" data-ty="true">Pravdivé</button>
+        <button class="ty-tab" data-ty="partial">Zčásti pravdivé</button>
+        <button class="ty-tab" data-ty="specul">Plausibilní spekulace</button>
+        <button class="ty-tab" data-ty="halu">Halucinace</button>
+        <button class="ty-tab" data-ty="konfab">Konfabulace</button>
+      </div>
+
+      <div class="ty-panel">
+        <div class="ty-head">
+          <span class="ty-badge" id="ty-badge"></span>
+          <span class="ty-name" id="ty-name"></span>
+        </div>
+        <div class="ty-sample" id="ty-sample"></div>
+        <div class="ty-rows" id="ty-rows"></div>
+      </div>
+    </div>
+
+    <p class="footnote">
+      Ukázky jsou smyšlené a slouží jen k rozlišení typů; nejde o tvrzení o skutečných přípravcích ani předpisech. Typologie navazuje na stranu 2.4 a rozlišení halucinace/konfabulace ze strany 3.1.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Čemu z výstupu věřit nejvíc a čemu nejmíň</h2>
+    <p class="section-lead">
+      Když už tón nepomůže, potřebujeme jiné vodítko. Tím je typ obsahu: různé vrstvy výstupu mají velmi rozdílnou spolehlivost. Čtěte odshora dolů jako klesající důvěru.
+    </p>
+
+    <div class="stab">
+      <div class="stab-row lv1">
+        <div class="s-lbl">Forma a struktura</div>
+        <div class="s-txt">Členění, nadpisy, formát tabulky, styl a délka. Model požadovaný tvar drží spolehlivě.</div>
+        <div class="s-tag">Nejstabilnější</div>
+      </div>
+      <div class="stab-row lv2">
+        <div class="s-lbl">Smysl a vyznění</div>
+        <div class="s-txt">O čem text je, jaká je hlavní myšlenka, jestli je závěr kladný nebo záporný. Obvykle sedí.</div>
+        <div class="s-tag">Dost stabilní</div>
+      </div>
+      <div class="stab-row lv3">
+        <div class="s-lbl">Formulace a příklady</div>
+        <div class="s-txt">Konkrétní věty, pořadí bodů, zvolené příklady. Při každém spuštění jiné — což samo o sobě nevadí.</div>
+        <div class="s-tag">Variabilní</div>
+      </div>
+      <div class="stab-row lv4">
+        <div class="s-lbl">Fakta a čísla</div>
+        <div class="s-txt">Konkrétní údaje, data, lhůty, čísla ustanovení, citace, jména, odkazy. Rozptyl je největší a chybuje se tu nejčastěji.</div>
+        <div class="s-tag">Nejméně stabilní</div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Nejrizikovější je přesně to, co z výstupu nejčastěji přebíráme</summary>
+      <div class="tip-body">
+        <p>Spodní řádek tabulky je zároveň to, kvůli čemu se AI ptáme nejčastěji: <strong>čísla, lhůty, ustanovení, citace</strong>. U těchto údajů je pravděpodobnostní rozdělení extrémně široké — pro pokračování „ochranná lhůta činí…" existují desítky stejně plausibilních čísel a model musí jedno tipnout.</p>
+        <p>Praktický důsledek: čím konkrétnější a přesnější údaj potřebujete, tím dřív se vyplatí jít rovnou do zdroje. <strong>AI použijte na to, abyste se ve zdroji zorientovali — ne jako zdroj sám.</strong></p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Cílem téhle strany není nedůvěřovat AI. Je jím přestat používat dojem z textu jako měřítko a nahradit ho něčím, co funguje.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Plynulý ≠ pravdivý.</strong> Hladkost je výchozí stav, ne signál správnosti. „Zní to dobře" není kvalitativní kritérium.
+      </div>
+      <div class="takeaway-card">
+        <strong>Sebejistota není kalibrovaná na pravdu.</strong> Model nemá vnitřní měřidlo pravdivosti. Tón odpovědi vám neřekne, čemu věřit.
+      </div>
+      <div class="takeaway-card">
+        <strong>Rozdíl je v tom, jak chybu poznáte.</strong> Halucinace je vymyšlená celá, konfabulace míchá skutečné prvky do nepravdivé kombinace — a proto se odhaluje hůř.
+      </div>
+      <div class="takeaway-card">
+        <strong>Věřte tvaru, ověřujte čísla.</strong> Struktura a vyznění bývají v pořádku. Konkrétní údaje, lhůty a odkazy jsou nejméně stabilní vrstva výstupu.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <span class="nc-lbl">Navazuje · strana 5.3</span>
+      <p>Když tón nepomůže a nejrizikovější jsou zrovna konkrétní údaje, potřebujeme postup, který se na dojem nespoléhá vůbec. To je rutina ověření ve čtyřech krocích — jedna karta na jakýkoli výstup.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 5 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Skládá dohromady mechanismy vyložené v setkáních 2 a 3.</em>
+  </footer>
+
+</main>
+
+<script>
+/* ── Typologie výstupů ──────────────────────────────── */
+const types = {
+  true: {
+    cls: 'ok', name: 'Pravdivé tvrzení',
+    sample: '„Ochranná lhůta se stanovuje zvlášť pro maso a pro mléko."',
+    rows: {
+      'Jak vzniká': 'Tvrzení má v trénovacích datech silnou a konzistentní oporu — opakuje se napříč mnoha zdroji ve stejné podobě.',
+      'Jak poznáte': '<strong>Z textu nijak.</strong> Vypadá úplně stejně jako všechny ostatní typy níže. To je celé jádro problému.',
+      'Co s tím': 'U obecného principu, který znáte, můžete pokračovat. U čehokoli, co ponese následek, stejně ověřujete.'
+    }
+  },
+  partial: {
+    cls: 'mid', name: 'Zčásti pravdivé',
+    sample: '„Ochranná lhůta se stanovuje pro maso a mléko a řídí se limitem stanoveným pro danou látku."',
+    rows: {
+      'Jak vzniká': 'Model spojí dvě věci, které spolu souvisí, ale nejsou totéž — a spojení vypadá logicky.',
+      'Jak poznáte': 'Nejtěžší typ. Většina věty sedí, takže ostražitost klesne a chybná část projde s ní. <strong>Souhlas s částí textu se přelije na celek.</strong>',
+      'Co s tím': 'Rozeberte souvětí na jednotlivá tvrzení a ověřujte je zvlášť. To, co je pravda o&nbsp;jednom, nemusí platit o&nbsp;druhém.'
+    }
+  },
+  specul: {
+    cls: 'mid', name: 'Plausibilní spekulace',
+    sample: '„Posouzení tohoto typu žádosti bývá obvykle rychlejší, protože dokumentace je menší."',
+    rows: {
+      'Jak vzniká': 'Model doplní, co „by tam mělo být" — vyplní mezeru obecnou praxí, když konkrétní odpověď v podkladech nenajde.',
+      'Jak poznáte': 'Podle slov jako <em>obvykle, zpravidla, bývá</em> — a podle chybějícího zdroje. Zní to rozumně, protože to rozumné je; jen to není doložené.',
+      'Co s tím': 'Kvalitní odpověď zní: <strong>„v podkladu se to přímo neuvádí"</strong>. Když místo toho dostanete plynulé zobecnění, je to signál k ověření.'
+    }
+  },
+  halu: {
+    cls: 'bad', name: 'Halucinace',
+    sample: '„Podle studie Nováka a kol. (2021) v Veterinary Research Journal činil rozdíl 18 %."',
+    rows: {
+      'Jak vzniká': 'Zcela vymyšlený údaj — neexistující studie, autor, ustanovení. Model musel vybrat pokračování a v datech neměl oporu, tak vytvořil věrohodně vypadající tvar.',
+      'Jak poznáte': 'Relativně dobře — <strong>ověřením nic nenajdete</strong>. Studie, paragraf ani autor prostě neexistují. Práce je v tom si na ověření vzpomenout.',
+      'Co s tím': 'Vyhledat zdroj. Když neexistuje, tvrzení padá celé — není co zachraňovat.'
+    }
+  },
+  konfab: {
+    cls: 'bad', name: 'Konfabulace',
+    sample: '„Podle nařízení (EU) 2019/6, čl. 41, se ochranná lhůta uvádí v souhrnu údajů o přípravku."',
+    rows: {
+      'Jak vzniká': 'Skutečné prvky v nepravdivé kombinaci: existující předpis, existující požadavek — ale <strong>chybné číslo článku</strong>. Reálný autor u cizí publikace, správný zákon s chybným paragrafem.',
+      'Jak poznáte': '<strong>Nejhůř ze všech.</strong> Ověření na první pohled projde: předpis existuje, téma sedí, odkaz funguje. Chyba je až v detailu, na který se musíte cíleně podívat.',
+      'Co s tím': 'Nestačí ověřit, že zdroj existuje. Musíte v něm <strong>najít přesně to tvrzení</strong> — otevřít článek a přečíst, co v něm doopravdy stojí.'
+    }
+  }
+};
+
+const tyTabs = document.querySelectorAll('.ty-tab');
+const tyBadge = document.getElementById('ty-badge');
+const tyName = document.getElementById('ty-name');
+const tySample = document.getElementById('ty-sample');
+const tyRows = document.getElementById('ty-rows');
+
+const badgeLabel = { ok: 'V pořádku', mid: 'Zrádné', bad: 'Chyba' };
+
+function renderType(key) {
+  const t = types[key];
+  tyBadge.textContent = badgeLabel[t.cls];
+  tyBadge.className = 'ty-badge ' + t.cls;
+  tyName.textContent = t.name;
+  tySample.textContent = t.sample;
+  tyRows.innerHTML = Object.entries(t.rows).map(([k, v]) =>
+    '<div class="ty-row"><div class="ty-k">' + k + '</div><div class="ty-v">' + v + '</div></div>'
+  ).join('');
+  tyTabs.forEach(b => b.classList.toggle('active', b.dataset.ty === key));
+}
+
+tyTabs.forEach(btn => btn.addEventListener('click', () => renderType(btn.dataset.ty)));
+renderType('true');
+
+/* ── Read progress + reveal ─────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Zkreslení na obou stranách</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #a04a4a; --accent-hover: #7d3838; --accent-soft: #f5e6e6;
+    --green: #4a7c59; --green-soft: #e7f0ea;
+    --warm: #b5651d; --warm-soft: #fbf3e7;
+    --machine: #2c5e6e; --machine-soft: #e4eef1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+  .builds { margin-top: 14px; font-size: 12.8px; color: var(--muted); font-style: italic; max-width: 760px; }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── DVĚ STRANY ─────────────────────────────────────── */
+  .sides { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .sides { grid-template-columns: 1fr; } }
+  .side-card { border: 1px solid var(--line); padding: 20px 22px; }
+  .side-card.machine { background: var(--machine-soft); border-top: 3px solid var(--machine); }
+  .side-card.human { background: var(--accent-soft); border-top: 3px solid var(--accent); }
+  .side-card .s-who {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 10px;
+  }
+  .side-card.machine .s-who { color: var(--machine); }
+  .side-card.human .s-who { color: var(--accent); }
+  .side-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px;
+    font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.3;
+  }
+  .side-card p { font-size: 13.2px; line-height: 1.62; color: var(--ink-soft); margin-bottom: 9px; }
+  .side-card p:last-child { margin-bottom: 0; }
+
+  /* ── PŘEHLED ZKRESLENÍ ──────────────────────────────── */
+  .bi-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .bi-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .bi-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+  }
+  .bi-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .bi-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .bi-panel { background: var(--bg); border: 1px solid var(--line); padding: 20px 22px; }
+  .bi-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .bi-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    padding: 5px 11px; color: #fff; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .bi-badge.m { background: var(--machine); }
+  .bi-badge.h { background: var(--accent); }
+  .bi-head .bi-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 700; color: var(--ink);
+  }
+  .bi-rows { border-top: 1px solid var(--line); }
+  .bi-row {
+    display: grid; grid-template-columns: 130px 1fr; gap: 16px;
+    padding: 11px 0; border-bottom: 1px solid var(--line); align-items: start;
+  }
+  @media (max-width: 620px) { .bi-row { grid-template-columns: 1fr; gap: 3px; } }
+  .bi-row .bi-k {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; padding-top: 2px;
+  }
+  .bi-row .bi-v { font-size: 13.3px; line-height: 1.6; color: var(--ink-soft); }
+  .bi-row .bi-v strong { color: var(--ink); }
+  .bi-counter {
+    margin-top: 14px; background: var(--green-soft); border-left: 3px solid var(--green);
+    padding: 12px 16px; font-size: 13.2px; line-height: 1.6; color: var(--ink-soft);
+  }
+  .bi-counter strong { color: var(--green); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  .footnote {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; line-height: 1.65;
+    color: var(--muted); margin-top: 14px; max-width: 860px;
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .next-card {
+    margin-top: 28px; background: var(--accent-soft); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); padding: 16px 20px;
+  }
+  .next-card .nc-lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; display: block; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.4px; line-height: 1.6; color: var(--ink-soft); }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 5 · Hands-on</p>
+    <h1>Zkreslení má <em>dvě</em> strany</h1>
+    <p class="hero-subtitle">
+      O zkreslení v datech jsme mluvili u toho, jak model vzniká. Jenže druhá polovina problému nesedí v modelu, ale u klávesnice: způsob, jakým se ptáme, čemu věnujeme pozornost a kdy přestaneme kontrolovat. Zkreslení na straně AI se dá popsat. Zkreslení na naší straně se musí umět <em>všimnout</em>.
+    </p>
+    <div class="definition">
+      <strong>Automation bias</strong> = sklon přijímat výstup automatizovaného systému snáz než tvrzení člověka, a přestat ho prověřovat právě proto, že přišel od stroje. Nejde o&nbsp;lenost ani o&nbsp;naivitu; je to doložený jev, který sílí s&nbsp;tím, jak často systém odpovídá správně.
+    </div>
+    <p class="builds">
+      Navazuje na galerii zkreslení v datech (2.2), sykofantství v promptu (3.2) a princip minimální námahy (4.0). Pojmenovává jev, který se v předchozích stranách opisoval, ale nedostal jméno.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Dva zdroje, které se navzájem zesilují</h2>
+    <p class="section-lead">
+      Kdyby působil jen jeden z nich, dal by se uhlídat. Nebezpečné je jejich spojení: model se přizpůsobuje tomu, co chceme slyšet, a my zrovna u toho, co slyšet chceme, kontrolujeme nejmíň.
+    </p>
+
+    <div class="sides">
+      <div class="side-card machine">
+        <span class="s-who">Na straně AI</span>
+        <h3>Model nese stopu svých dat a svého doladění</h3>
+        <p>Zkreslení v trénovacích datech není chyba v kódu, ale věrné zrcadlo toho, co se do modelu dostalo — a někdy zrcadlo, které stereotyp ještě zesílí oproti skutečné statistice.</p>
+        <p>K tomu se přidává <strong>sykofantství</strong>: doložená tendence dávat uživateli za pravdu. Když do dotazu vložíte svůj předpoklad, model spíš najde důvody pro něj než proti němu.</p>
+      </div>
+      <div class="side-card human">
+        <span class="s-who">Na naší straně</span>
+        <h3>Hotová odpověď uspává ostražitost</h3>
+        <p>Čím častěji nástroj odpoví dobře, tím míň ho kontrolujeme — a tím spolehlivěji projde ta jedna odpověď, která dobrá není. Důvěra se buduje na běžných případech a vybírá se na těch výjimečných.</p>
+        <p>Přidávají se běžné reflexy: sáhnout po tom, co je po ruce, spokojit se s prvním dostatečně dobrým výsledkem, skončit dřív, než ověříme. <strong>Reflex sám o sobě není chyba — jen nesmí rozhodovat za nás.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Pět zkreslení a jejich protiváhy</h2>
+    <p class="section-lead">
+      U každého je uvedené, kde vzniká, jak se pozná a co proti němu konkrétně udělat. Protiváha není „být opatrnější" — to nefunguje. Vždycky je to nějaký krok navíc. Klikněte na zkreslení.
+    </p>
+
+    <div class="bi-wrap">
+      <div class="bi-tabs" id="bi-tabs">
+        <button class="bi-tab active" data-bi="auto">Automation bias</button>
+        <button class="bi-tab" data-bi="syko">Sykofantství</button>
+        <button class="bi-tab" data-bi="prompt">Předjímání v zadání</button>
+        <button class="bi-tab" data-bi="data">Zkreslení z dat</button>
+        <button class="bi-tab" data-bi="effort">Minimální námaha</button>
+      </div>
+
+      <div class="bi-panel">
+        <div class="bi-head">
+          <span class="bi-badge" id="bi-badge"></span>
+          <span class="bi-name" id="bi-name"></span>
+        </div>
+        <div class="bi-rows" id="bi-rows"></div>
+        <div class="bi-counter" id="bi-counter"></div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> Nejnebezpečnější je AI, která se skoro nikdy nemýlí</summary>
+      <div class="tip-body">
+        <p>Zní to obráceně, ale dává to smysl. Nástroj, který se plete často, si nikdo neoblíbí a všichni ho kontrolují. Nástroj, který má pravdu v devětadevadesáti případech ze sta, si <strong>vybuduje důvěru, kterou pak v tom setém případě nikdo nezpochybní</strong>.</p>
+        <p>Praktický důsledek: kontrolní krok nesmí záviset na tom, jestli máte zrovna pocit, že je něco podezřelé. Musí být <strong>součástí postupu</strong> — provede se vždycky, i když výstup vypadá bezvadně. Pocitu se v tomhle nedá věřit; právě proto vznikla rutina na straně 5.3.</p>
+      </div>
+    </details>
+
+    <p class="footnote">
+      Doklady k jednotlivým zkreslením v datech (reklama, generování obrazu, překlad, veřejná správa) viz strana 2.2; sykofantství a formy skrytého zkreslení v zadání viz 3.2; princip minimální námahy a čtyři reflexy viz 4.0.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Zkreslení se nedá vypnout — ani modelu, ani sobě. Dá se ale postavit postup, který na něm nestojí.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Zkreslení má dvě strany.</strong> Model nese stopu svých dat a doladění; my neseme reflexy a rostoucí důvěru. Uhlídat jde jen to, o čem víme.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pozor na to, co se vám hodí.</strong> Shoda s vaším předpokladem je varovný signál, ne potvrzení. Model se přizpůsobuje zadání — o to pečlivěji ověřujte příznivé nálezy.
+      </div>
+      <div class="takeaway-card">
+        <strong>Ptejte se neutrálně.</strong> „Vysvětli, proč je X lepší" dostane obhajobu X. „Porovnej X a Y" dostane srovnání. Formulace zadání předurčuje odpověď.
+      </div>
+      <div class="takeaway-card">
+        <strong>Kontrola patří do postupu, ne do nálady.</strong> Čím spolehlivější nástroj, tím míň ho prověřujeme. Proto se ověření provádí vždy, ne když se něco zdá divné.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <span class="nc-lbl">Uzavírá · Setkání 5</span>
+      <p>Tím se kruh zavírá: chyba se nepozná z textu (5.1), riziko není rozložené rovnoměrně (5.2), existuje na to rutina (5.3) — a fungovat bude jen tehdy, když ji provádíme i ve chvíli, kdy nám to připadá zbytečné.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 5 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Pojmenovává zkreslení na straně uživatele, které předchozí strany popisovaly bez názvu.</em>
+  </footer>
+
+</main>
+
+<script>
+/* ── Přehled zkreslení ──────────────────────────────── */
+const biases = {
+  auto: {
+    side: 'h', name: 'Automation bias',
+    rows: {
+      'Kde vzniká': 'U vás. Výstup ze stroje působí objektivněji než tvrzení kolegy — nemá zájem, neúnavně pracuje, formuluje jistě. Sklon ho přijmout je proto silnější.',
+      'Jak se projeví': 'Přestanete ověřovat. Ne najednou, ale postupně: po dvacáté správné odpovědi už dvacátou první nekontrolujete. <strong>Zkratka se zavede právě proto, že dosud fungovala.</strong>',
+      'Jak poznáte': 'Podle toho, že si nepamatujete, kdy jste naposledy něco ověřovali. Nebo že byste stejné tvrzení od kolegy prověřili, ale od AI ne.'
+    },
+    counter: '<strong>Protiváha:</strong> udělejte z ověření krok postupu, ne rozhodnutí. U výstupů, které jdou do rozhodnutí, ověřujte vždy — bez ohledu na to, jak dobře výstup vypadá a jak spolehlivý byl nástroj minule.'
+  },
+  syko: {
+    side: 'm', name: 'Sykofantství',
+    rows: {
+      'Kde vzniká': 'V modelu. Při doladění byly odměňovány odpovědi, které uživatel přijal dobře — a lidé lépe přijímají souhlas než odpor.',
+      'Jak se projeví': 'Model vám dá za pravdu. Když se doptáte „opravdu si tím stojíš?", <strong>ustoupí a změní pozici, aniž by měl novou informaci</strong>.',
+      'Jak poznáte': 'Podle toho, že odpověď potvrzuje přesně to, co jste naznačili. A podle toho, že se mění podle tónu vašich otázek, ne podle podkladů.'
+    },
+    counter: '<strong>Protiváha:</strong> vyžádejte si roli oponenta — „najdi tři důvody, proč je tenhle závěr špatně". A změnu názoru po doptání neberte jako opravu, dokud pro ni nedostanete <em>důvod</em>, ne jen novou formulaci.'
+  },
+  prompt: {
+    side: 'h', name: 'Předjímání v zadání',
+    rows: {
+      'Kde vzniká': 'U vás, ještě než přijde odpověď. Do formulace dotazu se skoro nepozorovaně dostane váš předpoklad.',
+      'Jak se projeví': 'Tři typické formy: <strong>sugestivní</strong> („není přece problém použít X?"), <strong>předjímání závěru</strong> („vysvětli, proč je X lepší než Y") a <strong>pozitivní rámec</strong> („co se ti na tomhle řešení líbí?").',
+      'Jak poznáte': 'Přečtěte si vlastní prompt jako cizí člověk. Kdyby ho dostal kolega, poznal by z něj, jakou odpověď čekáte? Pak ji dostanete i od modelu.'
+    },
+    counter: '<strong>Protiváha:</strong> přeformulujte na neutrální srovnání — „porovnej X a Y podle kritérií A, B, C" místo „proč je X lepší". Když už máte hypotézu, zadejte ji výslovně jako hypotézu k testování, ne jako premisu.'
+  },
+  data: {
+    side: 'm', name: 'Zkreslení z dat',
+    rows: {
+      'Kde vzniká': 'V trénovacích datech a ve výběru toho, co model nikdy neuvidí. Není to chyba v kódu — je to zrcadlo světa, jak se do dat promítl.',
+      'Jak se projeví': 'Model reprodukuje převažující vzorec a někdy ho <strong>zesílí nad skutečnou statistiku</strong>. U odborného obsahu se to projeví tím, že „výchozí" odpovědí je ta častější v datech — ne ta správná pro váš kontext.',
+      'Jak poznáte': 'Těžko zevnitř výstupu. Pomůže znalost domény: když odpověď odpovídá obecné či zahraniční praxi, ale ne té vaší, je to podezřelé.'
+    },
+    counter: '<strong>Protiváha:</strong> dejte modelu kotvu. Vložte do zadání konkrétní zdroj nebo dokument, ať pracuje s vaším textem, a ne s tím, co „si pamatuje" jako obvyklé.'
+  },
+  effort: {
+    side: 'h', name: 'Princip minimální námahy',
+    rows: {
+      'Kde vzniká': 'U vás, a je to normální lidské chování — sáhneme po tom, co je nejblíž a stojí nejmíň úsilí.',
+      'Jak se projeví': 'Čtyři reflexy: známé před neznámými, dostupné před přesnými, jednoduché před složitými, <strong>rychlé před důkladnými</strong>. Ten poslední je pro práci s AI nejzrádnější — hotově vypadající odpověď svádí skončit dřív, než ověříme.',
+      'Jak poznáte': 'Podle toho, že jste použili první nástroj, který vás napadl, na úkol, pro který nevznikl.'
+    },
+    counter: '<strong>Protiváha:</strong> vědomě přerušit reflex jednou otázkou — „je tenhle nástroj vhodný pro tenhle úkol, nebo je jen po ruce?". A u důležitých věcí si dopředu určete, kdy máte hotovo, ať to nerozhoduje únava.'
+  }
+};
+
+const biTabs = document.querySelectorAll('.bi-tab');
+const biBadge = document.getElementById('bi-badge');
+const biName = document.getElementById('bi-name');
+const biRows = document.getElementById('bi-rows');
+const biCounter = document.getElementById('bi-counter');
+
+const sideLabel = { m: 'Strana AI', h: 'Naše strana' };
+
+function renderBias(key) {
+  const b = biases[key];
+  biBadge.textContent = sideLabel[b.side];
+  biBadge.className = 'bi-badge ' + b.side;
+  biName.textContent = b.name;
+  biRows.innerHTML = Object.entries(b.rows).map(([k, v]) =>
+    '<div class="bi-row"><div class="bi-k">' + k + '</div><div class="bi-v">' + v + '</div></div>'
+  ).join('');
+  biCounter.innerHTML = b.counter;
+  biTabs.forEach(t => t.classList.toggle('active', t.dataset.bi === key));
+}
+
+biTabs.forEach(btn => btn.addEventListener('click', () => renderBias(btn.dataset.bi)));
+renderBias('auto');
+
+/* ── Read progress + reveal ─────────────────────────── */
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

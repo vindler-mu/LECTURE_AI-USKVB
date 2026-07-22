@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Katalog úloh: co si nechat vyrobit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #b5651d; --accent-hover: #8e4a18; --accent-soft: #fbf3e7;
+    --green: #4a7c59; --green-soft: #e7f0ea;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+    --blue: #4575b5; --blue-soft: #e8eff8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 880px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 780px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 780px;
+  }
+  .definition strong { color: var(--accent); }
+  .evidence-key {
+    margin-top: 16px; display: flex; gap: 18px; flex-wrap: wrap;
+    font-size: 12.4px; color: var(--muted); align-items: center;
+  }
+  .evidence-key span { display: inline-flex; align-items: center; gap: 6px; }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 840px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── FOUR SHAPES ────────────────────────────────────── */
+  .shapes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 940px) { .shapes { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .shapes { grid-template-columns: 1fr; } }
+  .shape {
+    background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--green);
+    padding: 16px 18px;
+  }
+  .shape .sh-n {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--green); font-weight: 600; display: block; margin-bottom: 7px;
+  }
+  .shape h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 15.5px;
+    font-weight: 700; color: var(--ink); margin-bottom: 6px; line-height: 1.25;
+  }
+  .shape p { font-size: 12.6px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ── UNIVERSAL PREREQS ──────────────────────────────── */
+  .prereq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .prereq { grid-template-columns: 1fr; } }
+  .pq { border: 1px solid var(--line); background: var(--bg); padding: 18px 20px; }
+  .pq.mat { border-top: 3px solid var(--blue); }
+  .pq.know { border-top: 3px solid var(--accent); }
+  .pq.risk { border-top: 3px solid var(--red); }
+  .pq .pq-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.3px;
+    text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 8px;
+  }
+  .pq.mat .pq-tag { color: var(--blue); }
+  .pq.know .pq-tag { color: var(--accent); }
+  .pq.risk .pq-tag { color: var(--red); }
+  .pq h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 16px;
+    font-weight: 700; color: var(--ink); margin-bottom: 8px;
+  }
+  .pq ul { margin: 0 0 0 17px; font-size: 12.9px; color: var(--ink-soft); line-height: 1.6; }
+  .pq li { margin-bottom: 6px; }
+  .pq li:last-child { margin-bottom: 0; }
+  .pq li b { color: var(--ink); }
+
+  .keypoint {
+    margin-top: 18px; background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+    padding: 22px 26px; max-width: 900px;
+  }
+  .keypoint h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: clamp(18px, 2.2vw, 22px);
+    font-weight: 700; line-height: 1.3; color: var(--ink); margin-bottom: 10px;
+  }
+  .keypoint h3 em { font-style: italic; color: var(--accent-hover); }
+  .keypoint p { font-size: 13.6px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 9px; }
+  .keypoint p:last-child { margin-bottom: 0; }
+  .keypoint strong { color: var(--ink); }
+
+  /* ── CATALOG CARDS ──────────────────────────────────── */
+  .agenda-head {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+    margin: 30px 0 12px; padding-bottom: 7px; border-bottom: 1px solid var(--line);
+  }
+  .agenda-head:first-of-type { margin-top: 0; }
+
+  .card { border: 1px solid var(--line); background: var(--bg); margin-bottom: 10px; overflow: hidden; }
+  .card > summary {
+    padding: 14px 18px; cursor: pointer; list-style: none; background: var(--paper);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .card > summary::-webkit-details-marker { display: none; }
+  .card > summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 17px; color: var(--accent); flex: none;
+  }
+  .card[open] > summary::after { content: "−"; }
+  .card[open] > summary { border-bottom: 1px solid var(--line); }
+  .c-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; padding: 4px 9px; color: #fff; flex: none;
+  }
+  .c-badge.script { background: var(--green); }
+  .c-badge.ai { background: var(--blue); }
+  .c-badge.human { background: var(--red); }
+  .c-title { font-size: 14.2px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .c-ev {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.9px;
+    text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--line-strong);
+    color: var(--muted); flex: none;
+  }
+  .c-ev.doc { border-color: var(--green); color: var(--green); }
+
+  .card-body { padding: 18px 20px 20px; }
+  .cb-row { margin-bottom: 16px; }
+  .cb-row:last-child { margin-bottom: 0; }
+  .cb-lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.3px;
+    text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 6px;
+  }
+  .cb-row.how .cb-lbl { color: var(--accent); }
+  .cb-row.need .cb-lbl { color: var(--blue); }
+  .cb-row.skill .cb-lbl { color: var(--ink-soft); }
+  .cb-row.prob .cb-lbl { color: var(--red); }
+  .cb-row p { font-size: 13.2px; line-height: 1.65; color: var(--ink-soft); }
+  .cb-row ul { margin: 0 0 0 17px; font-size: 13.1px; color: var(--ink-soft); line-height: 1.6; }
+  .cb-row li { margin-bottom: 5px; }
+  .cb-row li:last-child { margin-bottom: 0; }
+  .cb-row strong { color: var(--ink); }
+  .cb-row.prob { background: var(--red-soft); border-left: 3px solid var(--red); padding: 12px 16px; }
+  .cb-row.prob p, .cb-row.prob ul { color: var(--ink-soft); }
+
+  /* ── REST TABLE ─────────────────────────────────────── */
+  .rest-scroll { overflow-x: auto; border: 1px solid var(--line); }
+  .rest { width: 100%; border-collapse: collapse; font-size: 13.1px; background: var(--bg); }
+  .rest th, .rest td { padding: 11px 15px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .rest thead th {
+    background: var(--paper); font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1.1px; text-transform: uppercase; font-weight: 600; color: var(--muted);
+  }
+  .rest tbody tr:last-child td { border-bottom: none; }
+  .rest .t-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 8px; color: #fff; white-space: nowrap;
+  }
+  .rest .t-pill.script { background: var(--green); }
+  .rest .t-pill.ai { background: var(--blue); }
+  .rest .t-pill.human { background: var(--red); }
+  .rest td .note { display: block; color: var(--muted); font-size: 12.1px; margin-top: 3px; }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 6 · Hands-on</p>
+    <h1>Katalog úloh: <em>co si nechat vyrobit</em></h1>
+    <p class="hero-subtitle">
+      Konkrétní nápady z prostředí ÚSKVBL, u každého rozpis: jak na to, co k tomu musíte mít, co musíte umět a kde to obvykle drhne. Není to seznam ke splnění — je to zásobník, ze kterého si vytáhnete to, co se potká s vaší agendou.
+    </p>
+    <div class="definition">
+      <strong>Jak to číst.</strong> Zelené jsou úlohy pro <em>nástroj</em> (AI ho napíše jednou, pak běží sama), modré pro <em>AI</em> (dělá úkol, vy kontrolujete výstup), červené zůstávají <em>člověku</em>. Metodu, jak si nástroj bezpečně objednat, popisuje <a href="6.3-vyroba-nastroju.html">předchozí stránka</a>.
+    </div>
+    <div class="evidence-key">
+      <span><span class="c-ev doc">Doloženo</span> vychází z veřejných materiálů úřadu</span>
+      <span><span class="c-ev">Hypotéza</span> pravděpodobné, ale neověřené — posuďte sami</span>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Čtyři tvary, do kterých se to skoro vždy vejde</h2>
+    <p class="section-lead">
+      Než začnete procházet katalog, naučte se tyhle čtyři. Když se vaše úloha dá popsat některou z nich, je to skoro jistě práce pro nástroj — a nemusíte v seznamu níž hledat přesnou shodu.
+    </p>
+
+    <div class="shapes">
+      <div class="shape">
+        <span class="sh-n">Tvar 1</span>
+        <h3>Porovnej dvě věci a řekni, co se liší</h3>
+        <p>Dvě verze seznamu, dokument před a po změně, web proti interní evidenci, deklarace proti skutečnosti.</p>
+      </div>
+      <div class="shape">
+        <span class="sh-n">Tvar 2</span>
+        <h3>Zkontroluj, že něco splňuje pravidla</h3>
+        <p>Úplnost podání, platnost kódů, dodržení formátu, přítomnost povinných částí, rozsah hodnot.</p>
+      </div>
+      <div class="shape">
+        <span class="sh-n">Tvar 3</span>
+        <h3>Posbírej stejný údaj z mnoha míst</h3>
+        <p>Tři pole ze dvou stovek dokumentů stejného tvaru, hlášení od desítek subjektů, výstupy z přístroje.</p>
+      </div>
+      <div class="shape">
+        <span class="sh-n">Tvar 4</span>
+        <h3>Hlídej termín nebo platnost</h3>
+        <p>Procesní lhůty, expirace certifikátů a standardů, kalibrace, co se blíží konci a co už propadlo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co potřebuje každá taková úloha</h2>
+    <p class="section-lead">
+      Platí to napříč katalogem, tak ať to nemusím opakovat u každé položky. U jednotlivých úloh pak zmiňuju jen to, co je pro ně specifické.
+    </p>
+
+    <div class="prereq">
+      <div class="pq mat">
+        <span class="pq-tag">Podklady</span>
+        <h3>Co musíte mít po ruce</h3>
+        <ul>
+          <li><b>Vzorek dat</b> v takové podobě, v jaké reálně chodí — ne uklizená ukázka.</li>
+          <li><b>Číselník nebo referenční seznam</b>, proti kterému se kontroluje (kódy, ATC, seznam subjektů).</li>
+          <li><b>Malý testovací vzorek</b>, u kterého <b>znáte správnou odpověď</b>, protože jste ji spočítali ručně.</li>
+          <li><b>Popis struktury</b> — jaké sloupce, co v nich je, které jsou povinné. Stačí česky, nemusí to být technické.</li>
+        </ul>
+      </div>
+      <div class="pq know">
+        <span class="pq-tag">Znalosti</span>
+        <h3>Co musíte umět</h3>
+        <ul>
+          <li><b>Vyslovit pravidlo přesně.</b> Ne „poznám to, když to vidím", ale „kód má sedm znaků a musí být v tomhle seznamu".</li>
+          <li><b>Znát výjimky.</b> Které případy se posuzují jinak a proč.</li>
+          <li><b>Ověřit výsledek</b> na malém vzorku ručně. To je celá potřebná dovednost.</li>
+          <li><b>Nemusíte</b> umět programovat, ani číst kód. Musíte rozumět vysvětlení, které vám k němu AI napíše.</li>
+        </ul>
+      </div>
+      <div class="pq risk">
+        <span class="pq-tag">Rizika</span>
+        <h3>Co se pokazí nejčastěji</h3>
+        <ul>
+          <li><b>Data nejsou tak čistá, jak myslíte.</b> Historické záznamy mají jiný formát než letošní.</li>
+          <li><b>Excel tiše mění hodnoty</b> — vedoucí nuly, data, desetinná čárka.</li>
+          <li><b>Pravidlo má výjimky, které nikdo nesepsal.</b> Viz níž, je to ta nejdůležitější past.</li>
+          <li><b>Zdroj změní formát</b> a nikdo to neohlásí. Proto má program spadnout, ne domýšlet.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="keypoint">
+      <h3>Nejtěžší na skriptu není kód. Je to zjištění, že <em>vaše pravidlo má výjimky, které jste nikdy nevyslovili</em></h3>
+      <p>
+        Většina úředních postupů běží zčásti na tichém vědění. „Tohle se posuzuje takhle — no, kromě případů, kdy… to prostě poznáte." Dokud práci dělá člověk, funguje to. Jakmile ji má dělat program, <strong>musíte pravidlo vyslovit celé</strong> — a teprve tam se ukáže, kolik z něj nikdy nikdo nezapsal.
+      </p>
+      <p>
+        Berte to jako <strong>užitek, ne překážku</strong>. Je to nejlevnější způsob, jak zjistit, které části vaší agendy stojí na znalosti jednoho člověka a zmizí s ním. To, že u toho vznikne i skript, je skoro vedlejší produkt.
+      </p>
+      <p>
+        Praktický důsledek: <strong>první pokus skoro nikdy nesedí</strong> a to je normální. Neznamená to, že AI selhala ani že na to nemáte. Znamená to, že jste narazili na výjimku — dopište ji do zadání a nechte to přepsat.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Katalog po agendách</h2>
+    <p class="section-lead">
+      Rozklikněte položku a uvidíte rozpis. Pořadí uvnitř agend je zhruba podle poměru užitku k námaze — co je nahoře, má nejlepší návratnost.
+    </p>
+
+    <!-- ══ ANTIMIKROBIKA ══ -->
+    <div class="agenda-head">Antimikrobika a sběr dat</div>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Validace hlášení od distributorů</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Popíšete AI strukturu výkazu (jaké sloupce, co je povinné, jak vypadá platný kód) a necháte si napsat kontrolu, která projde přijatý soubor a <strong>vypíše seznam nálezů</strong> — duplicity, chybějící povinné údaje, kódy mimo číselník, nesmyslné hodnoty. Nic neopravuje, jen hlásí. Spouštíte lokálně na přijatých souborech.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Aktuální číselník kódů balení a ATC kódů. Vzorové výkazy v podobě, v jaké reálně chodí — včetně těch od distributora, který to vyplňuje po svém. Jeden zkontrolovaný výkaz, u kterého víte, co v něm je špatně.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Přesně říct, co je vada a co je jen neobvyklé. Rozdíl mezi „tohle je chyba, vracíme k opravě" a „tohle je legitimní výjimka" musí být vyslovitelný, ne intuitivní.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Každý distributor vyplňuje trochu jinak.</strong> Mezery navíc, jiné pořadí sloupců, jiné psaní názvů. Program musí být tolerantní k formátu, ale přísný k obsahu — a tuhle hranici musíte určit vy.</li>
+            <li><strong>Vedoucí nuly v kódech</strong>, pokud soubor prošel Excelem. Do zadání patří věta o načítání jako text.</li>
+            <li><strong>Historická data mají jiný formát.</strong> Když to pustíte na archiv, čekejte lavinu falešných nálezů.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Výpočet spotřeby v mg/PCU a mg/kg biomasy</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Výpočet zapíšete jako program místo jako řetěz vzorců v Excelu. Vstupem jsou sesbíraná data o prodejích a denominátor; výstupem číslo plus <strong>mezivýsledky, aby šlo vidět, jak vzniklo</strong>. Program je zároveň výpočet i jeho dokumentace.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Přesnou definici metodiky včetně toho, co patří do denominátoru u které varianty. Data z minulého roku, u kterých znáte publikovaný výsledek — to je váš validační vzorek.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Rozumět metodice natolik, abyste ji popsali krok za krokem. Pokud jsou dvě varianty výpočtu, musíte umět říct, čím přesně se liší — jinak vám program spočítá obojí stejně.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Tohle je publikované číslo, které jde do evropské zprávy.</strong> Ověření na loňských datech proti známému výsledku tu není doporučení, ale podmínka.</li>
+            <li><strong>Zaokrouhlování a pořadí operací</strong> umí posunout výsledek na třetím místě. Když se rozchází s ručním výpočtem o kousek, hledejte tady.</li>
+            <li><strong>Změna metodiky mezi roky.</strong> Program napsaný na letošní pravidla dá u loňských dat jiné číslo než tehdejší publikace — a to je správně, jen o tom musíte vědět.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Kontrola pokrytí a hlídání, kdo nehlásil</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Porovnání seznamu subjektů, které hlásit mají, se seznamem těch, kteří hlásili. Výstup: kdo chybí, kolik to dělá procent, komu se blíží termín. Tvar 1 a 4 dohromady.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Aktuální seznam povinných subjektů a evidenci přijatých hlášení. Obojí nejspíš existuje, jen ne na jednom místě.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Určit, kdo je v daném období povinný — subjekt, který skončil v půlce roku, se počítá jak? To je pravidlo, které musíte vyslovit.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Párování podle názvu firmy nefunguje.</strong> „s.r.o." versus „s. r. o.", diakritika, změna názvu. Párujte podle IČO nebo jiného stabilního identifikátoru.</li>
+            <li><strong>Změny v průběhu období</strong> — vznik, zánik, převod. Bez pravidla pro tyhle případy budou čísla pokaždé jiná.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <!-- ══ REGISTRACE ══ -->
+    <div class="agenda-head">Registrace a změny</div>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Porovnání SPC před a po změně</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program vezme dvě verze textu a <strong>zvýrazní, co se přesně změnilo</strong> — po větách nebo po odstavcích, s uvedením sekce. Odpadá čtení dvou dokumentů vedle sebe a hledání rozdílu očima.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Obě verze v textové podobě. Pokud jsou to PDF, přibývá krok převodu — a ten je zdrojem většiny potíží, viz níž.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Nic navíc. Tohle je jedna z mála úloh, kde stačí umět posoudit, jestli zvýrazněné rozdíly odpovídají skutečnosti — a to poznáte na první pohled.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>PDF nemá „text", má rozmístěné znaky.</strong> Převod umí přeházet pořadí, rozbít tabulky a slepit slova. Rozdíly, které program najde, pak nemusí být skutečné změny obsahu.</li>
+            <li><strong>Formátovací šum.</strong> Jiné zalomení řádku není změna obsahu, ale program to tak vidí. Do zadání patří, aby porovnával věty, ne řádky.</li>
+            <li><strong>Nejde o schválení změny</strong> — program řekne, <em>co</em> se změnilo, ne jestli je to v pořádku. To zůstává na posuzovateli.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Kontrola úplnosti a struktury dokumentu proti šabloně</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program ověří, že dokument obsahuje všechny povinné sekce ve správném pořadí a číslování, a vypíše, co chybí. Mechanická část kontroly, která se dnes dělá očima při každém podání.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Seznam povinných sekcí podle platné šablony. Několik podání, u kterých víte, co v nich chybělo.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Vědět, které části jsou povinné vždy a které jen za určitých podmínek — jiné požadavky platí podle právní báze podání. Bez tohoto rozlišení dostanete falešné nálezy u každého druhého spisu.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Kontroluje se přítomnost, ne kvalita.</strong> Program pozná, že sekce chybí. Nepozná, že je vyplněná nesmyslně — to je pořád na člověku.</li>
+            <li><strong>Šablona se mění.</strong> Program napsaný na jednu revizi bude u novější hlásit nesmysly. Do poznámky patří, ke které revizi byl psaný.</li>
+            <li><strong>Nadpisy se píšou různě.</strong> Malé/velké písmeno, jiné pořadí slov, překlep. Buď tolerantní porovnání, nebo lavina falešných hlášení.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Sledování procedurálních lhůt</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Ze seznamu běžících procedur (spis, typ, datum zahájení) program dopočítá termíny a vypíše, co se blíží a co už propadlo. Tvar 4 v čisté podobě.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Přehled běžících procedur v jakékoli strukturované podobě, klidně tabulka. Přesná pravidla pro počítání lhůt u každého typu.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Vysvětlit, jak se lhůta počítá: pracovní nebo kalendářní dny, od kterého dne se začíná, co ji staví a co ji přerušuje. Tohle je typicky nejhůř sepsaná část celé agendy.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Stavění lhůty při výzvě žadateli.</strong> Pokud to program neumí, budou termíny systematicky špatně — a to nebezpečně, protože budou vypadat věrohodně.</li>
+            <li><strong>Svátky a víkendy.</strong> Musí se doplnit ručně a každý rok znovu.</li>
+            <li><strong>Nesmí se stát jediným zdrojem pravdy</strong>, dokud si na něm neověříte několik uzavřených procedur zpětně.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge ai">AI</span>
+        <span class="c-title">Kontrola, že odpověď žadatele pokrývá všechny body</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Necháte AI porovnat seznam položených otázek s došlou odpovědí a označit, co zůstalo nezodpovězené nebo zodpovězené jen zčásti. Výstup je <strong>upozornění k prověření</strong>, ne verdikt.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Obojí v textové podobě. <strong>Pozor na vstupní branku</strong> — pokud dokumenty obsahují neveřejné údaje žadatele, tahle úloha musí počkat na schválený nástroj.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Posoudit, jestli má upozornění pravdu. AI tu funguje jako druhý pár očí, ne jako kontrolor.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Odpověď „na půl" AI často uzná jako úplnou.</strong> Model je vstřícný a raději najde souvislost, než aby hlásil nedostatek.</li>
+            <li><strong>Nejde to obrátit.</strong> „Nic nechybí" od AI není doklad úplnosti. Použitelný je jen nález, ne jeho absence.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <!-- ══ FARMAKOVIGILANCE ══ -->
+    <div class="agenda-head">Farmakovigilance</div>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Kontrola úplnosti hlášení a hlídání 30denní lhůty</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program projde evidenci přijatých hlášení, ověří přítomnost minimálních údajů a vypíše ta, u kterých se blíží nebo uplynula lhůta pro záznam do databáze.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Evidenci hlášení s datem přijetí a stavem zpracování. Definici toho, co se počítá jako kompletní minimální údaj.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Říct, kdy přesně lhůta začíná běžet a co znamená „identifikovatelný" u ohlašovatele a zvířete. Obojí je v praxi hranatější, než vypadá.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Vyplněné pole neznamená použitelný údaj.</strong> Program pozná, že tam něco je; nepozná, že je to „neuvedeno".</li>
+            <li><strong>Lhůta u doplněných hlášení</strong> — když přijde dodatečná informace, běží nová lhůta? Musíte rozhodnout vy.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Přehledová statistika nad hlášeními</span>
+        <span class="c-ev">Hypotéza</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Rozdělení hlášení podle druhu zvířete, přípravku, typu reakce a vývoj v čase. Při řádově stovkách záznamů ročně je to výpočetně triviální — jen to dnes nikdo nedělá, protože data sedí v systému a vytáhnout je ručně nikoho nebaví.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Export evidence v jakémkoli strukturovaném formátu. Stačí i tabulka.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Vědět, na co se ptáte. Statistika bez otázky vyrobí barevné grafy, které nic neřeknou.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Tohle není detekce signálu.</strong> Přehled je popis, ne posouzení. Záměna těchto dvou věcí by byla vážný problém — signál se vyhodnocuje odborně a postupem, který má svá pravidla.</li>
+            <li><strong>Změna počtu hlášení nemusí znamenat změnu rizika.</strong> Může jít o změnu ochoty hlásit. Interpretace patří člověku.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge ai">AI</span>
+        <span class="c-title">Návrh kódování volného textu do řízeného slovníku</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>AI dostane popis reakce vlastními slovy a <strong>navrhne odpovídající termíny</strong> z řízeného slovníku, včetně zdůvodnění. Člověk návrh potvrdí nebo přepíše. Mapování volného textu na slovník je přesně ten typ jazykové úlohy, kde je AI silná.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Platnou verzi slovníku a pravidla kódování. Sadu už zakódovaných případů, na kterých ověříte shodu s tím, jak kóduje váš tým.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Kódovat sami. Tohle je nástroj pro zrychlení experta, ne náhrada expertízy — bez schopnosti návrh posoudit je k ničemu.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>AI si termín vymyslí</strong>, když přesný neexistuje. Vypadá věrohodně a ve slovníku není. Každý navržený termín se musí ověřit proti seznamu — ideálně programem.</li>
+            <li><strong>Sklon k obecnějšímu termínu.</strong> Model volí bezpečnější a širší pojem, čímž se ztrácí informace.</li>
+            <li><strong>Nikdy ne hromadně bez kontroly.</strong> Zakódovaný údaj jde do evropské databáze a nese se dál.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <!-- ══ LABORATOŘ ══ -->
+    <div class="agenda-head">Laboratoř</div>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Kontrolní karty a sledování trendů</span>
+        <span class="c-ev">Hypotéza</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program bere výsledky kontrolních vzorků, vykresluje je proti mezím a upozorní na překročení nebo na trend, který se k mezi blíží. Klasická úloha řízení kvality, kterou lze mít průběžně místo jednou za čtvrtletí.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Historii výsledků kontrolních vzorků a stanovené meze. Pravidla, která u vás platí pro vyhodnocení.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Znát pravidla pro vyhodnocení karty a umět je vyslovit. Kolik po sobě jdoucích bodů na jedné straně už je nález?</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Akreditovaná činnost.</strong> Pokud výstup vstupuje do systému kvality, není to osobní pomůcka — potřebuje vlastníka, popis a revizi jako každý jiný řízený dokument.</li>
+            <li><strong>Přepočet mezí z historie</strong> je snadné udělat špatně. Ověřte proti mezím, které máte stanovené jinak.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Hlídání platnosti kalibrací, standardů a certifikátů</span>
+        <span class="c-ev">Hypotéza</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Jeden seznam s datem platnosti, program vypíše, co propadá v následujících týdnech. Nejjednodušší položka v celém katalogu a přitom jedna z nejužitečnějších.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Evidenci s datem platnosti. Pokud existuje jen v hlavách nebo na papíře, prvním krokem je ji sepsat — a to je práce, kterou skript neušetří.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Nic zvláštního. Vhodné jako úplně první skript.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Seznam zastará.</strong> Nástroj je tak dobrý jako evidence pod ním; když ji nikdo neaktualizuje, uspává falešným klidem.</li>
+            <li><strong>Různé typy platnosti</strong> — od data vydání, od otevření, od poslední kalibrace. Musí se rozlišit.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <!-- ══ WEB, POKYNY, VĚSTNÍK ══ -->
+    <div class="agenda-head">Web, pokyny, Věstník</div>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Kontrola mrtvých odkazů</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program projde odkazy v dokumentu nebo na stránce a ověří, že cíl existuje. Výstup je seznam nefunkčních. Doba běhu minuty, přínos okamžitý.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Nic navíc — seznam odkazů se dá vytáhnout ze samotného dokumentu.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Nic. Ideální ukázka na projektor, protože výsledek je vidět hned a je nesporný.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Rychlé opakované dotazy vypadají jako útok.</strong> Program musí mezi dotazy čekat, jinak ho cílový server odmítne — a vy dostanete falešné nálezy.</li>
+            <li><strong>Ne každá chyba znamená mrtvý odkaz.</strong> Některé servery odmítají automatické dotazy, i když stránka funguje. Nálezy je potřeba doklepnout ručně.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Automatický přehled platných pokynů</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program posbírá pokyny rozeseté po jednotlivých sekcích webu a sestaví z nich jeden přehled — kód, název, revize, datum, odkaz. Tvar 3 v čisté podobě.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Seznam míst, kde pokyny žijí. Pravidlo pro čtení kódu a revize z názvu.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Vědět, co je platná verze, když existuje víc revizí — a co znamená, že je pokyn v revizi.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Značení není důsledné.</strong> Jednou s diakritikou, jednou bez, jednou s lomítkem, jednou s pomlčkou. Program to musí snést, nebo to napřed sjednotíte.</li>
+            <li><strong>Redesign webu vám to rozbije.</strong> Počítejte s tím, že to bude potřeba občas přepsat — proto to má být jednoduché a srozumitelné.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <!-- ══ PRŮŘEZOVÉ ══ -->
+    <div class="agenda-head">Průřezové</div>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Porovnání dvou verzí seznamu</span>
+        <span class="c-ev doc">Doloženo</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Dva soubory dovnitř, ven přehled: co přibylo, co zmizelo, co se změnilo a v čem. Funguje na seznamy přípravků, subjektů, kódů — na cokoli, co má stabilní identifikátor.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Dva exporty a vědomí, <strong>který sloupec je identifikátor</strong>. To je jediné podstatné rozhodnutí celé úlohy.</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Určit identifikátor. Pokud žádný stabilní neexistuje, je to zjištění samo o sobě — a vysvětluje, proč je ruční porovnávání tak protivné.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Párování podle názvu</strong> vyrobí falešné „přibylo" a „ubylo" u každé změny psaní.</li>
+            <li><strong>Exporty z různých dob mají různé sloupce.</strong> Program musí porovnávat průnik, ne padat na neshodě struktury.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>
+        <span class="c-badge script">Nástroj</span>
+        <span class="c-title">Vytažení stejných údajů ze stovek dokumentů</span>
+        <span class="c-ev">Hypotéza</span>
+      </summary>
+      <div class="card-body">
+        <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
+          <p>Program projde složku dokumentů stejného tvaru, z každého vytáhne určená pole a složí z nich tabulku. Klíčové slovo je <strong>stejného tvaru</strong>.</p>
+        </div>
+        <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
+          <p>Dokumenty v jedné složce a popis, kde přesně údaj leží — „za nadpisem X", „ve druhém sloupci tabulky Y".</p>
+        </div>
+        <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
+          <p>Popsat umístění údaje slovy a poznat, kdy dokument do řady nepatří.</p>
+        </div>
+        <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
+          <ul>
+            <li><strong>Skeny nejsou text.</strong> Naskenovaný dokument potřebuje rozpoznávání znaků a to chybuje — u čísel a kódů obzvlášť zrádně.</li>
+            <li><strong>Vyzkoušejte na deseti, než pustíte na dvě stě.</strong> A těch deset zkontrolujte ručně celé.</li>
+            <li><strong>Starší dokumenty mívají jiný tvar</strong>, i když se jmenují stejně.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+  </section>
+
+  <section>
+    <h2 class="section-title">Zbytek zásobníku</h2>
+    <p class="section-lead">
+      Bez rozpisu — nápady, které stojí za zvážení, ale rozepisovat je má smysl teprve tehdy, když se někdo chytí. Rozpis si k nim doplníte stejnou strukturou: jak, co k tomu, co umět, kde to drhne.
+    </p>
+
+    <div class="rest-scroll">
+      <table class="rest">
+        <thead>
+          <tr><th style="width:100px;">Typ</th><th>Úloha</th><th style="width:290px;">Poznámka</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Kontrola konzistence ochranné lhůty napříč dokumenty</td><td>Stejný údaj na několika místech se musí shodovat<span class="note">Vysoká hodnota, ale závisí na strojové čitelnosti podkladů</span></td></tr>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Detekce anomálií v hlášení — kdo hlásí řádově jinak než dřív</td><td>Vytipování k prověření, ne nález<span class="note">Program ukáže odchylku, důvod hledá člověk</span></td></tr>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Ověření, že zásilkové lékárny mají na webu společné logo</td><td>Povinnost plyne z předpisu, seznam se vede<span class="note">Kontrola je mechanická, nálezy se doklepnou ručně</span></td></tr>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Sledování platnosti certifikátů a plánování inspekcí</td><td>Tvar 4<span class="note">Stojí a padá s kvalitou evidence</span></td></tr>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Kontrola shody seznamů na webu s interní evidencí</td><td>Tvar 1<span class="note">Odhalí, co se zapomnělo zveřejnit nebo stáhnout</span></td></tr>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Sledování změn na sledovaných stránkách</td><td>Upozornění, že se něco změnilo<span class="note">Ověřte, jestli zdroj nenabízí odběr sám</span></td></tr>
+          <tr><td><span class="t-pill ai">AI</span></td><td>Shrnutí zveřejněné hodnoticí zprávy</td><td>Jednorázová jazyková úloha<span class="note">Ověřit proti originálu, který máte po ruce</span></td></tr>
+          <tr><td><span class="t-pill ai">AI</span></td><td>První draft opakované korespondence</td><td>Formální nedostatky podání<span class="note">Konečné slovo i odeslání zůstává na vás</span></td></tr>
+          <tr><td><span class="t-pill ai">AI</span></td><td>Překlad veřejných odborných dokumentů</td><td>Vstup bezpečný, výstup rizikový<span class="note">Terminologii porovnat se schválenými vzory</span></td></tr>
+          <tr><td><span class="t-pill ai">AI</span></td><td>Vysvětlení neznámé odborné oblasti</td><td>Princip ano, konkrétní číslo ne<span class="note">Fakt si vždy ověřte u zdroje</span></td></tr>
+          <tr><td><span class="t-pill ai">AI</span></td><td>Protistrana k vlastní argumentaci</td><td>„Jaké námitky by šly vznést?"<span class="note">Formulovat obecně, bez konkrétního spisu</span></td></tr>
+          <tr><td><span class="t-pill human">Člověk</span></td><td>Posouzení poměru přínosu a rizika</td><td>Nedelegovatelné<span class="note">Odkaz na výstup modelu není odůvodnění</span></td></tr>
+          <tr><td><span class="t-pill human">Člověk</span></td><td>Klasifikace inspekčních nálezů a volba opatření</td><td>Nedelegovatelné<span class="note">AI nanejvýš uspořádá podklady</span></td></tr>
+          <tr><td><span class="t-pill human">Člověk</span></td><td>Vyhodnocení signálu a posouzení kauzality</td><td>Nedelegovatelné<span class="note">Přehledová statistika není detekce signálu</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Katalog je zásobník, ne úkolník. Stačí, když si z něj vezmete jednu věc a dotáhnete ji.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Začněte tím nejnudnějším.</strong> Hlídání platnosti nebo porovnání dvou seznamů. Nic to nezničí, výsledek je hned vidět a naučíte se na tom celý postup.
+      </div>
+      <div class="takeaway-card">
+        <strong>Bottleneck nejsou znalosti kódu.</strong> Je jím schopnost vyslovit pravidlo celé, včetně výjimek. Kdo zná svou agendu, má to nejtěžší za sebou.
+      </div>
+      <div class="takeaway-card">
+        <strong>První pokus nesedí a je to v pořádku.</strong> Znamená to, že jste našli nezapsanou výjimku. Dopište ji do zadání a nechte přepsat.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pozor na přechod k úřednímu použití.</strong> Osobní pomůcka a součást postupu jsou dvě různé věci. Ta druhá potřebuje vlastníka, popis a revizi.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 6 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Položky označené „Doloženo" vycházejí z veřejných materiálů úřadu, „Hypotéza" jsou návrhy k posouzení — ani jedno nenahrazuje znalost skutečných pracovních postupů.</em>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>
