@@ -113,6 +113,11 @@ const sessions = [
     topics: ["Halucinace a&nbsp;chyby v&nbsp;praxi", "Jak ověřovat výstupy", "Zkreslení a&nbsp;slepá místa AI", "Kdy AI (ne)důvěřovat"],
     prep: "Vezměte si jeden AI výstup z&nbsp;vlastní práce, který vás něčím zaskočil — buď byl překvapivě dobrý, nebo naopak obsahoval chybu. Na něm budeme společně trénovat, jak výstupy ověřovat a&nbsp;kdy jim (ne)věřit.",
     practice: "Dostáváte AI-generované výstupy a&nbsp;hledáte v&nbsp;nich chyby. Následně sdílíte strategie, které vám fungují ve vaší konkrétní práci.",
+    materials: [
+      { label: "Proč se chyba nepozná z&nbsp;textu: plynulost a&nbsp;jistota", href: "handson/5.1-plynulost-a-jistota.html" },
+      { label: "Rutina ověření: jeden postup na&nbsp;jakýkoli výstup", href: "handson/5.3-rutina-overeni.html" },
+      { label: "Zkreslení na&nbsp;obou stranách: v&nbsp;modelu i&nbsp;u&nbsp;klávesnice", href: "handson/5.4-zkresleni-na-obou-stranach.html" }
+    ],
     toolkit: [
       { label: "EUR-Lex (ověření legislativy)", href: "https://eur-lex.europa.eu" },
       { label: "Google Scholar (ověření citací)", href: "https://scholar.google.com" },
@@ -131,8 +136,11 @@ const sessions = [
     prep: "Nic si předem chystat nemusíte — úkoly najdeme společně na místě. Vezměte si ale notebook a&nbsp;přihlášení do své AI (Claude, ChatGPT — cokoli používáte); budeme si vše rovnou zkoušet.",
     practice: "Dílna: rozehřejeme se na společné úloze, vytipujeme vaše vlastní úkoly vhodné pro AI a&nbsp;jeden si každý reálně vyzkouší od zadání po ověření. Odejdete s&nbsp;hotovou věcí a&nbsp;s&nbsp;„receptem“ pro opakované použití.",
     materials: [
+      { label: "Co smí dovnitř: co všechno smíte AI vůbec dát", href: "handson/6.0-co-smi-dovnitr.html" },
       { label: "Vhodnost úkolu pro AI: čtyři otázky, které rozhodnou", href: "handson/6.1-vhodnost-ukolu.html" },
-      { label: "Workshop: vyzkoušejte AI na vlastním úkolu", href: "handson/6.2-workshop.html" }
+      { label: "Workshop: vyzkoušejte AI na vlastním úkolu", href: "handson/6.2-workshop.html" },
+      { label: "Výroba nástrojů: jak si nechat napsat skript, kterému smíte věřit", href: "handson/6.3-vyroba-nastroju.html" },
+      { label: "Katalog úloh: co si konkrétně nechat vyrobit", href: "handson/6.4-katalog-uloh.html" }
     ],
     toolkit: [
       { label: "Claude", href: "https://claude.ai" },
@@ -151,14 +159,19 @@ const sessions = [
     desc: "Závěrečný seminář propojující dvě roviny: (1) co regulace AI (EU AI Act) znamená pro úřad a&nbsp;regulované subjekty, a&nbsp;(2) praktické kroky k&nbsp;tomu, aby AI v&nbsp;instituci fungovala odpovědně. Od výběru nástrojů přes bezpečnost dat po interní pravidla a&nbsp;budování kompetencí.",
     why: "Bez institucionálního ukotvení zůstane AI individuálním experimentem jednotlivců. Jako regulatorní úřad navíc ÚSKVBL potřebuje rozumět regulaci AI, protože ovlivní i&nbsp;regulované subjekty.",
     topics: ["Regulace AI v&nbsp;EU", "Bezpečnost dat při práci s&nbsp;AI", "Uzavřené vs. veřejné nástroje, licence", "Interní pravidla a&nbsp;odpovědnosti", "Budování kompetencí do budoucna"],
-    prep: "Bude upřesněno před setkáním.",
+    prep: "Nic si chystat nemusíte. Pokud si ale chcete přinést jednu věc, ať je to vaše odpověď na&nbsp;otázku z&nbsp;prvního setkání: kde ve&nbsp;své práci vidíte příležitost nebo úskalí? Vrátíme se k&nbsp;ní a&nbsp;porovnáme, co se za&nbsp;dobu série změnilo. Užitečné je také přijít s&nbsp;otázkou, na&nbsp;kterou jste během série nedostali odpověď — závěrečné setkání je poslední příležitost ji položit.",
     practice: "Návrat k&nbsp;potřebám z&nbsp;prvního semináře. Co se za dobu série změnilo? Společná formulace prvních doporučení pro další kroky instituce.",
     materials: [
-      { label: "AI Act: co z&nbsp;něj plyne pro úřad", href: "handson/7.1-ai-act.html" }
+      { label: "AI Act: co z&nbsp;něj plyne pro úřad", href: "handson/7.1-ai-act.html" },
+      { label: "Nástroje a&nbsp;licence: stejný model, jiná smlouva", href: "handson/7.2-nastroje-a-licence.html" },
+      { label: "Interní pravidla: šest rozhodnutí a&nbsp;jedna strana textu", href: "handson/7.3-interni-pravidla.html" },
+      { label: "Kompetence a&nbsp;co dál: co z&nbsp;téhle série vydrží", href: "handson/7.4-kompetence.html" }
     ],
     toolkit: [
       { label: "EUR-Lex — nařízení (EU) 2024/1689", href: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj" },
+      { label: "Pokyny Komise k&nbsp;čl. 50 (transparence)", href: "https://digital-strategy.ec.europa.eu/en/library/guidelines-transparency-obligations-providers-and-deployers-ai-systems" },
       { label: "AI Act Service Desk (EK)", href: "https://ai-act-service-desk.ec.europa.eu" },
+      { label: "ČTÚ — umělá inteligence", href: "https://ctu.gov.cz/umela-inteligence" },
       { label: "Digitální Česko — AI Akt", href: "https://digitalnicesko.gov.cz/ai-akt/" }
     ]
   }

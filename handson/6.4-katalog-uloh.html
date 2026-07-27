@@ -248,21 +248,21 @@
     <p class="hero-eyebrow">Setkání 6 · Hands-on</p>
     <h1>Katalog úloh: <em>co si nechat vyrobit</em></h1>
     <p class="hero-subtitle">
-      Konkrétní nápady z prostředí ÚSKVBL, u každého rozpis: jak na to, co k tomu musíte mít, co musíte umět a kde to obvykle drhne. Není to seznam ke splnění — je to zásobník, ze kterého si vytáhnete to, co se potká s vaší agendou.
+      Konkrétní nápady z prostředí ÚSKVBL, u každého rozpis: jak na to, co k tomu musíte mít, co musíte umět a kde to obvykle drhne. Berte to jako zásobník, ze kterého si vytáhnete to, co se potká s vaší agendou, ne jako seznam ke splnění.
     </p>
     <div class="definition">
-      <strong>Jak to číst.</strong> Zelené jsou úlohy pro <em>nástroj</em> (AI ho napíše jednou, pak běží sama), modré pro <em>AI</em> (dělá úkol, vy kontrolujete výstup), červené zůstávají <em>člověku</em>. Metodu, jak si nástroj bezpečně objednat, popisuje <a href="6.3-vyroba-nastroju.html">předchozí stránka</a>.
+      <strong>Jak to číst.</strong> Zelené jsou úlohy pro <em>nástroj</em> (AI ho napíše jednou, pak běží sám), modré pro <em>AI</em> (dělá úkol, vy kontrolujete výstup), červené zůstávají <em>člověku</em>. Metodu, jak si nástroj bezpečně objednat, popisuje <a href="6.3-vyroba-nastroju.html">předchozí stránka</a>.
     </div>
     <div class="evidence-key">
       <span><span class="c-ev doc">Doloženo</span> vychází z veřejných materiálů úřadu</span>
-      <span><span class="c-ev">Hypotéza</span> pravděpodobné, ale neověřené — posuďte sami</span>
+      <span><span class="c-ev">Hypotéza</span> pravděpodobné, ale neověřené; posuďte sami</span>
     </div>
   </header>
 
   <section>
     <h2 class="section-title">Čtyři tvary, do kterých se to skoro vždy vejde</h2>
     <p class="section-lead">
-      Než začnete procházet katalog, naučte se tyhle čtyři. Když se vaše úloha dá popsat některou z nich, je to skoro jistě práce pro nástroj — a nemusíte v seznamu níž hledat přesnou shodu.
+      Než začnete procházet katalog, naučte se tyhle čtyři. Když se vaše úloha dá popsat některou z nich, je to skoro jistě práce pro nástroj a nemusíte v seznamu níž hledat přesnou shodu.
     </p>
 
     <div class="shapes">
@@ -300,10 +300,10 @@
         <span class="pq-tag">Podklady</span>
         <h3>Co musíte mít po ruce</h3>
         <ul>
-          <li><b>Vzorek dat</b> v takové podobě, v jaké reálně chodí — ne uklizená ukázka.</li>
+          <li><b>Vzorek dat</b> v takové podobě, v jaké reálně chodí, ne uklizená ukázka.</li>
           <li><b>Číselník nebo referenční seznam</b>, proti kterému se kontroluje (kódy, ATC, seznam subjektů).</li>
           <li><b>Malý testovací vzorek</b>, u kterého <b>znáte správnou odpověď</b>, protože jste ji spočítali ručně.</li>
-          <li><b>Popis struktury</b> — jaké sloupce, co v nich je, které jsou povinné. Stačí česky, nemusí to být technické.</li>
+          <li><b>Popis struktury:</b> jaké sloupce, co v nich je, které jsou povinné. Stačí česky, nemusí to být technické.</li>
         </ul>
       </div>
       <div class="pq know">
@@ -312,8 +312,8 @@
         <ul>
           <li><b>Vyslovit pravidlo přesně.</b> Ne „poznám to, když to vidím", ale „kód má sedm znaků a musí být v tomhle seznamu".</li>
           <li><b>Znát výjimky.</b> Které případy se posuzují jinak a proč.</li>
-          <li><b>Ověřit výsledek</b> na malém vzorku ručně. To je celá potřebná dovednost.</li>
-          <li><b>Nemusíte</b> umět programovat, ani číst kód. Musíte rozumět vysvětlení, které vám k němu AI napíše.</li>
+          <li><b>Ověřit výsledek</b> na malém vzorku ručně. Víc dovedností potřeba není.</li>
+          <li><b>Nemusíte</b> umět programovat ani číst kód; stačí rozumět vysvětlení, které vám k němu AI napíše.</li>
         </ul>
       </div>
       <div class="pq risk">
@@ -321,7 +321,7 @@
         <h3>Co se pokazí nejčastěji</h3>
         <ul>
           <li><b>Data nejsou tak čistá, jak myslíte.</b> Historické záznamy mají jiný formát než letošní.</li>
-          <li><b>Excel tiše mění hodnoty</b> — vedoucí nuly, data, desetinná čárka.</li>
+          <li><b>Excel tiše mění hodnoty:</b> vedoucí nuly, data, desetinná čárka.</li>
           <li><b>Pravidlo má výjimky, které nikdo nesepsal.</b> Viz níž, je to ta nejdůležitější past.</li>
           <li><b>Zdroj změní formát</b> a nikdo to neohlásí. Proto má program spadnout, ne domýšlet.</li>
         </ul>
@@ -329,15 +329,15 @@
     </div>
 
     <div class="keypoint">
-      <h3>Nejtěžší na skriptu není kód. Je to zjištění, že <em>vaše pravidlo má výjimky, které jste nikdy nevyslovili</em></h3>
+      <h3>Nejtěžší na skriptu bývá zjištění, že <em>vaše pravidlo má výjimky, které jste nikdy nevyslovili</em></h3>
       <p>
-        Většina úředních postupů běží zčásti na tichém vědění. „Tohle se posuzuje takhle — no, kromě případů, kdy… to prostě poznáte." Dokud práci dělá člověk, funguje to. Jakmile ji má dělat program, <strong>musíte pravidlo vyslovit celé</strong> — a teprve tam se ukáže, kolik z něj nikdy nikdo nezapsal.
+        Většina úředních postupů běží zčásti na tichém vědění. „Tohle se posuzuje takhle — no, kromě případů, kdy… to prostě poznáte." Dokud práci dělá člověk, funguje to. Jakmile ji má dělat program, <strong>musíte pravidlo vyslovit celé</strong>, a teprve tam se ukáže, kolik z něj nikdy nikdo nezapsal.
       </p>
       <p>
         Berte to jako <strong>užitek, ne překážku</strong>. Je to nejlevnější způsob, jak zjistit, které části vaší agendy stojí na znalosti jednoho člověka a zmizí s ním. To, že u toho vznikne i skript, je skoro vedlejší produkt.
       </p>
       <p>
-        Praktický důsledek: <strong>první pokus skoro nikdy nesedí</strong> a to je normální. Neznamená to, že AI selhala ani že na to nemáte. Znamená to, že jste narazili na výjimku — dopište ji do zadání a nechte to přepsat.
+        Praktický důsledek: <strong>první pokus skoro nikdy nesedí</strong> a to je normální. Neznamená to, že AI selhala ani že na to nemáte. Znamená to, že jste narazili na výjimku; dopište ji do zadání a nechte to přepsat.
       </p>
     </div>
   </section>
@@ -345,7 +345,7 @@
   <section>
     <h2 class="section-title">Katalog po agendách</h2>
     <p class="section-lead">
-      Rozklikněte položku a uvidíte rozpis. Pořadí uvnitř agend je zhruba podle poměru užitku k námaze — co je nahoře, má nejlepší návratnost.
+      Rozklikněte položku a uvidíte rozpis. Pořadí uvnitř agend je zhruba podle poměru užitku k námaze; co je nahoře, má nejlepší návratnost.
     </p>
 
     <!-- ══ ANTIMIKROBIKA ══ -->
@@ -359,17 +359,17 @@
       </summary>
       <div class="card-body">
         <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
-          <p>Popíšete AI strukturu výkazu (jaké sloupce, co je povinné, jak vypadá platný kód) a necháte si napsat kontrolu, která projde přijatý soubor a <strong>vypíše seznam nálezů</strong> — duplicity, chybějící povinné údaje, kódy mimo číselník, nesmyslné hodnoty. Nic neopravuje, jen hlásí. Spouštíte lokálně na přijatých souborech.</p>
+          <p>Popíšete AI strukturu výkazu (jaké sloupce, co je povinné, jak vypadá platný kód) a necháte si napsat kontrolu, která projde přijatý soubor a <strong>vypíše seznam nálezů</strong>: duplicity, chybějící povinné údaje, kódy mimo číselník, nesmyslné hodnoty. Nic neopravuje, jen hlásí. Spouštíte lokálně na přijatých souborech.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Aktuální číselník kódů balení a ATC kódů. Vzorové výkazy v podobě, v jaké reálně chodí — včetně těch od distributora, který to vyplňuje po svém. Jeden zkontrolovaný výkaz, u kterého víte, co v něm je špatně.</p>
+          <p>Aktuální číselník kódů balení a ATC kódů. Vzorové výkazy v podobě, v jaké reálně chodí, včetně těch od distributora, který to vyplňuje po svém. Jeden zkontrolovaný výkaz, u kterého víte, co v něm je špatně.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
           <p>Přesně říct, co je vada a co je jen neobvyklé. Rozdíl mezi „tohle je chyba, vracíme k opravě" a „tohle je legitimní výjimka" musí být vyslovitelný, ne intuitivní.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Každý distributor vyplňuje trochu jinak.</strong> Mezery navíc, jiné pořadí sloupců, jiné psaní názvů. Program musí být tolerantní k formátu, ale přísný k obsahu — a tuhle hranici musíte určit vy.</li>
+            <li><strong>Každý distributor vyplňuje trochu jinak.</strong> Mezery navíc, jiné pořadí sloupců, jiné psaní názvů. Program musí být tolerantní k formátu, ale přísný k obsahu, a tuhle hranici musíte určit vy.</li>
             <li><strong>Vedoucí nuly v kódech</strong>, pokud soubor prošel Excelem. Do zadání patří věta o načítání jako text.</li>
             <li><strong>Historická data mají jiný formát.</strong> Když to pustíte na archiv, čekejte lavinu falešných nálezů.</li>
           </ul>
@@ -388,16 +388,16 @@
           <p>Výpočet zapíšete jako program místo jako řetěz vzorců v Excelu. Vstupem jsou sesbíraná data o prodejích a denominátor; výstupem číslo plus <strong>mezivýsledky, aby šlo vidět, jak vzniklo</strong>. Program je zároveň výpočet i jeho dokumentace.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Přesnou definici metodiky včetně toho, co patří do denominátoru u které varianty. Data z minulého roku, u kterých znáte publikovaný výsledek — to je váš validační vzorek.</p>
+          <p>Přesnou definici metodiky včetně toho, co patří do denominátoru u které varianty. Data z minulého roku, u kterých znáte publikovaný výsledek; to je váš validační vzorek.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Rozumět metodice natolik, abyste ji popsali krok za krokem. Pokud jsou dvě varianty výpočtu, musíte umět říct, čím přesně se liší — jinak vám program spočítá obojí stejně.</p>
+          <p>Rozumět metodice natolik, abyste ji popsali krok za krokem. Pokud jsou dvě varianty výpočtu, musíte umět říct, čím se liší, jinak vám program spočítá obojí stejně.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
             <li><strong>Tohle je publikované číslo, které jde do evropské zprávy.</strong> Ověření na loňských datech proti známému výsledku tu není doporučení, ale podmínka.</li>
             <li><strong>Zaokrouhlování a pořadí operací</strong> umí posunout výsledek na třetím místě. Když se rozchází s ručním výpočtem o kousek, hledejte tady.</li>
-            <li><strong>Změna metodiky mezi roky.</strong> Program napsaný na letošní pravidla dá u loňských dat jiné číslo než tehdejší publikace — a to je správně, jen o tom musíte vědět.</li>
+            <li><strong>Změna metodiky mezi roky.</strong> Program napsaný na letošní pravidla dá u loňských dat jiné číslo než tehdejší publikace, a to je správně, jen o tom musíte vědět.</li>
           </ul>
         </div>
       </div>
@@ -417,12 +417,12 @@
           <p>Aktuální seznam povinných subjektů a evidenci přijatých hlášení. Obojí nejspíš existuje, jen ne na jednom místě.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Určit, kdo je v daném období povinný — subjekt, který skončil v půlce roku, se počítá jak? To je pravidlo, které musíte vyslovit.</p>
+          <p>Určit, kdo je v daném období povinný. Jak se počítá subjekt, který skončil v půlce roku? To je pravidlo, které musíte vyslovit.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
             <li><strong>Párování podle názvu firmy nefunguje.</strong> „s.r.o." versus „s. r. o.", diakritika, změna názvu. Párujte podle IČO nebo jiného stabilního identifikátoru.</li>
-            <li><strong>Změny v průběhu období</strong> — vznik, zánik, převod. Bez pravidla pro tyhle případy budou čísla pokaždé jiná.</li>
+            <li><strong>Změny v průběhu období:</strong> vznik, zánik, převod. Bez pravidla pro tyhle případy budou čísla pokaždé jiná.</li>
           </ul>
         </div>
       </div>
@@ -439,19 +439,19 @@
       </summary>
       <div class="card-body">
         <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
-          <p>Program vezme dvě verze textu a <strong>zvýrazní, co se přesně změnilo</strong> — po větách nebo po odstavcích, s uvedením sekce. Odpadá čtení dvou dokumentů vedle sebe a hledání rozdílu očima.</p>
+          <p>Program vezme dvě verze textu a <strong>zvýrazní, co se změnilo</strong>, po větách nebo po odstavcích a s uvedením sekce. Odpadá čtení dvou dokumentů vedle sebe a hledání rozdílu očima.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Obě verze v textové podobě. Pokud jsou to PDF, přibývá krok převodu — a ten je zdrojem většiny potíží, viz níž.</p>
+          <p>Obě verze v textové podobě. Pokud jsou to PDF, přibývá krok převodu, a ten je zdrojem většiny potíží; viz níž.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Nic navíc. Tohle je jedna z mála úloh, kde stačí umět posoudit, jestli zvýrazněné rozdíly odpovídají skutečnosti — a to poznáte na první pohled.</p>
+          <p>Nic navíc. Tohle je jedna z mála úloh, kde stačí umět posoudit, jestli zvýrazněné rozdíly odpovídají skutečnosti, a to poznáte na první pohled.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
             <li><strong>PDF nemá „text", má rozmístěné znaky.</strong> Převod umí přeházet pořadí, rozbít tabulky a slepit slova. Rozdíly, které program najde, pak nemusí být skutečné změny obsahu.</li>
             <li><strong>Formátovací šum.</strong> Jiné zalomení řádku není změna obsahu, ale program to tak vidí. Do zadání patří, aby porovnával věty, ne řádky.</li>
-            <li><strong>Nejde o schválení změny</strong> — program řekne, <em>co</em> se změnilo, ne jestli je to v pořádku. To zůstává na posuzovateli.</li>
+            <li><strong>Nejde o schválení změny:</strong> program řekne, <em>co</em> se změnilo, ne jestli je to v pořádku. To zůstává na posuzovateli.</li>
           </ul>
         </div>
       </div>
@@ -471,11 +471,11 @@
           <p>Seznam povinných sekcí podle platné šablony. Několik podání, u kterých víte, co v nich chybělo.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Vědět, které části jsou povinné vždy a které jen za určitých podmínek — jiné požadavky platí podle právní báze podání. Bez tohoto rozlišení dostanete falešné nálezy u každého druhého spisu.</p>
+          <p>Vědět, které části jsou povinné vždy a které jen za určitých podmínek: jiné požadavky platí podle právní báze podání. Bez tohoto rozlišení dostanete falešné nálezy u každého druhého spisu.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Kontroluje se přítomnost, ne kvalita.</strong> Program pozná, že sekce chybí. Nepozná, že je vyplněná nesmyslně — to je pořád na člověku.</li>
+            <li><strong>Kontroluje se přítomnost, ne kvalita.</strong> Program pozná, že sekce chybí. Nepozná, že je vyplněná nesmyslně; to zůstává na člověku.</li>
             <li><strong>Šablona se mění.</strong> Program napsaný na jednu revizi bude u novější hlásit nesmysly. Do poznámky patří, ke které revizi byl psaný.</li>
             <li><strong>Nadpisy se píšou různě.</strong> Malé/velké písmeno, jiné pořadí slov, překlep. Buď tolerantní porovnání, nebo lavina falešných hlášení.</li>
           </ul>
@@ -501,7 +501,7 @@
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Stavění lhůty při výzvě žadateli.</strong> Pokud to program neumí, budou termíny systematicky špatně — a to nebezpečně, protože budou vypadat věrohodně.</li>
+            <li><strong>Stavění lhůty při výzvě žadateli.</strong> Pokud to program neumí, budou termíny systematicky špatně, a to nebezpečně, protože budou vypadat věrohodně.</li>
             <li><strong>Svátky a víkendy.</strong> Musí se doplnit ručně a každý rok znovu.</li>
             <li><strong>Nesmí se stát jediným zdrojem pravdy</strong>, dokud si na něm neověříte několik uzavřených procedur zpětně.</li>
           </ul>
@@ -520,7 +520,7 @@
           <p>Necháte AI porovnat seznam položených otázek s došlou odpovědí a označit, co zůstalo nezodpovězené nebo zodpovězené jen zčásti. Výstup je <strong>upozornění k prověření</strong>, ne verdikt.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Obojí v textové podobě. <strong>Pozor na vstupní branku</strong> — pokud dokumenty obsahují neveřejné údaje žadatele, tahle úloha musí počkat na schválený nástroj.</p>
+          <p>Obojí v textové podobě. <strong>Pozor na <a href="6.0-co-smi-dovnitr.html">vstupní branku</a>:</strong> pokud dokumenty obsahují neveřejné údaje žadatele, tahle úloha musí počkat na schválený nástroj.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
           <p>Posoudit, jestli má upozornění pravdu. AI tu funguje jako druhý pár očí, ne jako kontrolor.</p>
@@ -551,12 +551,12 @@
           <p>Evidenci hlášení s datem přijetí a stavem zpracování. Definici toho, co se počítá jako kompletní minimální údaj.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Říct, kdy přesně lhůta začíná běžet a co znamená „identifikovatelný" u ohlašovatele a zvířete. Obojí je v praxi hranatější, než vypadá.</p>
+          <p>Říct, kdy lhůta začíná běžet a co znamená „identifikovatelný" u ohlašovatele a zvířete. Obojí je v praxi hranatější, než vypadá.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
             <li><strong>Vyplněné pole neznamená použitelný údaj.</strong> Program pozná, že tam něco je; nepozná, že je to „neuvedeno".</li>
-            <li><strong>Lhůta u doplněných hlášení</strong> — když přijde dodatečná informace, běží nová lhůta? Musíte rozhodnout vy.</li>
+            <li><strong>Lhůta u doplněných hlášení.</strong> Když přijde dodatečná informace, běží nová lhůta? Musíte rozhodnout vy.</li>
           </ul>
         </div>
       </div>
@@ -570,7 +570,7 @@
       </summary>
       <div class="card-body">
         <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
-          <p>Rozdělení hlášení podle druhu zvířete, přípravku, typu reakce a vývoj v čase. Při řádově stovkách záznamů ročně je to výpočetně triviální — jen to dnes nikdo nedělá, protože data sedí v systému a vytáhnout je ručně nikoho nebaví.</p>
+          <p>Rozdělení hlášení podle druhu zvířete, přípravku, typu reakce a vývoj v čase. Při řádově stovkách záznamů ročně je to výpočetně triviální; jen to dnes nikdo nedělá, protože data sedí v systému a vytáhnout je ručně nikoho nebaví.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
           <p>Export evidence v jakémkoli strukturovaném formátu. Stačí i tabulka.</p>
@@ -580,7 +580,7 @@
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Tohle není detekce signálu.</strong> Přehled je popis, ne posouzení. Záměna těchto dvou věcí by byla vážný problém — signál se vyhodnocuje odborně a postupem, který má svá pravidla.</li>
+            <li><strong>Tohle není detekce signálu.</strong> Přehled je popis, ne posouzení. Záměna těchto dvou věcí by byla vážný problém; signál se vyhodnocuje odborně a postupem, který má svá pravidla.</li>
             <li><strong>Změna počtu hlášení nemusí znamenat změnu rizika.</strong> Může jít o změnu ochoty hlásit. Interpretace patří člověku.</li>
           </ul>
         </div>
@@ -595,17 +595,17 @@
       </summary>
       <div class="card-body">
         <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
-          <p>AI dostane popis reakce vlastními slovy a <strong>navrhne odpovídající termíny</strong> z řízeného slovníku, včetně zdůvodnění. Člověk návrh potvrdí nebo přepíše. Mapování volného textu na slovník je přesně ten typ jazykové úlohy, kde je AI silná.</p>
+          <p>AI dostane popis reakce vlastními slovy a <strong>navrhne odpovídající termíny</strong> z řízeného slovníku, včetně zdůvodnění. Člověk návrh potvrdí nebo přepíše. Mapování volného textu na slovník je typ jazykové úlohy, ve kterém je AI silná.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
           <p>Platnou verzi slovníku a pravidla kódování. Sadu už zakódovaných případů, na kterých ověříte shodu s tím, jak kóduje váš tým.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Kódovat sami. Tohle je nástroj pro zrychlení experta, ne náhrada expertízy — bez schopnosti návrh posoudit je k ničemu.</p>
+          <p>Kódovat sami. Tohle je nástroj pro zrychlení experta, ne náhrada expertízy; bez schopnosti návrh posoudit je k ničemu.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>AI si termín vymyslí</strong>, když přesný neexistuje. Vypadá věrohodně a ve slovníku není. Každý navržený termín se musí ověřit proti seznamu — ideálně programem.</li>
+            <li><strong>AI si termín vymyslí</strong>, když odpovídající neexistuje. Vypadá věrohodně a ve slovníku není. Každý navržený termín se musí ověřit proti seznamu, ideálně programem.</li>
             <li><strong>Sklon k obecnějšímu termínu.</strong> Model volí bezpečnější a širší pojem, čímž se ztrácí informace.</li>
             <li><strong>Nikdy ne hromadně bez kontroly.</strong> Zakódovaný údaj jde do evropské databáze a nese se dál.</li>
           </ul>
@@ -634,7 +634,7 @@
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Akreditovaná činnost.</strong> Pokud výstup vstupuje do systému kvality, není to osobní pomůcka — potřebuje vlastníka, popis a revizi jako každý jiný řízený dokument.</li>
+            <li><strong>Akreditovaná činnost.</strong> Pokud výstup vstupuje do systému kvality, přestává jít o osobní pomůcku a potřebuje vlastníka, popis a revizi jako každý jiný řízený dokument.</li>
             <li><strong>Přepočet mezí z historie</strong> je snadné udělat špatně. Ověřte proti mezím, které máte stanovené jinak.</li>
           </ul>
         </div>
@@ -652,7 +652,7 @@
           <p>Jeden seznam s datem platnosti, program vypíše, co propadá v následujících týdnech. Nejjednodušší položka v celém katalogu a přitom jedna z nejužitečnějších.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Evidenci s datem platnosti. Pokud existuje jen v hlavách nebo na papíře, prvním krokem je ji sepsat — a to je práce, kterou skript neušetří.</p>
+          <p>Evidenci s datem platnosti. Pokud existuje jen v hlavách nebo na papíře, prvním krokem je ji sepsat, a to je práce, kterou skript neušetří.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
           <p>Nic zvláštního. Vhodné jako úplně první skript.</p>
@@ -660,7 +660,7 @@
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
             <li><strong>Seznam zastará.</strong> Nástroj je tak dobrý jako evidence pod ním; když ji nikdo neaktualizuje, uspává falešným klidem.</li>
-            <li><strong>Různé typy platnosti</strong> — od data vydání, od otevření, od poslední kalibrace. Musí se rozlišit.</li>
+            <li><strong>Různé typy platnosti:</strong> od data vydání, od otevření, od poslední kalibrace. Musí se rozlišit.</li>
           </ul>
         </div>
       </div>
@@ -680,14 +680,14 @@
           <p>Program projde odkazy v dokumentu nebo na stránce a ověří, že cíl existuje. Výstup je seznam nefunkčních. Doba běhu minuty, přínos okamžitý.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Nic navíc — seznam odkazů se dá vytáhnout ze samotného dokumentu.</p>
+          <p>Nic navíc; seznam odkazů se dá vytáhnout ze samotného dokumentu.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
           <p>Nic. Ideální ukázka na projektor, protože výsledek je vidět hned a je nesporný.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Rychlé opakované dotazy vypadají jako útok.</strong> Program musí mezi dotazy čekat, jinak ho cílový server odmítne — a vy dostanete falešné nálezy.</li>
+            <li><strong>Rychlé opakované dotazy vypadají jako útok.</strong> Program musí mezi dotazy čekat, jinak ho cílový server odmítne a vy dostanete falešné nálezy.</li>
             <li><strong>Ne každá chyba znamená mrtvý odkaz.</strong> Některé servery odmítají automatické dotazy, i když stránka funguje. Nálezy je potřeba doklepnout ručně.</li>
           </ul>
         </div>
@@ -702,18 +702,18 @@
       </summary>
       <div class="card-body">
         <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
-          <p>Program posbírá pokyny rozeseté po jednotlivých sekcích webu a sestaví z nich jeden přehled — kód, název, revize, datum, odkaz. Tvar 3 v čisté podobě.</p>
+          <p>Program posbírá pokyny rozeseté po jednotlivých sekcích webu a sestaví z nich jeden přehled: kód, název, revize, datum, odkaz. Tvar 3 v čisté podobě.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
           <p>Seznam míst, kde pokyny žijí. Pravidlo pro čtení kódu a revize z názvu.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Vědět, co je platná verze, když existuje víc revizí — a co znamená, že je pokyn v revizi.</p>
+          <p>Vědět, co je platná verze, když existuje víc revizí, a co znamená, že je pokyn v revizi.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
             <li><strong>Značení není důsledné.</strong> Jednou s diakritikou, jednou bez, jednou s lomítkem, jednou s pomlčkou. Program to musí snést, nebo to napřed sjednotíte.</li>
-            <li><strong>Redesign webu vám to rozbije.</strong> Počítejte s tím, že to bude potřeba občas přepsat — proto to má být jednoduché a srozumitelné.</li>
+            <li><strong>Redesign webu vám to rozbije.</strong> Počítejte s tím, že to bude potřeba občas přepsat; proto to má být jednoduché a srozumitelné.</li>
           </ul>
         </div>
       </div>
@@ -730,13 +730,13 @@
       </summary>
       <div class="card-body">
         <div class="cb-row how"><span class="cb-lbl">Jak na to</span>
-          <p>Dva soubory dovnitř, ven přehled: co přibylo, co zmizelo, co se změnilo a v čem. Funguje na seznamy přípravků, subjektů, kódů — na cokoli, co má stabilní identifikátor.</p>
+          <p>Dva soubory dovnitř, ven přehled: co přibylo, co zmizelo, co se změnilo a v čem. Funguje na seznamy přípravků, subjektů i kódů, zkrátka na cokoli, co má stabilní identifikátor.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
           <p>Dva exporty a vědomí, <strong>který sloupec je identifikátor</strong>. To je jediné podstatné rozhodnutí celé úlohy.</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
-          <p>Určit identifikátor. Pokud žádný stabilní neexistuje, je to zjištění samo o sobě — a vysvětluje, proč je ruční porovnávání tak protivné.</p>
+          <p>Určit identifikátor. Pokud žádný stabilní neexistuje, je to zjištění samo o sobě a vysvětluje, proč je ruční porovnávání tak protivné.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
@@ -758,14 +758,14 @@
           <p>Program projde složku dokumentů stejného tvaru, z každého vytáhne určená pole a složí z nich tabulku. Klíčové slovo je <strong>stejného tvaru</strong>.</p>
         </div>
         <div class="cb-row need"><span class="cb-lbl">Co potřebujete mít</span>
-          <p>Dokumenty v jedné složce a popis, kde přesně údaj leží — „za nadpisem X", „ve druhém sloupci tabulky Y".</p>
+          <p>Dokumenty v jedné složce a popis, kde údaj leží: „za nadpisem X", „ve druhém sloupci tabulky Y".</p>
         </div>
         <div class="cb-row skill"><span class="cb-lbl">Co musíte umět</span>
           <p>Popsat umístění údaje slovy a poznat, kdy dokument do řady nepatří.</p>
         </div>
         <div class="cb-row prob"><span class="cb-lbl">Kde to drhne</span>
           <ul>
-            <li><strong>Skeny nejsou text.</strong> Naskenovaný dokument potřebuje rozpoznávání znaků a to chybuje — u čísel a kódů obzvlášť zrádně.</li>
+            <li><strong>Skeny nejsou text.</strong> Naskenovaný dokument potřebuje rozpoznávání znaků a to chybuje, u čísel a kódů obzvlášť zrádně.</li>
             <li><strong>Vyzkoušejte na deseti, než pustíte na dvě stě.</strong> A těch deset zkontrolujte ručně celé.</li>
             <li><strong>Starší dokumenty mívají jiný tvar</strong>, i když se jmenují stejně.</li>
           </ul>
@@ -778,7 +778,7 @@
   <section>
     <h2 class="section-title">Zbytek zásobníku</h2>
     <p class="section-lead">
-      Bez rozpisu — nápady, které stojí za zvážení, ale rozepisovat je má smysl teprve tehdy, když se někdo chytí. Rozpis si k nim doplníte stejnou strukturou: jak, co k tomu, co umět, kde to drhne.
+      Nápady bez rozpisu; rozepisovat je má smysl teprve tehdy, když se někdo chytí. Rozpis si k nim doplníte stejnou strukturou: jak, co k tomu, co umět, kde to drhne.
     </p>
 
     <div class="rest-scroll">
@@ -788,7 +788,7 @@
         </thead>
         <tbody>
           <tr><td><span class="t-pill script">Nástroj</span></td><td>Kontrola konzistence ochranné lhůty napříč dokumenty</td><td>Stejný údaj na několika místech se musí shodovat<span class="note">Vysoká hodnota, ale závisí na strojové čitelnosti podkladů</span></td></tr>
-          <tr><td><span class="t-pill script">Nástroj</span></td><td>Detekce anomálií v hlášení — kdo hlásí řádově jinak než dřív</td><td>Vytipování k prověření, ne nález<span class="note">Program ukáže odchylku, důvod hledá člověk</span></td></tr>
+          <tr><td><span class="t-pill script">Nástroj</span></td><td>Detekce anomálií v hlášení: kdo hlásí řádově jinak než dřív</td><td>Vytipování k prověření, ne nález<span class="note">Program ukáže odchylku, důvod hledá člověk</span></td></tr>
           <tr><td><span class="t-pill script">Nástroj</span></td><td>Ověření, že zásilkové lékárny mají na webu společné logo</td><td>Povinnost plyne z předpisu, seznam se vede<span class="note">Kontrola je mechanická, nálezy se doklepnou ručně</span></td></tr>
           <tr><td><span class="t-pill script">Nástroj</span></td><td>Sledování platnosti certifikátů a plánování inspekcí</td><td>Tvar 4<span class="note">Stojí a padá s kvalitou evidence</span></td></tr>
           <tr><td><span class="t-pill script">Nástroj</span></td><td>Kontrola shody seznamů na webu s interní evidencí</td><td>Tvar 1<span class="note">Odhalí, co se zapomnělo zveřejnit nebo stáhnout</span></td></tr>
@@ -809,14 +809,14 @@
   <section>
     <h2 class="section-title">Co si odnést</h2>
     <p class="section-lead">
-      Katalog je zásobník, ne úkolník. Stačí, když si z něj vezmete jednu věc a dotáhnete ji.
+      Stačí, když si z katalogu vezmete jednu věc a dotáhnete ji.
     </p>
     <div class="takeaways">
       <div class="takeaway-card">
         <strong>Začněte tím nejnudnějším.</strong> Hlídání platnosti nebo porovnání dvou seznamů. Nic to nezničí, výsledek je hned vidět a naučíte se na tom celý postup.
       </div>
       <div class="takeaway-card">
-        <strong>Bottleneck nejsou znalosti kódu.</strong> Je jím schopnost vyslovit pravidlo celé, včetně výjimek. Kdo zná svou agendu, má to nejtěžší za sebou.
+        <strong>Úzké hrdlo je vyslovit pravidlo celé,</strong> včetně výjimek, ne napsat kód. Kdo zná svou agendu, má to nejtěžší za sebou.
       </div>
       <div class="takeaway-card">
         <strong>První pokus nesedí a je to v pořádku.</strong> Znamená to, že jste našli nezapsanou výjimku. Dopište ji do zadání a nechte přepsat.
@@ -832,7 +832,7 @@
     <br>
     Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
     <br>
-    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Položky označené „Doloženo" vycházejí z veřejných materiálů úřadu, „Hypotéza" jsou návrhy k posouzení — ani jedno nenahrazuje znalost skutečných pracovních postupů.</em>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 4.8 (kód, design, drafty textů). Položky označené „Doloženo" vycházejí z veřejných materiálů úřadu, „Hypotéza" jsou návrhy k posouzení; ani jedno nenahrazuje znalost skutečných pracovních postupů.</em>
   </footer>
 
 </main>

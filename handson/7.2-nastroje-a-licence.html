@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Nástroje a licence: co se změní, když nástroj pořídí úřad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #0d1b2a; --accent-hover: #000000; --accent-soft: #dde0e4;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --purple: #5b3f7a; --purple-soft: #ede5f3;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 900px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── MODE SWITCH ────────────────────────────────────── */
+  .md-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .md-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .md-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 11px 16px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.2px;
+    text-align: left; line-height: 1.35;
+  }
+  .md-tab span { display: block; font-size: 10.5px; color: var(--muted); margin-top: 2px; font-weight: 400; }
+  .md-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .md-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .md-tab.active span { color: rgba(255,255,255,0.72); }
+
+  .md-head {
+    background: var(--bg); border: 1px solid var(--line); border-bottom: none;
+    padding: 18px 22px 16px;
+  }
+  .md-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 700;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .md-who { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); }
+
+  .md-rows { background: var(--bg); border: 1px solid var(--line); }
+  .md-row {
+    display: grid; grid-template-columns: 210px 1fr; gap: 18px;
+    padding: 13px 22px; border-top: 1px solid var(--line); align-items: start;
+  }
+  @media (max-width: 720px) { .md-row { grid-template-columns: 1fr; gap: 4px; } }
+  .md-k {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; padding-top: 3px;
+  }
+  .md-v { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); }
+  .md-v strong { color: var(--ink); }
+  .md-verdict {
+    margin-top: 0; padding: 14px 22px; font-size: 13px; line-height: 1.6; color: var(--ink);
+    border-top: 1px solid var(--line);
+  }
+  .md-verdict.ok { background: var(--green-soft); border-top-color: var(--green); }
+  .md-verdict.warn { background: var(--warm-soft); border-top-color: var(--warm); }
+  .md-verdict.bad { background: var(--red-soft); border-top-color: var(--red); }
+  .md-verdict strong { display: block; margin-bottom: 3px; }
+
+  /* ── QUESTION CARDS ─────────────────────────────────── */
+  .qs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .qs { grid-template-columns: 1fr; } }
+  .q {
+    background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 17px 20px;
+  }
+  .q-n {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    color: var(--muted); font-weight: 600; margin-bottom: 7px;
+  }
+  .q h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 17px;
+    font-weight: 700; margin-bottom: 8px; line-height: 1.3;
+  }
+  .q p { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 8px; }
+  .q p:last-child { margin-bottom: 0; }
+  .q .bad-answer {
+    font-size: 12.5px; line-height: 1.55; color: var(--ink); background: var(--red-soft);
+    border-left: 2px solid var(--red); padding: 8px 11px; margin-top: 10px;
+  }
+  .q .bad-answer em { color: var(--red); font-style: normal; font-weight: 600; }
+
+  /* ── TABLES ─────────────────────────────────────────── */
+  .tbl {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 20px;
+  }
+  .tbl th, .tbl td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .tbl th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .tbl td strong { color: var(--ink); }
+  .tbl tr:nth-child(even) td { background: var(--paper); }
+  .tbl td.nm { white-space: nowrap; font-weight: 600; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; white-space: nowrap;
+  }
+  .tag.ano { background: var(--green-soft); color: var(--green); }
+  .tag.ne { background: var(--red-soft); color: var(--red); }
+  .tag.zalezi { background: var(--warm-soft); color: var(--warm); }
+
+  /* ── TRAP LIST ──────────────────────────────────────── */
+  .traps { display: flex; flex-direction: column; gap: 12px; }
+  .trap {
+    background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--warm);
+    padding: 16px 20px;
+  }
+  .trap h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 16.5px;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .trap p { font-size: 13.2px; line-height: 1.62; color: var(--ink-soft); margin-bottom: 7px; }
+  .trap p:last-child { margin-bottom: 0; }
+  .trap .ask {
+    font-size: 12.5px; line-height: 1.55; color: var(--ink); background: var(--accent-soft);
+    padding: 8px 11px; margin-top: 9px; border-left: 2px solid var(--accent);
+  }
+  .trap .ask strong { color: var(--accent-hover); }
+
+  /* ── GATE SHIFT ─────────────────────────────────────── */
+  .shift { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .shift { grid-template-columns: 1fr; } }
+  .shift-card { background: var(--bg); border: 1px solid var(--line); padding: 18px 20px; }
+  .shift-card.now { border-left: 3px solid var(--red); }
+  .shift-card.after { border-left: 3px solid var(--green); }
+  .shift-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.3px;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 9px; display: block;
+  }
+  .shift-card.now .shift-tag { color: var(--red); }
+  .shift-card.after .shift-tag { color: var(--green); }
+  .shift-card h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px;
+    font-weight: 700; margin-bottom: 9px;
+  }
+  .shift-card p { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 8px; }
+  .shift-card ul { list-style: none; margin-top: 9px; }
+  .shift-card li {
+    font-size: 13px; line-height: 1.55; color: var(--ink-soft);
+    padding-left: 17px; position: relative; margin-bottom: 6px;
+  }
+  .shift-card li::before {
+    content: "·"; position: absolute; left: 4px; font-weight: 700; font-size: 17px; line-height: 1.1;
+  }
+  .shift-card.now li::before { color: var(--red); }
+  .shift-card.after li::before { color: var(--green); }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body ul { margin: 8px 0 10px; padding-left: 20px; }
+  .tip-body li { margin-bottom: 6px; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  /* ── TAKEAWAYS ──────────────────────────────────────── */
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .next-card {
+    margin-top: 28px; background: var(--warm-soft);
+    border: 1px solid color-mix(in srgb, var(--warm) 25%, var(--line));
+    border-left: 4px solid var(--warm); padding: 18px 22px;
+  }
+  .next-card .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--warm); font-weight: 600; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .next-card a { color: var(--warm); font-weight: 600; }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 7 · Hands-on</p>
+    <h1>Stejný model, <em>jiná smlouva</em></h1>
+    <p class="hero-subtitle">
+      Když si dnes někdo na&nbsp;úřadě otevře AI nástroj, používá přesně tentýž model, jaký by úřad koupil institucionálně. Rozdíl není v&nbsp;kvalitě odpovědí ani v&nbsp;tom, co nástroj umí. Rozdíl je v&nbsp;tom, <em>kdo je smluvní stranou</em>, co se smí stát se&nbsp;vstupy a&nbsp;kdo o&nbsp;tom vede záznam. A&nbsp;právě tenhle rozdíl rozhoduje, co do&nbsp;nástroje smí.
+    </p>
+    <div class="definition">
+      <strong>Pořízení nástroje není nákup schopností, ale nákup záruk.</strong> Model umí totéž v&nbsp;osobním i&nbsp;firemním tarifu. Kupuje se zpracovatelská smlouva, závazek netrénovat na&nbsp;vstupech, nastavitelná retence a&nbsp;správa účtů. Proto se pořízením nástroje <em>posouvá branka</em> z&nbsp;<a href="6.0-co-smi-dovnitr.html">strany 6.0</a> — dovnitř smí víc než dnes.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Tři režimy téhož nástroje</h2>
+    <p class="section-lead">
+      Tytéž nástroje se prodávají ve&nbsp;třech odlišných režimech. Z&nbsp;uživatelského pohledu vypadají skoro stejně — stejné okno, stejný model, často i&nbsp;stejná adresa. Právně jsou to tři různé světy. Klikněte na&nbsp;režim.
+    </p>
+
+    <div class="md-wrap">
+      <div class="md-tabs" id="md-tabs">
+        <button class="md-tab active" data-md="osobni">Osobní placený účet<span>dnešní stav na&nbsp;ÚSKVBL</span></button>
+        <button class="md-tab" data-md="firemni">Firemní licence<span>tým / business / enterprise</span></button>
+        <button class="md-tab" data-md="uzavrene">Uzavřené nasazení<span>API v&nbsp;EU · lokální model</span></button>
+      </div>
+
+      <div class="md-head">
+        <div class="md-name" id="md-name"></div>
+        <div class="md-who" id="md-who"></div>
+      </div>
+      <div class="md-rows" id="md-rows"></div>
+      <div class="md-verdict" id="md-verdict"></div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> Nejde o&nbsp;to, že by osobní účet byl „horší nástroj"</summary>
+      <div class="tip-body">
+        <p>Kdo dnes používá placený osobní účet, má k&nbsp;dispozici <strong>špičkový model</strong> — v&nbsp;řadě případů tentýž, jaký by dostal ve&nbsp;firemní licenci. Nejde tedy o&nbsp;to, že by lidé pracovali s&nbsp;podřadnou verzí a&nbsp;pořízením se odemkla lepší.</p>
+        <p>Rozdíl je celý na&nbsp;straně <strong>závazků poskytovatele vůči organizaci</strong>. Spotřebitelské podmínky jsou uzavřené s&nbsp;fyzickou osobou a&nbsp;s&nbsp;pracovním použitím u&nbsp;správního úřadu nepočítají. Úřad v&nbsp;nich není smluvní stranou, nemá k&nbsp;čemu se odvolat a&nbsp;nemá jak doložit, co se s&nbsp;daty stalo.</p>
+        <p>Praktický důsledek: pokud by se někdo ptal — dozorový orgán, žadatel, jehož dokumentace se toho týká, nebo soud — <em>úřad nemá čím odpovědět</em>. Ne proto, že by se stalo něco špatného, ale proto, že o&nbsp;tom neexistuje záznam a&nbsp;neexistuje smlouva, která by cokoli garantovala.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Šest otázek, kterými se ptát dodavatele</h2>
+    <p class="section-lead">
+      Konkrétní produkty a&nbsp;jejich podmínky se mění po&nbsp;měsících. Otázky se nemění. Tenhle seznam přežije většinu tabulek srovnávajících nástroje — a&nbsp;dá se přiložit k&nbsp;poptávce nebo k&nbsp;zadávací dokumentaci.
+    </p>
+
+    <div class="qs">
+      <div class="q">
+        <div class="q-n">Otázka 01</div>
+        <h3>Kdo je smluvní stranou a&nbsp;kdo zpracovatelem?</h3>
+        <p>Existuje mezi úřadem a&nbsp;poskytovatelem <strong>smlouva o&nbsp;zpracování osobních údajů</strong> podle čl.&nbsp;28 GDPR? Kdo je správce, kdo zpracovatel, kdo případný další zpracovatel?</p>
+        <div class="bad-answer"><em>Špatná odpověď:</em> „Naše podmínky užití to řeší." Podmínky užití nejsou zpracovatelská smlouva a&nbsp;spotřebitelské podmínky jí nejsou nikdy.</div>
+      </div>
+      <div class="q">
+        <div class="q-n">Otázka 02</div>
+        <h3>Používají se naše vstupy k&nbsp;trénování?</h3>
+        <p>Ne „standardně ne", ale <strong>smluvně vyloučeno</strong>. A&nbsp;pozor na&nbsp;výjimky: obvyklá je výjimka pro obsah označený k&nbsp;bezpečnostnímu přezkumu, která platí bez ohledu na&nbsp;nastavení.</p>
+        <div class="bad-answer"><em>Špatná odpověď:</em> „Ve&nbsp;výchozím nastavení to je vypnuté." Výchozí nastavení se dá změnit jednostranně; smluvní závazek ne.</div>
+      </div>
+      <div class="q">
+        <div class="q-n">Otázka 03</div>
+        <h3>Jak dlouho se data drží a&nbsp;kdo je vidí?</h3>
+        <p>Jaká je <strong>retence</strong> a&nbsp;dá se nastavit? Kdo z&nbsp;lidí u&nbsp;poskytovatele může vidět obsah konverzací a&nbsp;za&nbsp;jakých podmínek? Existuje režim s&nbsp;nulovým uchováním?</p>
+        <div class="bad-answer"><em>Špatná odpověď:</em> „Data mažeme průběžně." Kolik dní, kde přesně a&nbsp;co znamená „mažeme" u&nbsp;záloh?</div>
+      </div>
+      <div class="q">
+        <div class="q-n">Otázka 04</div>
+        <h3>Kde fyzicky probíhá zpracování?</h3>
+        <p>Ve&nbsp;kterých zemích běží inference a&nbsp;kde se ukládají data? Platí to <strong>pro všechny modely v&nbsp;nabídce</strong>, včetně těch od&nbsp;jiných dodavatelů, které nástroj používá jako subdodávku?</p>
+        <div class="bad-answer"><em>Špatná odpověď:</em> „Vaše data zůstávají v&nbsp;EU." U&nbsp;kterých modelů a&nbsp;s&nbsp;jakými výjimkami při zatížení? Ptejte se na&nbsp;výčet.</div>
+      </div>
+      <div class="q">
+        <div class="q-n">Otázka 05</div>
+        <h3>Co uvidí správce a&nbsp;co půjde doložit?</h3>
+        <p>Umí nástroj <strong>centrální správu účtů</strong>, vynucení nastavení napříč organizací, přehled o&nbsp;užívání a&nbsp;auditní log? Odchod zaměstnance — co se stane s&nbsp;jeho konverzacemi?</p>
+        <div class="bad-answer"><em>Špatná odpověď:</em> „Každý uživatel si to nastaví sám." Pak úřad nemá pravidlo, ale zvyk.</div>
+      </div>
+      <div class="q">
+        <div class="q-n">Otázka 06</div>
+        <h3>Co se stane, když skončíme?</h3>
+        <p>Jde vzít data ven a&nbsp;v&nbsp;jakém formátu? Za&nbsp;jak dlouho po&nbsp;ukončení se smažou? Co se stane s&nbsp;„pamětí", vlastními instrukcemi a&nbsp;nahranými dokumenty?</p>
+        <div class="bad-answer"><em>Špatná odpověď:</em> „Export je na&nbsp;vyžádání." Znamená to formát, který jde reálně použít, nebo PDF s&nbsp;výpisem chatů?</div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Tyhle otázky nejsou o&nbsp;AI</summary>
+      <div class="tip-body">
+        <p>Všimněte si, že ani jedna z&nbsp;šesti otázek se neptá na&nbsp;model, přesnost, halucinace nebo schopnosti. Ptají se na&nbsp;zpracovatelskou smlouvu, retenci, lokalitu zpracování, správu přístupů a&nbsp;exit. To jsou <strong>standardní otázky pro pořízení jakékoli cloudové služby</strong>, kterou úřad používá na&nbsp;neveřejná data.</p>
+        <p>Je to dobrá zpráva. Znamená to, že pořízení AI nástroje není nová disciplína, na&nbsp;kterou by úřad neměl postupy. Je to varianta něčeho, co už umí. Nové je jen jedno: <strong>u&nbsp;AI nástroje se do&nbsp;služby posílá obsah dokumentů, ne jen metadata</strong> — a&nbsp;posílá ho každý uživatel sám, ad hoc, v&nbsp;objemu, který nikdo předem neschvaluje.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kde jsou dnes hlavní nástroje</h2>
+    <p class="section-lead">
+      Orientační stav u&nbsp;čtyř nástrojů, které lidé na&nbsp;úřadě reálně potkávají. Tabulka slouží k&nbsp;pochopení principu, <strong>ne jako podklad k&nbsp;rozhodnutí</strong> — konkrétní podmínky si před pořízením vždy vyžádejte písemně od&nbsp;dodavatele, protože se mění a&nbsp;liší se podle konkrétního tarifu a&nbsp;regionu.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Nástroj</th>
+          <th>Osobní tarif — trénink na&nbsp;vstupech</th>
+          <th>Firemní tarif — trénink na&nbsp;vstupech</th>
+          <th>Na&nbsp;co se u&nbsp;něj zvlášť ptát</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="nm">ChatGPT<br><span style="font-weight:400;color:var(--muted);font-size:11.5px;">OpenAI</span></td>
+          <td>Ve&nbsp;výchozím stavu <strong>ano</strong>, lze vypnout v&nbsp;nastavení <span class="tag zalezi">nastavení</span></td>
+          <td>U&nbsp;business a&nbsp;enterprise tarifů <strong>ne</strong>, uvádí se jako smluvní závazek <span class="tag ano">smluvně</span></td>
+          <td>Nastavitelnost retence, dostupnost datové rezidence pro&nbsp;firemní zákazníky</td>
+        </tr>
+        <tr>
+          <td class="nm">Claude<br><span style="font-weight:400;color:var(--muted);font-size:11.5px;">Anthropic</span></td>
+          <td>Od&nbsp;srpna&nbsp;2025 ve&nbsp;výchozím stavu <strong>ano</strong>, s&nbsp;možností odmítnout <span class="tag zalezi">nastavení</span></td>
+          <td>U&nbsp;firemních tarifů <strong>ne</strong> <span class="tag ano">smluvně</span></td>
+          <td>Délka uchování při&nbsp;souhlasu (uvádí se až&nbsp;5&nbsp;let) a&nbsp;výjimka pro&nbsp;obsah označený k&nbsp;bezpečnostnímu přezkumu</td>
+        </tr>
+        <tr>
+          <td class="nm">Gemini<br><span style="font-weight:400;color:var(--muted);font-size:11.5px;">Google</span></td>
+          <td>Se&nbsp;zapnutou aktivitou <strong>ano</strong> <span class="tag zalezi">nastavení</span></td>
+          <td>V&nbsp;rámci Workspace <strong>ne</strong>, závazek je součástí zpracovatelské doložky <span class="tag ano">smluvně</span></td>
+          <td>Rozlišit aplikaci Gemini na&nbsp;osobním účtu od&nbsp;Gemini uvnitř Workspace — jsou to <em>jiné produkty</em> s&nbsp;jinými podmínkami</td>
+        </tr>
+        <tr>
+          <td class="nm">Microsoft&nbsp;Copilot<br><span style="font-weight:400;color:var(--muted);font-size:11.5px;">Microsoft</span></td>
+          <td>Liší se podle toho, zda jde o&nbsp;přihlášení pracovním, nebo osobním účtem <span class="tag zalezi">záleží</span></td>
+          <td>U&nbsp;Microsoft&nbsp;365&nbsp;Copilot <strong>ne</strong> — prompty ani data z&nbsp;Microsoft&nbsp;Graphu se podle dokumentace nepoužívají k&nbsp;trénování základních modelů <span class="tag ano">smluvně</span></td>
+          <td>Hranice EU&nbsp;Data&nbsp;Boundary: které modely do&nbsp;ní spadají a&nbsp;jaká je konfigurace směrování při&nbsp;zatížení — viz&nbsp;sekce&nbsp;05</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Ověřeno 27.&nbsp;7.&nbsp;2026 z&nbsp;veřejných zdrojů poskytovatelů a&nbsp;odborných shrnutí (Anthropic — aktualizace spotřebitelských podmínek z&nbsp;28.&nbsp;8.&nbsp;2025 a&nbsp;zásady ochrany soukromí z&nbsp;8.&nbsp;6.&nbsp;2026; OpenAI — dokumentace k&nbsp;firemním tarifům a&nbsp;datové rezidenci; Microsoft&nbsp;Learn — <em>Data, Privacy, and Security for Microsoft&nbsp;365&nbsp;Copilot</em> a&nbsp;<em>Enterprise data protection</em>; Google&nbsp;Workspace — Cloud&nbsp;Data&nbsp;Processing&nbsp;Addendum). Ceny, názvy tarifů i&nbsp;podmínky se mění řádově po&nbsp;měsících; <strong>tuhle tabulku neuvádějte jako zdroj v&nbsp;úředním dokumentu</strong>, ověřte si aktuální stav přímo u&nbsp;dodavatele a&nbsp;písemně.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co se tím posune u&nbsp;branky</h2>
+    <p class="section-lead">
+      Tohle je celý praktický smysl pořízení nástroje. Na&nbsp;<a href="6.0-co-smi-dovnitr.html">straně 6.0</a> jsme kreslili tvrdou hranici, protože jiná v&nbsp;současné situaci nejde. Institucionální nástroj tu hranici nemaže — <strong>posouvá ji</strong>, a&nbsp;to výrazně.
+    </p>
+
+    <div class="shift">
+      <div class="shift-card now">
+        <span class="shift-tag">Dnes · osobní účet</span>
+        <h3>Branka je nutně úzká</h3>
+        <p>Test „prošlo by to redakcí před zveřejněním hodnoticí zprávy?" musí být přísný, protože za&nbsp;vstupem nestojí žádná záruka. Ven nesmí nic, co úřad drží proto, že mu to někdo svěřil.</p>
+        <ul>
+          <li>registrační dokumentace v&nbsp;žádném rozsahu</li>
+          <li>hlášení nežádoucích účinků</li>
+          <li>inspekční zjištění před uzavřením</li>
+          <li>cokoli se jménem</li>
+        </ul>
+      </div>
+      <div class="shift-card after">
+        <span class="shift-tag">Po pořízení nástroje</span>
+        <h3>Branka se otevírá — ale ne dokořán</h3>
+        <p>Se&nbsp;zpracovatelskou smlouvou, vyloučeným tréninkem a&nbsp;doložitelnou retencí přestává být vložení pracovního obsahu samo o&nbsp;sobě problém. Otevírá se agenda, která je dnes nedostupná.</p>
+        <ul>
+          <li>práce s&nbsp;rozpracovanými posouzeními a&nbsp;návrhy</li>
+          <li>rešerše nad&nbsp;interními podklady</li>
+          <li>porovnávání verzí dokumentace</li>
+          <li>rutinní zpracování textu, který dnes musí ven „přepsaný obecně"</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Pozor</span> Co se neposouvá ani po&nbsp;pořízení</summary>
+      <div class="tip-body">
+        <p>Smlouva řeší <em>přípustnost vstupu</em>. Neřeší tři věci, které zůstávají stejné:</p>
+        <ul>
+          <li><strong>Osobní údaje pořád podléhají GDPR.</strong> Zpracovatelská smlouva umožňuje osobní údaje zpracovávat, ale jen v&nbsp;rozsahu a&nbsp;pro&nbsp;účel, které má úřad podložené. Nedělá z&nbsp;nich veřejná data.</li>
+          <li><strong>Mlčenlivost a&nbsp;obchodní tajemství žadatelů se nevypaří.</strong> Existence smlouvy s&nbsp;poskytovatelem není souhlas žadatele. U&nbsp;citlivé části dokumentace bude i&nbsp;po&nbsp;pořízení nástroje namístě zvláštní pravidlo, ne automatické „už to smíme".</li>
+          <li><strong>Kvalita výstupu se nezlepší ani o&nbsp;kousek.</strong> Model bude halucinovat úplně stejně jako předtím. Celé <a href="../index.html#s5">setkání&nbsp;5</a> platí beze změny — smlouva mění, co smí dovnitř, ne co se dá věřit tomu, co vyjde ven.</li>
+        </ul>
+        <p>Proto pořízení nástroje nenahrazuje interní pravidla, ale teprve je umožňuje napsat rozumně. Bez nástroje se dá napsat jen zákaz; s&nbsp;nástrojem se dá napsat postup. To je téma <a href="7.3-interni-pravidla.html">strany&nbsp;7.3</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Pasti, které se objeví až&nbsp;po&nbsp;podpisu</h2>
+    <p class="section-lead">
+      Tyhle věci nejsou v&nbsp;prodejní prezentaci. Nejsou ani skryté — stojí v&nbsp;dokumentaci, jen o&nbsp;několik prokliků dál. Všechny mají společné to, že marketingová věta je pravdivá a&nbsp;přesto nepřesná.
+    </p>
+
+    <div class="traps">
+      <div class="trap">
+        <h4>„Data zůstávají v&nbsp;EU" nemusí platit pro všechny modely</h4>
+        <p>Velcí dodavatelé dnes nabízejí ve&nbsp;svých nástrojích i&nbsp;modely od&nbsp;jiných výrobců. Takový model je z&nbsp;pohledu ochrany údajů <strong>další zpracovatel</strong> a&nbsp;nemusí spadat pod&nbsp;stejný závazek o&nbsp;lokalitě zpracování jako zbytek služby. U&nbsp;Microsoft&nbsp;365&nbsp;Copilotu je podle dokumentace tento případ modelů dodávaných Anthropicem, které jsou z&nbsp;hranice EU&nbsp;Data&nbsp;Boundary vyňaty.</p>
+        <div class="ask"><strong>Ptejte se:</strong> „Vyjmenujte modely dostupné v&nbsp;této službě a&nbsp;u&nbsp;každého uveďte, zda se na&nbsp;něj vztahuje závazek o&nbsp;zpracování v&nbsp;EU."</div>
+      </div>
+
+      <div class="trap">
+        <h4>Směrování při&nbsp;zatížení může závazek dočasně obejít</h4>
+        <p>Aby služba zvládla špičky, může být nastavené přesměrování výpočtu do&nbsp;jiné oblasti. U&nbsp;Microsoft&nbsp;365&nbsp;Copilotu je podle dokumentace funkce označovaná jako <em>Flex&nbsp;Routing</em> ve&nbsp;výchozím stavu <strong>zapnutá pro evropské tenanty založené po&nbsp;25.&nbsp;3.&nbsp;2026</strong>; při&nbsp;vysoké poptávce pak může inference proběhnout mimo EU, dokud ji správce nevypne.</p>
+        <p>Nejde o&nbsp;nic skrytého ani protiprávního. Jde o&nbsp;to, že <strong>výchozí nastavení nemusí být to, které úřad chce</strong> — a&nbsp;nikdo ho nezmění sám od&nbsp;sebe.</p>
+        <div class="ask"><strong>Ptejte se:</strong> „Která nastavení souvisejících se&nbsp;zpracováním dat jsou ve&nbsp;výchozím stavu zapnutá a&nbsp;jak je vypneme?"</div>
+      </div>
+
+      <div class="trap">
+        <h4>Výjimka pro bezpečnostní přezkum přebíjí uživatelské nastavení</h4>
+        <p>U&nbsp;spotřebitelských tarifů bývá vedle běžného souhlasu s&nbsp;tréninkem ještě samostatná výjimka: obsah, který systém <strong>označí k&nbsp;bezpečnostnímu přezkumu</strong>, se může použít bez ohledu na&nbsp;to, co si uživatel nastavil. Anthropic tuhle výjimku výslovně uvádí v&nbsp;zásadách ochrany soukromí z&nbsp;června&nbsp;2026; neuvádí přitom, co takové označení spouští ani zda se o&nbsp;něm uživatel dozví.</p>
+        <p>Pro úřad z&nbsp;toho plyne konkrétní věc: <em>„vypnul jsem si trénování" není totéž co „moje vstupy se nikdy nepoužijí"</em>. Tohle je nejsilnější jednotlivý argument proti spoléhání na&nbsp;nastavení osobních účtů.</p>
+        <div class="ask"><strong>Ptejte se:</strong> „Existují situace, kdy se náš obsah použije i&nbsp;přes vyloučení tréninku? Vyjmenujte je."</div>
+      </div>
+
+      <div class="trap">
+        <h4>Licence pro tým neznamená automaticky správu</h4>
+        <p>Nižší firemní tarify často přinesou závazek o&nbsp;datech, ale minimální administraci: žádný pořádný auditní log, omezené vynucování nastavení, nejasnosti kolem toho, co se stane s&nbsp;obsahem při&nbsp;odchodu zaměstnance. Pro&nbsp;úřad, který potřebuje doložit <em>kdo, kdy a&nbsp;s&nbsp;čím</em>, je to zásadní rozdíl.</p>
+        <div class="ask"><strong>Ptejte se:</strong> „Co konkrétně uvidí správce a&nbsp;jak dlouho tyhle záznamy zůstanou k&nbsp;dispozici?"</div>
+      </div>
+    </div>
+    <p class="footnote">
+      Konkrétní příklady jsou uvedeny jako ilustrace typu problému, ne jako hodnocení dodavatelů; obdobná ustanovení mají v&nbsp;různé podobě všichni. Zdroje: Microsoft&nbsp;Learn — dokumentace k&nbsp;ochraně dat v&nbsp;Microsoft&nbsp;365&nbsp;Copilotu a&nbsp;k&nbsp;EU&nbsp;Data&nbsp;Boundary; Anthropic — zásady ochrany soukromí zveřejněné 8.&nbsp;6.&nbsp;2026, účinné od&nbsp;7.&nbsp;7.&nbsp;2026. Ověřeno 27.&nbsp;7.&nbsp;2026. Údaje o&nbsp;výchozím zapnutí směrování a&nbsp;o&nbsp;vynětí modelů z&nbsp;EU&nbsp;Data&nbsp;Boundary pocházejí z&nbsp;dokumentace dodavatele a&nbsp;jejích shrnutí; <strong>před citováním v&nbsp;úředním kontextu si je nechte potvrdit dodavatelem písemně</strong>, protože se konfigurace mění.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Rozhodnutí, jestli a&nbsp;co pořídit, není na&nbsp;této straně ani na&nbsp;tomto setkání. Cílem je, aby ho úřad dělal se&nbsp;správnými otázkami a&nbsp;s&nbsp;realistickým očekáváním toho, co za&nbsp;peníze dostane.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Kupuje se smlouva, ne schopnosti.</strong> Model je v&nbsp;osobním i&nbsp;firemním tarifu prakticky týž. Rozdíl je ve&nbsp;zpracovatelské smlouvě, vyloučeném tréninku, nastavitelné retenci a&nbsp;správě — tedy přesně v&nbsp;tom, co úřad potřebuje doložit.
+      </div>
+      <div class="takeaway-card">
+        <strong>Pořízení posouvá branku, nemaže ji.</strong> Dovnitř bude smět výrazně víc než dnes, a&nbsp;právě to je hlavní přínos. Osobní údaje, mlčenlivost a&nbsp;povinnost ověřovat výstup ale zůstávají beze změny.
+      </div>
+      <div class="takeaway-card">
+        <strong>Ptejte se na&nbsp;výchozí nastavení a&nbsp;na&nbsp;výjimky.</strong> Většina nepříjemných překvapení nejsou porušené sliby, ale zapnuté defaulty a&nbsp;výjimky, které marketingová věta nezmiňuje. Chtějte výčet, ne ujištění.
+      </div>
+      <div class="takeaway-card">
+        <strong>Nejsou to otázky o&nbsp;AI.</strong> Zpracovatel, retence, lokalita, správa přístupů, exit — to úřad při&nbsp;pořizování cloudové služby řeší běžně. Nové je jen to, že sem lidé posílají obsah dokumentů, a&nbsp;dělá to každý sám.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <div class="lbl">Kam s&nbsp;tím dál</div>
+      <p>Nástroj sám o&nbsp;sobě nic nevyřeší — bez pravidla se s&nbsp;institucionální licencí zopakuje totéž, co se stalo s&nbsp;osobními účty, jen s&nbsp;lepší smlouvou. Následující strana <a href="7.3-interni-pravidla.html">7.3</a> je o&nbsp;tom, co má úřad písemně rozhodnout, kdo to vlastní a&nbsp;jak vypadá minimální verze, která se vejde na&nbsp;jednu stranu.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 7 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 5 (kód, design, drafty textů). Podmínky poskytovatelů ověřeny k 27. 7. 2026; nejde o právní poradenství ani o doporučení konkrétního dodavatele.</em>
+  </footer>
+
+</main>
+
+<script>
+const modes = {
+  osobni: {
+    name: 'Osobní placený účet',
+    who: 'smluvní stranou je zaměstnanec · spotřebitelské podmínky',
+    rows: [
+      ['Smlouva s úřadem', 'Žádná. Poskytovatel má vztah s fyzickou osobou, nikoli s organizací. <strong>Zpracovatelská smlouva podle čl. 28 GDPR neexistuje.</strong>'],
+      ['Trénink na vstupech', 'U hlavních nástrojů je dnes ve výchozím stavu zapnutý a uživatel ho musí aktivně odmítnout. Odmítnutí navíc typicky <strong>neplatí pro obsah označený k bezpečnostnímu přezkumu</strong>.'],
+      ['Uchování dat', 'Řídí se spotřebitelskými podmínkami a mění se jednostranně. Při souhlasu s tréninkem se uvádí uchování v řádu let.'],
+      ['Správa a přehled', 'Žádné. Úřad neví, kdo nástroj používá, na co, ani co do něj poslal. Nemá to jak zjistit ani zpětně.'],
+      ['Odpovědnost', 'Zůstává na jednotlivci. Chybějící pravidlo odpovědnost nepřenáší, jen ji nechává nerozdělenou.'],
+      ['Co s tím dnes', 'Platí vstupní branka ze <a href="6.0-co-smi-dovnitr.html">strany 6.0</a>: dovnitř jen to, co by prošlo redakcí před zveřejněním.']
+    ],
+    verdict: { cls: 'bad', label: 'Kde je dnes ÚSKVBL', text: 'Použitelné pro veřejné dokumenty, vlastní text, učení a psaní skriptů. Pro neveřejný pracovní obsah nikoli — a žádná opatrnost jednotlivce to nespraví, protože chybí ta smlouva, ne ta opatrnost.' }
+  },
+  firemni: {
+    name: 'Firemní licence',
+    who: 'smluvní stranou je úřad · business nebo enterprise tarif',
+    rows: [
+      ['Smlouva s úřadem', 'Ano. Součástí bývá zpracovatelská smlouva podle čl. 28 GDPR. <strong>Tohle je ta věc, kvůli které se licence kupuje.</strong>'],
+      ['Trénink na vstupech', 'U firemních tarifů hlavních poskytovatelů vyloučen — a to smluvně, ne nastavením, které jde přepnout.'],
+      ['Uchování dat', 'Zpravidla nastavitelné, u vyšších tarifů i s možností krátké nebo nulové retence. Je to konfigurace, kterou musí někdo vědomě nastavit.'],
+      ['Správa a přehled', 'Centrální správa účtů, vynucení nastavení napříč organizací, přehled o užívání. Rozsah auditních logů se ale mezi tarify <strong>zásadně liší</strong> — ptejte se konkrétně.'],
+      ['Odpovědnost', 'Rozdělitelná. Úřad může stanovit pravidlo, doložit jeho dodržování a nést odpovědnost jako organizace, ne jako součet jednotlivců.'],
+      ['Co to otevírá', 'Pracovní obsah, který dnes nesmí ven: rozpracovaná posouzení, interní podklady, porovnávání verzí dokumentace. Viz sekce 04.']
+    ],
+    verdict: { cls: 'ok', label: 'Realistický cíl pro úřad', text: 'Pro naprostou většinu agendy dostatečné. Zbývají dvě věci k dořešení: zvláštní režim pro nejcitlivější části dokumentace žadatelů a rozsah auditních záznamů, který se u levnějších tarifů často ukáže jako nedostatečný.' }
+  },
+  uzavrene: {
+    name: 'Uzavřené nasazení',
+    who: 'API v evropském regionu · model běžící na vlastní infrastruktuře',
+    rows: [
+      ['Smlouva s úřadem', 'U API v evropském regionu smlouva s poskytovatelem včetně volby lokality zpracování. U lokálního modelu <strong>žádný externí poskytovatel</strong> — data neopustí úřad.'],
+      ['Trénink na vstupech', 'U API standardně vyloučen. U lokálního modelu z podstaty nepřipadá v úvahu.'],
+      ['Uchování dat', 'U API často možnost nulového uchování. U lokálního modelu jen to, co si úřad uloží sám.'],
+      ['Správa a přehled', 'Úplné — ale za cenu toho, že si ho úřad musí sám postavit a provozovat. Nic z toho nepřijde v ceně licence.'],
+      ['Cena a náročnost', '<strong>Tady je háček.</strong> Vyžaduje IT kapacitu, kterou úřad musí mít nebo koupit. Lokální modely navíc bývají znatelně slabší než špičkové komerční.'],
+      ['Kdy dává smysl', 'Pro úzce vymezenou úlohu s citlivými daty a předvídatelným objemem — ne jako náhrada obecného asistenta pro celý úřad.']
+    ],
+    verdict: { cls: 'warn', label: 'Ne jako první krok', text: 'Technicky nejčistší a organizačně nejdražší varianta. Pro úřad, který zatím nemá žádný institucionální nástroj, je to nepraktický start — dává smysl jako doplněk pro konkrétní citlivou úlohu, ne jako první pořízení.' }
+  }
+};
+
+const mdTabs = document.querySelectorAll('.md-tab');
+const mdEls = {
+  name: document.getElementById('md-name'),
+  who: document.getElementById('md-who'),
+  rows: document.getElementById('md-rows'),
+  verdict: document.getElementById('md-verdict')
+};
+
+function renderMode(key) {
+  const m = modes[key];
+  mdEls.name.textContent = m.name;
+  mdEls.who.textContent = m.who;
+  mdEls.rows.innerHTML = m.rows.map(r =>
+    '<div class="md-row"><div class="md-k">' + r[0] + '</div><div class="md-v">' + r[1] + '</div></div>'
+  ).join('');
+  mdEls.verdict.className = 'md-verdict ' + m.verdict.cls;
+  mdEls.verdict.innerHTML = '<strong>' + m.verdict.label + '</strong>' + m.verdict.text;
+  mdTabs.forEach(b => b.classList.toggle('active', b.dataset.md === key));
+}
+mdTabs.forEach(btn => btn.addEventListener('click', () => renderMode(btn.dataset.md)));
+renderMode('osobni');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

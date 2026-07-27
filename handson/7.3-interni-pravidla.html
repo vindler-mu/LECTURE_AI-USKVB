@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Interní pravidla: šest rozhodnutí a jedna strana textu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #0d1b2a; --accent-hover: #000000; --accent-soft: #dde0e4;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --purple: #5b3f7a; --purple-soft: #ede5f3;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 900px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+  .disclaimer {
+    margin-top: 18px; padding: 14px 18px; background: var(--warm-soft);
+    border-left: 3px solid var(--warm); font-size: 13.5px; line-height: 1.62; max-width: 760px;
+  }
+  .disclaimer .d-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--warm); font-weight: 600;
+    display: block; margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── FAILURE MODES ──────────────────────────────────── */
+  .fails { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .fails { grid-template-columns: 1fr; } }
+  .fail {
+    background: var(--bg); border: 1px solid var(--line); border-top: 3px solid var(--red);
+    padding: 17px 19px;
+  }
+  .fail h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 17px;
+    font-weight: 700; margin-bottom: 8px; line-height: 1.3;
+  }
+  .fail p { font-size: 13.1px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 8px; }
+  .fail p:last-child { margin-bottom: 0; }
+  .fail .res {
+    font-size: 12.5px; color: var(--ink); background: var(--paper);
+    padding: 8px 11px; margin-top: 10px; border-left: 2px solid var(--line-strong);
+  }
+  .fail .res strong { color: var(--accent); }
+
+  /* ── DECISIONS ──────────────────────────────────────── */
+  .dc-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .dc-grid { display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .dc-grid { grid-template-columns: 1fr; } }
+  .dc-list { display: flex; flex-direction: column; gap: 5px; }
+  .dc-item {
+    border: 1px solid var(--line); background: var(--bg); cursor: pointer;
+    font-family: 'Inter', sans-serif; text-align: left; padding: 12px 15px;
+    transition: all 0.15s ease; display: flex; align-items: flex-start; gap: 11px;
+    color: var(--ink-soft); width: 100%; line-height: 1.35;
+  }
+  .dc-item:hover { border-color: var(--accent); color: var(--accent); }
+  .dc-item.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .dc-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    opacity: 0.55; flex-shrink: 0; padding-top: 1px;
+  }
+  .dc-item .dc-t { font-size: 13.2px; font-weight: 600; }
+
+  .dc-panel { background: var(--bg); border: 1px solid var(--line); padding: 22px 24px; min-height: 430px; }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  }
+  .dc-q {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 700;
+    color: var(--ink); margin-bottom: 6px; line-height: 1.25;
+  }
+  .dc-why { font-size: 13.2px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 18px; }
+  .dc-opts { display: flex; flex-direction: column; gap: 10px; }
+  .dc-opt { border: 1px solid var(--line); border-left: 3px solid var(--line-strong); padding: 12px 15px; }
+  .dc-opt.rec { border-left-color: var(--green); background: var(--green-soft); }
+  .dc-opt h4 {
+    font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .dc-opt .badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1px;
+    text-transform: uppercase; font-weight: 600; padding: 2px 6px;
+    background: var(--green); color: #fff;
+  }
+  .dc-opt p { font-size: 12.8px; line-height: 1.58; color: var(--ink-soft); }
+  .dc-opt p.cost { margin-top: 6px; color: var(--muted); }
+  .dc-opt p.cost b { color: var(--ink-soft); font-weight: 600; }
+  .dc-note {
+    margin-top: 16px; padding: 11px 14px; background: var(--accent-soft);
+    border-left: 3px solid var(--accent); font-size: 12.8px; line-height: 1.55; color: var(--ink);
+  }
+  .dc-note strong { color: var(--accent-hover); }
+
+  /* ── ROLES TABLE ────────────────────────────────────── */
+  .tbl {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 20px;
+  }
+  .tbl th, .tbl td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .tbl th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .tbl td strong { color: var(--ink); }
+  .tbl tr:nth-child(even) td { background: var(--paper); }
+
+  /* ── DRAFT BOX ──────────────────────────────────────── */
+  .draft {
+    border: 1px solid var(--line-strong); background: var(--bg); margin-top: 4px;
+  }
+  .draft-head {
+    background: var(--paper); border-bottom: 1px solid var(--line);
+    padding: 13px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .draft-head .dl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--warm); font-weight: 600;
+  }
+  .draft-head .dt { font-size: 13px; color: var(--ink-soft); }
+  .draft-body { padding: 22px 26px; font-size: 13.4px; line-height: 1.7; color: var(--ink); }
+  .draft-body h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 700;
+    margin: 18px 0 7px; color: var(--ink);
+  }
+  .draft-body h4:first-child { margin-top: 0; }
+  .draft-body p { margin-bottom: 9px; }
+  .draft-body ol, .draft-body ul { margin: 0 0 10px 20px; }
+  .draft-body li { margin-bottom: 6px; }
+  .draft-body .blank {
+    background: var(--warm-soft); border-bottom: 1px dashed var(--warm);
+    padding: 0 4px; font-style: italic; color: var(--warm);
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body ul { margin: 8px 0 10px; padding-left: 20px; }
+  .tip-body li { margin-bottom: 6px; }
+  .tip-body code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    background: var(--paper); padding: 1px 5px; border: 1px solid var(--line);
+  }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .next-card {
+    margin-top: 28px; background: var(--warm-soft);
+    border: 1px solid color-mix(in srgb, var(--warm) 25%, var(--line));
+    border-left: 4px solid var(--warm); padding: 18px 22px;
+  }
+  .next-card .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--warm); font-weight: 600; margin-bottom: 6px;
+  }
+  .next-card p { font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .next-card a { color: var(--warm); font-weight: 600; }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 7 · Hands-on</p>
+    <h1>Pravidlo, které se <em>vejde na&nbsp;jednu stranu</em></h1>
+    <p class="hero-subtitle">
+      Dokud úřad nerozhodne, rozhoduje každý sám — a&nbsp;pokaždé trochu jinak. To není nekázeň, ale očekávatelný důsledek chybějícího pravidla. Tahle strana neříká, jak má pravidlo znít; říká, o&nbsp;čem se musí rozhodnout, jaké má každá varianta důsledky a&nbsp;jak vypadá nejmenší verze, která reálně funguje.
+    </p>
+    <div class="definition">
+      <strong>Minimální fungující pravidlo je jedna strana, ne směrnice.</strong> Šest rozhodnutí, jedna odpovědná osoba a&nbsp;datum revize. Dvacetistránková směrnice, kterou nikdo nedočte, chrání úřad hůř než jedna strana, kterou si každý přečte a&nbsp;zapamatuje.
+    </div>
+    <div class="disclaimer">
+      <span class="d-label">K čemu tahle strana slouží</span>
+      Nejsem zaměstnancem úřadu a&nbsp;nemůžu za&nbsp;něj rozhodnout — a&nbsp;ani by to nebylo správně. Rozhodnutí v&nbsp;sekci&nbsp;02 jsou proto <strong>kostra k&nbsp;vyplnění</strong>: u&nbsp;každého najdete varianty a&nbsp;jejich důsledky, ne doporučení, které si má úřad převzít. Ukázkové znění v&nbsp;sekci&nbsp;04 je <strong>návrh k&nbsp;diskusi</strong>, ne vzor ke&nbsp;schválení.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Tři způsoby, jak to dopadne bez pravidla</h2>
+    <p class="section-lead">
+      Než se pustíme do&nbsp;toho, co má pravidlo obsahovat, stojí za&nbsp;to pojmenovat, co se děje bez&nbsp;něj. Žádná z&nbsp;těchto tří variant není hypotetická a&nbsp;dvě z&nbsp;nich probíhají na&nbsp;úřadech současně.
+    </p>
+
+    <div class="fails">
+      <div class="fail">
+        <h3>Tichý provoz</h3>
+        <p>Lidé nástroje používají přes osobní účty, protože jim pomáhají. Nikdo to nezakázal, tak to není zakázané. Hranice si každý určí podle vlastního citu.</p>
+        <p>Úřad neví, kolik lidí to dělá, na&nbsp;co, ani co do&nbsp;nástrojů putuje. Zjistí to typicky až&nbsp;ve&nbsp;chvíli, kdy se něco pokazí.</p>
+        <div class="res"><strong>Co to řeší:</strong> pravidlo, které místo zákazu vymezí hřiště — a&nbsp;pojmenuje, co se stalo dosud, bez hledání viníků.</div>
+      </div>
+      <div class="fail">
+        <h3>Plošný zákaz</h3>
+        <p>Nejrychlejší reakce a&nbsp;zdánlivě nejbezpečnější. Ve&nbsp;skutečnosti přesune používání mimo dohled: na&nbsp;soukromé telefony, domů, do&nbsp;osobních účtů, o&nbsp;kterých úřad neví.</p>
+        <p>Zákaz navíc není zdarma — přijdete o&nbsp;zcela bezpečné použití, které nic neriskuje: psaní skriptů, práci s&nbsp;veřejnými dokumenty, učení.</p>
+        <div class="res"><strong>Co to řeší:</strong> rozlišení. Zakázat vstupy, ne nástroj. Rozdíl je celý na&nbsp;straně 6.0.</div>
+      </div>
+      <div class="fail">
+        <h3>Směrnice, kterou nikdo nečte</h3>
+        <p>Vznikne dvacet stran, projdou připomínkovým kolem, vyvěsí se a&nbsp;odklikne se školení. Zbytek úřadu pracuje dál přesně stejně jako předtím.</p>
+        <p>Papír existuje, chování se nezměnilo. Při&nbsp;kontrole to vypadá dobře, v&nbsp;praxi to nechrání nikoho.</p>
+        <div class="res"><strong>Co to řeší:</strong> stručnost a&nbsp;jedna věta, kterou si člověk zapamatuje. Delší dokument může existovat, ale až&nbsp;jako druhá vrstva.</div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Restart</span> Jak začít, když se to už&nbsp;nějakou dobu děje</summary>
+      <div class="tip-body">
+        <p>Pravidlo, které vzniká až&nbsp;po&nbsp;tom, co lidé nástroje nějakou dobu používali, má jeden nepříjemný vedlejší efekt: <strong>zpětně z&nbsp;kolegů dělá porušovatele něčeho, co v&nbsp;té době neexistovalo.</strong> Když se tenhle dojem nechá viset ve&nbsp;vzduchu, nikdo nepřizná, co dělal, a&nbsp;úřad se nikdy nedozví, co má vlastně ošetřit.</p>
+        <p>Funkční rámování je <strong>restart</strong> — nakreslit čáru a&nbsp;říct nahlas, že se posuzuje až&nbsp;to, co je za&nbsp;ní:</p>
+        <ul>
+          <li><strong>Pojmenovat výchozí stav bez obviňování.</strong> Pravidlo dosud neexistovalo, hranice nebyla nikde napsaná, lidé jednali podle vlastního úsudku. To je konstatování, ne omluva.</li>
+          <li><strong>Vyzvat k&nbsp;nahlášení bez následku.</strong> Kdo ví o&nbsp;něčem, co do&nbsp;nástroje nemělo jít, ať to řekne — v&nbsp;definovaném období a&nbsp;s&nbsp;jasným příslibem, že se to řeší jako událost, ne jako provinění.</li>
+          <li><strong>Od&nbsp;data účinnosti platí pravidlo normálně.</strong> Amnestie se váže k&nbsp;období bez pravidla, ne k&nbsp;období po&nbsp;něm. Jinak to není restart, ale signál, že na&nbsp;pravidle nezáleží.</li>
+        </ul>
+        <p>Bez téhle části bude úřad mít pravidlo, ale ne obrázek o&nbsp;tom, co se dosud dělo. A&nbsp;právě ten obrázek potřebuje k&nbsp;tomu, aby vědel, jestli má něco řešit jako incident.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Šest rozhodnutí, která musí někdo udělat</h2>
+    <p class="section-lead">
+      Tohle je jádro strany. U&nbsp;každého rozhodnutí jsou varianty a&nbsp;jejich důsledky — <strong>volba zůstává na&nbsp;úřadu</strong>. Zelený štítek označuje variantu, která podle mé zkušenosti nejčastěji funguje u&nbsp;organizací podobné velikosti a&nbsp;povahy, ne variantu správnou. Klikněte na&nbsp;rozhodnutí vlevo.
+    </p>
+
+    <div class="dc-wrap">
+      <div class="dc-grid">
+        <div class="dc-list" id="dc-list"></div>
+        <div class="dc-panel">
+          <p class="panel-label">Rozhodnutí</p>
+          <div class="dc-q" id="dc-q"></div>
+          <div class="dc-why" id="dc-why"></div>
+          <div class="dc-opts" id="dc-opts"></div>
+          <div class="dc-note" id="dc-note"></div>
+        </div>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Nuance</span> Sedmé rozhodnutí, které se snadno přehlédne: skripty</summary>
+      <div class="tip-body">
+        <p>Nejbezpečnější a&nbsp;zároveň nejužitečnější způsob použití AI na&nbsp;úřadě je nechat si <strong>napsat pomocný skript</strong> — kontrolu duplicit v&nbsp;hlášeních, porovnání dvou seznamů, vytažení údajů z&nbsp;PDF do&nbsp;tabulky, kontrolu mrtvých odkazů. Skript se píše proti <em>popisu struktury</em>, ne proti datům, takže ven nejde ani řádka reálného obsahu, a&nbsp;spouští se lokálně.</p>
+        <p>Jenže tím vzniká něco nového: <strong>nástroj, který produkuje výsledky, na&nbsp;jejichž základě se rozhoduje.</strong> A&nbsp;pro to úřad pravidlo většinou nemá, protože doteď žádné takové nástroje sám nevyráběl.</p>
+        <p>Dobrá zpráva je, že analogie je po&nbsp;ruce a&nbsp;úřad ji zná: <strong>skript se validuje jako analytická metoda.</strong> Pustíte ho na&nbsp;vzorku, u&nbsp;které předem víte, co má vyjít — včetně případů, kde má selhat — a&nbsp;porovnáte. To zvládne posoudit i&nbsp;netechnik, protože nehodnotí kód, ale výsledek na&nbsp;známém vzorku.</p>
+        <p>Minimální pravidlo pro skripty se dá napsat třemi větami: skript se před prvním použitím ověří na&nbsp;vzorku se&nbsp;známým výsledkem; kdo ho ověřil a&nbsp;kdy, se zapíše; skript, který narazí na&nbsp;neočekávaný údaj, musí skončit chybou, ne odhadem. Ta poslední věta patří rovnou do&nbsp;zadání pro AI.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdo to vlastní</h2>
+    <p class="section-lead">
+      Pravidlo bez konkrétní osoby u&nbsp;každé role je přání. Nejde o&nbsp;nové úvazky — jde o&nbsp;přiřazení k&nbsp;lidem, kteří tyhle role už&nbsp;na&nbsp;úřadě zastávají. Sloupec vpravo je to, co se stane, když role zůstane neobsazená.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Role</th><th>Co dělá</th><th>Když chybí</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Vlastník pravidla</strong></td>
+          <td>Odpovídá za&nbsp;znění, jeho revize a&nbsp;za&nbsp;to, že se o&nbsp;něm ví. Jedna jmenovitě určená osoba, ne odbor.</td>
+          <td>Pravidlo zastará a&nbsp;nikdo si toho nevšimne. Po&nbsp;roce ho nikdo nedokáže vyložit.</td>
+        </tr>
+        <tr>
+          <td><strong>Kdo rozhoduje o&nbsp;hraničních případech</strong></td>
+          <td>Dostupný člověk, kterého se lze zeptat, když si nejsem jistý — a&nbsp;který odpoví v&nbsp;řádu hodin, ne týdnů.</td>
+          <td>Lidé se přestanou ptát a&nbsp;rozhodnou sami. To je přesně ten stav, který mělo pravidlo ukončit.</td>
+        </tr>
+        <tr>
+          <td><strong>Kdo přijímá hlášení událostí</strong></td>
+          <td>Adresát pro situaci „poslal jsem tam něco, co tam nemělo jít". Zpravidla ten, kdo v&nbsp;úřadu odpovídá za&nbsp;ochranu osobních údajů.</td>
+          <td>Události se neřeší, ale zametají. Úřad se o&nbsp;nich dozví odjinud a&nbsp;později, což je vždycky horší.</td>
+        </tr>
+        <tr>
+          <td><strong>Kdo spravuje nástroj</strong></td>
+          <td>Zakládá a&nbsp;ruší účty, drží nastavení, sleduje změny podmínek u&nbsp;dodavatele. Relevantní až&nbsp;po&nbsp;pořízení licence.</td>
+          <td>Účty přežijí odchod zaměstnanců, nastavení se rozjede, změnu podmínek nikdo nezachytí.</td>
+        </tr>
+        <tr>
+          <td><strong>Kdo sleduje regulaci</strong></td>
+          <td>Hlídá termíny AI&nbsp;Actu a&nbsp;stav adaptačního zákona. Časově je to nejmenší role z&nbsp;celé tabulky.</td>
+          <td>Úřad se o&nbsp;posunu termínů dozví ze&nbsp;zastaralého zdroje — přesně jak ukazuje <a href="7.1-ai-act.html">strana&nbsp;7.1</a>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Vzdělávání se vyplatí evidovat</summary>
+      <div class="tip-body">
+        <p>Článek&nbsp;4 AI&nbsp;Actu ukládá organizacím zajišťovat u&nbsp;svých lidí dostatečnou úroveň AI&nbsp;gramotnosti; po&nbsp;úpravě balíčkem <em>Digital&nbsp;Omnibus&nbsp;on&nbsp;AI</em> je formulovaný měkčeji — jako povinnost gramotnost institucionálně podporovat přiměřenými opatřeními.</p>
+        <p>Prakticky z&nbsp;toho plyne jedna nenáročná věc: <strong>tahle série je takové opatření a&nbsp;stojí za&nbsp;to ji jako opatření zaevidovat</strong> — datum, rozsah, okruh účastníků, obsah. Není to formalita navíc; je to jediný doklad, který úřad o&nbsp;plnění čl.&nbsp;4 má, a&nbsp;pořizuje se snadno teď, hůř za&nbsp;dva roky.</p>
+        <p>Totéž platí do&nbsp;budoucna: každé další školení, interní ukázka nebo přenesení postupu na&nbsp;kolegy je opatření podle čl.&nbsp;4. Evidence nemusí být složitější než tabulka.</p>
+      </div>
+    </details>
+    <p class="footnote">
+      Čl.&nbsp;4 nařízení (EU)&nbsp;2024/1689 ve&nbsp;znění nařízení (EU)&nbsp;2026/1744. Výklad o&nbsp;evidenci vzdělávání je praktické doporučení autora, nikoli požadavek vyplývající přímo z&nbsp;textu nařízení. Ověřeno 27.&nbsp;7.&nbsp;2026.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Jak by to mohlo znít</h2>
+    <p class="section-lead">
+      Následující text je <strong>návrh k&nbsp;diskusi</strong>, ne vzor ke&nbsp;schválení a&nbsp;ne právní doporučení. Slouží k&nbsp;tomu, aby bylo vidět, jak málo textu na&nbsp;funkční pravidlo stačí, a&nbsp;aby měl úřad z&nbsp;čeho škrtat. Místa v&nbsp;závorkách jsou právě ta, kde musí padnout rozhodnutí ze&nbsp;sekce&nbsp;02.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Návrh k diskusi</span> Ukázkové znění pravidla na&nbsp;jednu stranu — rozbalit</summary>
+      <div class="tip-body" style="padding:0;">
+        <div class="draft">
+          <div class="draft-head">
+            <span class="dl">Není schválený dokument</span>
+            <span class="dt">Podklad pro diskusi · vyžaduje posouzení pověřencem pro&nbsp;ochranu osobních údajů a&nbsp;právní kontrolu</span>
+          </div>
+          <div class="draft-body">
+            <h4>Používání nástrojů umělé inteligence — pravidla</h4>
+            <p><strong>Účel.</strong> Tato pravidla vymezují, jak lze při&nbsp;práci pro&nbsp;úřad používat nástroje umělé inteligence, aby zůstala zachována ochrana svěřených údajů a&nbsp;odpovědnost za&nbsp;výstupy.</p>
+
+            <h4>1. Které nástroje</h4>
+            <p>Pro&nbsp;práci s&nbsp;neveřejným obsahem lze používat výhradně nástroje uvedené na&nbsp;seznamu schválených nástrojů, které úřad pořídil a&nbsp;spravuje. Seznam vede <span class="blank">(vlastník pravidla)</span> a&nbsp;je dostupný <span class="blank">(kde)</span>.</p>
+            <p>Ostatní nástroje, včetně osobních účtů zaměstnanců, lze používat pouze pro&nbsp;obsah podle bodu&nbsp;2 písm.&nbsp;a).</p>
+
+            <h4>2. Co smí do&nbsp;nástroje</h4>
+            <p>a) <strong>Do&nbsp;jakéhokoli nástroje</strong> smí obsah, který je již veřejný nebo který by mohl být zveřejněn bez&nbsp;úpravy: zveřejněné dokumenty úřadu a&nbsp;evropských agentur, právní předpisy, pokyny, odborná literatura, vlastní pracovní text neobsahující údaje třetích osob, a&nbsp;popis struktury dat pro&nbsp;účely tvorby pomocných skriptů.</p>
+            <p>b) <strong>Do&nbsp;schválených nástrojů</strong> smí navíc neveřejný pracovní obsah v&nbsp;rozsahu <span class="blank">(vymezí úřad podle rozhodnutí č. 2)</span>.</p>
+            <p>c) <strong>Nesmí nikam</strong>: <span class="blank">(výčet — např. registrační dokumentace, hlášení nežádoucích účinků, neuzavřená inspekční zjištění, osobní údaje umožňující identifikaci)</span>. U&nbsp;tohoto obsahu nelze spoléhat na&nbsp;anonymizaci provedenou ad&nbsp;hoc.</p>
+
+            <h4>3. Když si nejsem jistý</h4>
+            <p>Před&nbsp;vložením se zeptejte <span class="blank">(role / osoba)</span>. Dotaz se vyřizuje do&nbsp;<span class="blank">(lhůta)</span>. Platí zásada: <strong>zeptat se lze kdykoli, vzít vložení zpět nelze nikdy.</strong></p>
+
+            <h4>4. Odpovědnost za&nbsp;výstup</h4>
+            <p>Za&nbsp;obsah dokumentu odpovídá vždy jeho zpracovatel, bez&nbsp;ohledu na&nbsp;to, jakým nástrojem vznikl. Výstup AI je podklad, nikoli hotový dokument.</p>
+            <p>U&nbsp;výstupu, který vstupuje do&nbsp;rozhodovací činnosti nebo odchází mimo úřad, se před&nbsp;použitím ověří <span class="blank">(co konkrétně — např. každý citovaný předpis, každý číselný údaj a&nbsp;každý odkaz na&nbsp;zdroj)</span> proti původnímu zdroji.</p>
+
+            <h4>5. Označování</h4>
+            <p><span class="blank">(rozhodnutí č. 4 — např.: použití AI se neuvádí u&nbsp;běžné jazykové úpravy vlastního textu; uvádí se tam, kde AI vstoupila do&nbsp;věcného obsahu podkladu, a&nbsp;to formou poznámky ve&nbsp;spisu)</span></p>
+
+            <h4>6. Když se něco stane</h4>
+            <p>Kdo zjistí, že do&nbsp;nástroje bylo vloženo něco podle bodu&nbsp;2&nbsp;písm.&nbsp;c), ohlásí to bez&nbsp;zbytečného odkladu <span class="blank">(role / osoba)</span>. Ohlášení podané včas se posuzuje jako řešení události, nikoli jako porušení pracovních povinností.</p>
+            <p>Smazání konverzace situaci neřeší a&nbsp;znemožňuje její posouzení.</p>
+
+            <h4>7. Účinnost a&nbsp;revize</h4>
+            <p>Tato pravidla nabývají účinnosti <span class="blank">(datum)</span>. Na&nbsp;období před&nbsp;tímto datem, kdy pravidla neexistovala, se bod&nbsp;6 věta druhá vztahuje v&nbsp;plném rozsahu.</p>
+            <p>Pravidla přezkoumá <span class="blank">(vlastník)</span> nejpozději <span class="blank">(datum, doporučeně do&nbsp;12 měsíců)</span> nebo dříve, změní-li se právní úprava či podmínky poskytovatele nástroje.</p>
+          </div>
+        </div>
+      </div>
+    </details>
+    <p class="footnote">
+      Text výše je autorský návrh vytvořený pro&nbsp;potřeby semináře. Nejde o&nbsp;právní službu, nezohledňuje vnitřní předpisy ÚSKVBL ani konkrétní podobu jeho agend a&nbsp;<strong>před jakýmkoli použitím vyžaduje posouzení pověřencem pro&nbsp;ochranu osobních údajů a&nbsp;právní kontrolu</strong>. Formulace bodu&nbsp;6 o&nbsp;posuzování včasného ohlášení má pracovněprávní důsledky, které je nutné ověřit.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Interní pravidlo není dokument pro&nbsp;kontrolu. Je to způsob, jak přenést rozhodování z&nbsp;jednotlivců na&nbsp;organizaci — a&nbsp;tím z&nbsp;lidí sejmout odpovědnost, kterou dnes nesou sami a&nbsp;bez&nbsp;opory.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Rozhodnout, ne zakázat.</strong> Šest rozhodnutí a&nbsp;jedna strana textu udělá víc než dvacet stran směrnice. Plošný zákaz jen přesune používání mimo dohled a&nbsp;zabije i&nbsp;to, co nic neriskuje.
+      </div>
+      <div class="takeaway-card">
+        <strong>Ke&nbsp;každé roli patří jméno.</strong> Zejména ta, které se lze zeptat u&nbsp;hraničního případu — a&nbsp;která odpoví rychle. Jakmile odpověď trvá týdny, lidé se ptát přestanou a&nbsp;rozhodnou sami.
+      </div>
+      <div class="takeaway-card">
+        <strong>Restart, ne hledání viníků.</strong> Pravidlo vzniká pozdě a&nbsp;to je normální. Bez&nbsp;výslovné amnestie za&nbsp;období bez&nbsp;pravidla se úřad nikdy nedozví, co má vlastně ošetřit.
+      </div>
+      <div class="takeaway-card">
+        <strong>Datum revize je součást pravidla.</strong> Nástroje, podmínky poskytovatelů i&nbsp;regulace se mění v&nbsp;řádu měsíců. Pravidlo bez&nbsp;termínu přezkumu je za&nbsp;rok nepřesné a&nbsp;nikdo si toho nevšimne.
+      </div>
+    </div>
+
+    <div class="next-card">
+      <div class="lbl">Kam s&nbsp;tím dál</div>
+      <p>Pravidlo a&nbsp;nástroj řeší dnešek. Zbývá otázka, jak si udržet přehled dál — kdo sleduje změny, co se vyplatí umět a&nbsp;jak poznat, že se něco posunulo. To je poslední strana série, <a href="7.4-kompetence.html">7.4</a>.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 7 · Hands-on
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 5 (kód, design, drafty textů). Nejde o právní poradenství; ukázkové znění v sekci 04 je podklad k diskusi, ne vzor ke schválení.</em>
+  </footer>
+
+</main>
+
+<script>
+const decisions = [
+  {
+    t: 'Které nástroje jsou povolené',
+    q: 'Smí se používat cokoli, vybrané nástroje, nebo jeden schválený?',
+    why: 'Nejzákladnější rozhodnutí, protože z něj plyne všechno ostatní. Bez odpovědi na tuhle otázku nelze napsat žádné další pravidlo — nemá se k čemu vztahovat.',
+    opts: [
+      { h: 'Jeden schválený nástroj', rec: true, p: 'Úřad pořídí jednu institucionální licenci a ta je pro neveřejný obsah jediná povolená. Ostatní nástroje zůstávají pro veřejný obsah a učení.', cost: 'Nejjednodušší na správu, doložení i vysvětlení. Cena: lidé si zvyknou na jeden nástroj a jeho slabiny ponesou všichni.' },
+      { h: 'Seznam povolených', p: 'Úřad schválí několik nástrojů a udržuje seznam. Pro různé úlohy různé nástroje.', cost: 'Flexibilnější, ale seznam někdo musí udržovat a u každého nástroje ohlídat podmínky zvlášť. Roste náročnost správy.' },
+      { h: 'Cokoli, ale s pravidlem pro vstupy', p: 'Nástroj se neomezuje, omezuje se jen to, co do něj smí. Fakticky dnešní stav, jen napsaný.', cost: 'Nejlevnější a nejrychlejší. Neposune ale branku ze strany 6.0 — neveřejný obsah zůstává venku napořád.' }
+    ],
+    note: 'Tohle rozhodnutí je jediné, které <strong>stojí peníze</strong>. Ostatních pět je organizačních a dají se udělat hned. Pokud pořízení nástroje potrvá, má smysl zbylých pět rozhodnout mezitím — pravidlo pro vstupy dává smysl i bez licence.'
+  },
+  {
+    t: 'Co smí dovnitř',
+    q: 'Kde přesně vede hranice mezi tím, co jde vložit, a tím, co ne?',
+    why: 'Nejčastěji kladená otázka na seminářích a jediná, kterou lidé v praxi reálně řeší. Pravidlo, které na ni neodpoví konkrétně, se v praxi nepoužije.',
+    opts: [
+      { h: 'Jeden zapamatovatelný test + tvrdý výčet', rec: true, p: 'Obecný test pro běžné situace („prošlo by to redakcí před zveřejněním hodnoticí zprávy?") doplněný krátkým výčtem toho, co nesmí nikdy a bez výjimky.', cost: 'Pokrývá i situace, které nikdo předem nevymyslel, a u nejcitlivějších věcí nenechává prostor pro výklad. Vyžaduje ale, aby výčet sestavil někdo, kdo agendy zná.' },
+      { h: 'Úplný výčet kategorií', p: 'Pravidlo vyjmenuje typy dokumentů a u každého uvede, kam smí.', cost: 'Jednoznačné pro vyjmenované případy. Selže u všeho ostatního — a lidé přirozeně předpokládají, že co není zakázáno, je dovoleno.' },
+      { h: 'Klasifikace podle stupně citlivosti', p: 'Navázání na existující kategorizaci informací v úřadu, pokud nějaká je.', cost: 'Elegantní, když ta kategorizace existuje a lidé ji znají. Pokud ne, přidává jeden krok navíc před každým použitím a v praxi se přeskočí.' }
+    ],
+    note: 'Ať padne jakákoli varianta, patří k ní věta o&nbsp;anonymizaci. <strong>Obchodní tajemství se anonymizovat nedá</strong> — složení přípravku nebo výsledky studií jsou důvěrné samy o sobě, bez ohledu na to, čí jsou, a vymazání názvu firmy z nich zveřejnitelný materiál neudělá.'
+  },
+  {
+    t: 'Kdo rozhoduje o výjimkách',
+    q: 'Na koho se člověk obrátí, když si u konkrétního případu není jistý?',
+    why: 'Tohle rozhodnutí určuje, jestli pravidlo bude živé, nebo jen vyvěšené. Není-li se koho zeptat, lidé rozhodnou sami — a jsme přesně tam, kde jsme byli před pravidlem.',
+    opts: [
+      { h: 'Jmenovitá osoba s krátkou lhůtou', rec: true, p: 'Konkrétní člověk, konkrétní kontakt, závazek odpovědět v řádu hodin až jednoho dne. Rozhodnutí se stručně zaznamenává.', cost: 'Zatíží jednoho člověka, zpočátku znatelně. Zároveň ale vzniká sbírka precedentů, ze které se pravidlo při první revizi zpřesní.' },
+      { h: 'Vedoucí příslušného útvaru', p: 'Rozhodne přímý nadřízený, který zná kontext agendy.', cost: 'Škáluje a je blízko práci. Riziko: různí vedoucí rozhodnou v obdobné věci různě, a nikdo si toho nevšimne.' },
+      { h: 'Bez určeného adresáta', p: 'Pravidlo popíše hranici a předpokládá, že si každý poradí.', cost: 'Nulová zátěž na začátku. V praxi to znamená, že u hraničních případů rozhoduje ten, kdo je zrovna u klávesnice — tedy nikdo za úřad.' }
+    ],
+    note: 'Kritická je <strong>rychlost, ne formálnost</strong>. Dotaz, na který přijde odpověď za týden, se v praxi nepoloží — člověk mezitím buď vloží, nebo úkol vzdá. Právě proto se vyplatí zvolit spíš dostupnou osobu než formálně nejsprávnější místo.'
+  },
+  {
+    t: 'Jak se označuje AI-asistovaná práce',
+    q: 'Uvádí se někde, že u vzniku dokumentu asistovala AI? A kde?',
+    why: 'Otázka, u které se debata na úřadech nejčastěji zasekne. Pomáhá rozlišit dvě věci, které spolu nesouvisejí: AI jako nástroj psaní a AI jako zdroj tvrzení.',
+    opts: [
+      { h: 'Označovat podle role, ne podle použití', rec: true, p: 'Jazyková úprava vlastního textu se neoznačuje, stejně jako se neuvádí použití kontroly pravopisu. Označuje se tam, kde AI vstoupila do věcného obsahu — rešerše, shrnutí zdroje, návrh argumentace.', cost: 'Odpovídá tomu, na čem záleží, a nezahltí spisy formalitami. Vyžaduje ale, aby lidé ten rozdíl uměli poznat — což je vlastně obsah celé série.' },
+      { h: 'Neoznačovat interně vůbec', p: 'Odpovědnost nese zpracovatel bez ohledu na nástroj, takže se nic neuvádí.', cost: 'Nejjednodušší a obhajitelné. Nevýhoda se ukáže zpětně: při přezkumu staršího podkladu nelze zjistit, jak vznikl.' },
+      { h: 'Označovat vždy', p: 'Jakékoli použití AI se poznamená.', cost: 'Nejprůhlednější na papíře. V praxi se poznámka objeví všude, přestane nést informaci a lidé ji začnou vynechávat.' }
+    ],
+    note: 'Nezaměňovat s&nbsp;<strong>čl. 50 AI Actu</strong>. Ten se týká situací, kdy generovaný obsah nebo chatbot míří <em>k veřejnosti</em> — tam platí povinnost transparence od 2. 8. 2026. Interní označování ve spisu je rozhodnutí úřadu, ne požadavek nařízení. Viz <a href="7.1-ai-act.html">strana 7.1</a>.'
+  },
+  {
+    t: 'Kdo odpovídá za výstup',
+    q: 'Co se musí ověřit, než výstup vstoupí do rozhodování nebo odejde ven?',
+    why: 'Bez tohoto bodu pravidlo ošetřuje jen vstup a mlčí o tom, co je pro úřad zdaleka nejrizikovější — o nesprávném tvrzení v dokumentu, který odešel ven.',
+    opts: [
+      { h: 'Ověřovací povinnost odstupňovaná podle dopadu', rec: true, p: 'U výstupu vstupujícího do rozhodovací činnosti nebo odcházejícího mimo úřad se ověřuje každý citovaný předpis, číselný údaj a odkaz proti původnímu zdroji. U interního podkladu stačí běžná odborná péče.', cost: 'Míří tam, kde chyba bolí, a nezatěžuje běžnou práci. Vyžaduje jasně napsat, co „ověřit proti zdroji" znamená v praxi.' },
+      { h: 'Obecná formulace o odpovědnosti', p: 'Pravidlo konstatuje, že za obsah odpovídá zpracovatel, a nic dalšího nespecifikuje.', cost: 'Právně v pořádku a prakticky bezzubé. Odpovědnost byla na zpracovateli i předtím; pravidlo tím nepřidalo nic nového.' },
+      { h: 'Čtyři oči na všem, kde byla AI', p: 'Každý výstup s AI asistencí prochází druhou kontrolou.', cost: 'Nejvyšší jistota. Také nejvyšší zátěž — a v praxi vede k tomu, že lidé použití AI raději neuvedou, aby se kontrole vyhnuli.' }
+    ],
+    note: 'Nejužitečnější věta v&nbsp;celém pravidle bývá tahle: <strong>výstup AI je podklad, ne hotový dokument.</strong> Krátká, zapamatovatelná a řeší většinu sporných situací dřív, než vzniknou.'
+  },
+  {
+    t: 'Co se stane při chybě',
+    q: 'Jak se řeší situace, kdy do nástroje šlo něco, co tam nemělo?',
+    why: 'Rozhoduje o tom, jestli se úřad o problémech dozví. Pravidlo, které na tuhle otázku odpoví hrozbou, si zaručí, že se o nich nedozví nikdy.',
+    opts: [
+      { h: 'Ohlášení bez sankce, s jasným adresátem', rec: true, p: 'Kdo to zjistí, ohlásí to určené osobě bez zbytečného odkladu. Včasné ohlášení se posuzuje jako řešení události, ne jako porušení povinností.', cost: 'Jediná varianta, u které se úřad reálně dozví, co se stalo, a může to posoudit — třeba i jako bezpečnostní incident podle GDPR. Vyžaduje ověřit pracovněprávní stránku formulace.' },
+      { h: 'Standardní postup pro bezpečnostní incidenty', p: 'Napojení na existující proces hlášení, pokud v úřadu je.', cost: 'Nezavádí nic nového a je konzistentní. Riziko: pokud je stávající proces zdlouhavý nebo se vnímá jako „nahlásit sám sebe", lidé ho obejdou.' },
+      { h: 'Neřešit v pravidle', p: 'Pravidlo popíše, co se smí, a mlčí o tom, co když ne.', cost: 'Zdánlivě neutrální. Fakticky sděluje, že se to řeší postupem pro porušení pracovních povinností — což znamená, že se to hlásit nebude.' }
+    ],
+    note: 'Tenhle bod je zároveň jediné místo, kde se pravidlo potkává s&nbsp;<strong>restartem</strong>. Věta o tom, že se včasné ohlášení posuzuje jako událost, musí platit i zpětně na období, kdy pravidlo neexistovalo — jinak amnestie není amnestií.'
+  }
+];
+
+const dcList = document.getElementById('dc-list');
+const dcEls = {
+  q: document.getElementById('dc-q'),
+  why: document.getElementById('dc-why'),
+  opts: document.getElementById('dc-opts'),
+  note: document.getElementById('dc-note')
+};
+
+dcList.innerHTML = decisions.map((d, i) =>
+  '<button class="dc-item' + (i === 0 ? ' active' : '') + '" data-i="' + i + '">' +
+  '<span class="dc-num">' + String(i + 1).padStart(2, '0') + '</span>' +
+  '<span class="dc-t">' + d.t + '</span></button>'
+).join('');
+
+function renderDecision(i) {
+  const d = decisions[i];
+  dcEls.q.textContent = d.q;
+  dcEls.why.textContent = d.why;
+  dcEls.opts.innerHTML = d.opts.map(o =>
+    '<div class="dc-opt' + (o.rec ? ' rec' : '') + '">' +
+    '<h4>' + o.h + (o.rec ? '<span class="badge">častá volba</span>' : '') + '</h4>' +
+    '<p>' + o.p + '</p>' +
+    '<p class="cost"><b>Důsledek:</b> ' + o.cost + '</p></div>'
+  ).join('');
+  dcEls.note.innerHTML = d.note;
+  document.querySelectorAll('.dc-item').forEach(b =>
+    b.classList.toggle('active', Number(b.dataset.i) === i));
+}
+document.querySelectorAll('.dc-item').forEach(btn =>
+  btn.addEventListener('click', () => renderDecision(Number(btn.dataset.i))));
+renderDecision(0);
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>

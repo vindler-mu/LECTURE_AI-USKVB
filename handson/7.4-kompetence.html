@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Kompetence a co dál: jak nezastarat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1b2a; --ink-soft: #2c3e50; --bg: #ffffff; --paper: #f7f6f2;
+    --line: #e3e0d8; --line-strong: #c8c3b6; --muted: #6b6f76;
+    --accent: #0d1b2a; --accent-hover: #000000; --accent-soft: #dde0e4;
+    --warm: #b5651d; --warm-soft: #fbf3e7; --green: #4a7c59; --green-soft: #e7f0ea;
+    --purple: #5b3f7a; --purple-soft: #ede5f3;
+    --red: #a04a4a; --red-soft: #f5e6e6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.6;
+    font-size: 15px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.3px;
+  }
+  .back:hover { color: var(--accent); text-decoration: none; }
+
+  .hero { padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(32px, 4.4vw, 50px);
+    font-weight: 700; line-height: 1.12; letter-spacing: -0.6px;
+    margin-bottom: 18px; max-width: 900px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .hero-subtitle { font-size: 16px; color: var(--ink-soft); line-height: 1.6; max-width: 760px; }
+  .definition {
+    margin-top: 18px; padding: 14px 18px; background: var(--paper);
+    border-left: 3px solid var(--accent); font-size: 14.5px; color: var(--ink); max-width: 760px;
+  }
+  .definition strong { color: var(--accent); }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 13.8px; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px;
+  }
+  section { margin-bottom: 56px; }
+
+  /* ── SHELF LIFE ─────────────────────────────────────── */
+  .shelf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .shelf { grid-template-columns: 1fr; } }
+  .sh { background: var(--bg); border: 1px solid var(--line); padding: 18px 20px; }
+  .sh.fast { border-top: 3px solid var(--red); }
+  .sh.mid { border-top: 3px solid var(--warm); }
+  .sh.slow { border-top: 3px solid var(--green); }
+  .sh-life {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 8px; display: block;
+  }
+  .sh.fast .sh-life { color: var(--red); }
+  .sh.mid .sh-life { color: var(--warm); }
+  .sh.slow .sh-life { color: var(--green); }
+  .sh h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px;
+    font-weight: 700; margin-bottom: 9px; line-height: 1.28;
+  }
+  .sh > p { font-size: 13.1px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 10px; }
+  .sh ul { list-style: none; }
+  .sh li {
+    font-size: 12.8px; line-height: 1.5; color: var(--ink-soft);
+    padding-left: 16px; position: relative; margin-bottom: 6px;
+  }
+  .sh li::before { content: "·"; position: absolute; left: 3px; font-weight: 700; font-size: 16px; line-height: 1.1; }
+  .sh.fast li::before { color: var(--red); }
+  .sh.mid li::before { color: var(--warm); }
+  .sh.slow li::before { color: var(--green); }
+
+  /* ── ROLE SWITCH ────────────────────────────────────── */
+  .rl-wrap { background: var(--paper); border: 1px solid var(--line); padding: 26px 28px; }
+  .rl-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .rl-tab {
+    background: var(--bg); border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 11px 16px; font-family: 'Inter', sans-serif; font-size: 12.5px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s ease;
+    text-align: left; line-height: 1.35;
+  }
+  .rl-tab span { display: block; font-size: 10.5px; color: var(--muted); margin-top: 2px; font-weight: 400; }
+  .rl-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .rl-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .rl-tab.active span { color: rgba(255,255,255,0.72); }
+
+  .rl-panel { background: var(--bg); border: 1px solid var(--line); padding: 22px 24px; min-height: 300px; }
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px;
+  }
+  .rl-name {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; font-weight: 700;
+    color: var(--ink); margin-bottom: 3px;
+  }
+  .rl-who { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); margin-bottom: 18px; }
+  .rl-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .rl-cols { grid-template-columns: 1fr; } }
+  .rl-col h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px;
+  }
+  .rl-col ul { list-style: none; }
+  .rl-col li {
+    font-size: 13px; line-height: 1.55; color: var(--ink-soft);
+    padding-left: 17px; position: relative; margin-bottom: 8px;
+  }
+  .rl-col li::before {
+    content: "·"; position: absolute; left: 4px; color: var(--accent);
+    font-weight: 700; font-size: 17px; line-height: 1.1;
+  }
+  .rl-enough {
+    margin-top: 18px; padding: 12px 15px; background: var(--green-soft);
+    border-left: 3px solid var(--green); font-size: 12.9px; line-height: 1.6; color: var(--ink);
+  }
+  .rl-enough strong { display: block; margin-bottom: 3px; color: var(--green); }
+
+  /* ── WATCH TABLE ────────────────────────────────────── */
+  .tbl {
+    width: 100%; border-collapse: collapse; border: 1px solid var(--line);
+    background: var(--bg); font-size: 13px; margin-top: 20px;
+  }
+  .tbl th, .tbl td {
+    padding: 11px 14px; text-align: left; border: 1px solid var(--line);
+    vertical-align: top; line-height: 1.5;
+  }
+  .tbl th {
+    background: var(--paper); font-weight: 600; color: var(--accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .tbl td strong { color: var(--ink); }
+  .tbl tr:nth-child(even) td { background: var(--paper); }
+  .tbl td.freq { font-family: 'JetBrains Mono', monospace; font-size: 12px; white-space: nowrap; }
+
+  /* ── STEPS ──────────────────────────────────────────── */
+  .steps { display: flex; flex-direction: column; gap: 12px; counter-reset: step; }
+  .step {
+    background: var(--bg); border: 1px solid var(--line); padding: 16px 20px 16px 58px;
+    position: relative; counter-increment: step;
+  }
+  .step::before {
+    content: counter(step); position: absolute; left: 18px; top: 16px;
+    font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600;
+    color: var(--accent); opacity: 0.4;
+  }
+  .step h4 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 16.5px;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .step p { font-size: 13.2px; line-height: 1.62; color: var(--ink-soft); margin-bottom: 6px; }
+  .step p:last-child { margin-bottom: 0; }
+  .step .when {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 6px;
+  }
+
+  /* ── TIP TOGGLES ────────────────────────────────────── */
+  .tip-toggle { margin-top: 18px; border: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tip-toggle summary {
+    padding: 12px 18px; font-size: 13px; cursor: pointer; list-style: none;
+    color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 10px; background: var(--paper);
+  }
+  .tip-toggle summary::-webkit-details-marker { display: none; }
+  .tip-toggle summary::after {
+    content: "+"; margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent);
+  }
+  .tip-toggle[open] summary::after { content: "−"; }
+  .tip-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .tip-body { padding: 16px 20px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; }
+  .tip-body p { margin-bottom: 10px; }
+  .tip-body p:last-child { margin-bottom: 0; }
+  .tip-body ul { margin: 8px 0 10px; padding-left: 20px; }
+  .tip-body li { margin-bottom: 6px; }
+
+  .footnote {
+    font-size: 11px; color: var(--muted); margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; line-height: 1.5;
+  }
+
+  .takeaways { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .takeaways { grid-template-columns: 1fr; } }
+  .takeaway-card {
+    background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    padding: 16px 20px; font-size: 13.5px; line-height: 1.65; color: var(--ink);
+  }
+  .takeaway-card strong { color: var(--accent); }
+
+  .closing {
+    margin-top: 30px; background: var(--accent); color: #fff;
+    padding: 28px 32px;
+  }
+  .closing .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.8px;
+    text-transform: uppercase; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 12px;
+  }
+  .closing h3 {
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 25px; font-weight: 700;
+    line-height: 1.25; margin-bottom: 14px; max-width: 720px;
+  }
+  .closing p { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.86); max-width: 760px; margin-bottom: 10px; }
+  .closing p:last-child { margin-bottom: 0; }
+  .closing strong { color: #fff; }
+
+  .footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); line-height: 1.6;
+  }
+  .footer a { color: var(--accent); }
+
+  @media (max-width: 560px) { .wrap { padding: 36px 18px 60px; } }
+
+  .read-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 1000; transition: width 0.1s ease; pointer-events: none;
+  }
+  .wrap { counter-reset: section; }
+  .wrap > section:has(.section-title) { counter-increment: section; }
+  .wrap > section .section-title::before {
+    content: counter(section, decimal-leading-zero);
+    display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    font-weight: 500; color: var(--accent); letter-spacing: 2.5px; margin-bottom: 8px; opacity: 0.7;
+  }
+  .hero::before {
+    content: ""; display: block; width: 36px; height: 4px;
+    background: var(--accent); border-radius: 2px; margin-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .js-enabled .wrap > section:not(.hero) {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .js-enabled .wrap > section:not(.hero).in-view { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<script>
+  if ('IntersectionObserver' in window) { document.documentElement.classList.add('js-enabled'); }
+</script>
+</head>
+<body>
+<div class="read-progress" aria-hidden="true"></div>
+<main class="wrap">
+
+  <a class="back" href="../index.html">← Zpět na přehled série</a>
+
+  <header class="hero">
+    <p class="hero-eyebrow">Setkání 7 · Hands-on</p>
+    <h1>Co z&nbsp;téhle série <em>vydrží</em></h1>
+    <p class="hero-subtitle">
+      Sedm setkání skončilo, obor se vyvíjí dál. Otázka pro&nbsp;závěr tedy není „co jste se naučili", ale <em>co z&nbsp;toho bude platit i&nbsp;za&nbsp;dva roky</em> — a&nbsp;jak si udržet přehled, aniž by to komukoli zabralo víc než pár hodin ročně.
+    </p>
+    <div class="definition">
+      <strong>Ne všechno zastarává stejně rychle.</strong> Konkrétní nástroje a&nbsp;termíny mají trvanlivost v&nbsp;měsících. Principy fungování a&nbsp;návyky ověřování vydrží roky. Většina úsilí, které lidé věnují „udržování kroku", jde přitom do&nbsp;té první kategorie — a&nbsp;proto je marná.
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">Trvanlivost toho, co jsme probrali</h2>
+    <p class="section-lead">
+      Užitečné rozdělení pro&nbsp;každého, kdo se ptá „a&nbsp;co si mám z&nbsp;toho pamatovat". Sloupce jsou seřazené podle toho, jak rychle jednotlivé věci ztrácejí platnost — a&nbsp;zároveň jak moc se vyplatí do&nbsp;nich investovat čas.
+    </p>
+
+    <div class="shelf">
+      <div class="sh fast">
+        <span class="sh-life">Trvanlivost: měsíce</span>
+        <h3>Konkrétní stav světa</h3>
+        <p>Cokoli s&nbsp;datem, verzí nebo cenou. Zastará dřív, než se stačíte naučit to nazpaměť — a&nbsp;právě proto to nemá smysl učit.</p>
+        <ul>
+          <li>který model je zrovna nejlepší</li>
+          <li>ceny a&nbsp;názvy tarifů</li>
+          <li>termíny nabíhání AI&nbsp;Actu</li>
+          <li>co který nástroj právě umí</li>
+          <li>podmínky poskytovatelů</li>
+        </ul>
+      </div>
+      <div class="sh mid">
+        <span class="sh-life">Trvanlivost: roky</span>
+        <h3>Rámce a&nbsp;rozlišení</h3>
+        <p>Struktury, které pomáhají v&nbsp;nové situaci vědět, na&nbsp;co se ptát. Přežijí několik generací nástrojů, protože nepopisují nástroje, ale způsob uvažování o&nbsp;nich.</p>
+        <ul>
+          <li>branka vs.&nbsp;osa — co jde vykompenzovat pečlivostí a&nbsp;co ne</li>
+          <li>čtyři otázky vhodnosti úkolu</li>
+          <li>rozdíl mezi vyhledáním a&nbsp;vygenerováním</li>
+          <li>poskytovatel vs.&nbsp;provozovatel</li>
+          <li>compliance ≠ pravdivost</li>
+        </ul>
+      </div>
+      <div class="sh slow">
+        <span class="sh-life">Trvanlivost: dlouhodobá</span>
+        <h3>Principy a&nbsp;návyky</h3>
+        <p>To, kvůli čemu celá série vznikla. Váže se na&nbsp;povahu technologie, ne na&nbsp;její aktuální podobu — a&nbsp;na&nbsp;odbornost, kterou už&nbsp;máte.</p>
+        <ul>
+          <li>proč model generuje pravděpodobný text, ne pravdivý</li>
+          <li>plynulost není známka správnosti</li>
+          <li>rutina ověření proti zdroji</li>
+          <li>zastaralá pravda podaná s&nbsp;jistotou</li>
+          <li>odpovědnost zůstává u&nbsp;člověka</li>
+        </ul>
+      </div>
+    </div>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Realita</span> Většina „udržování kroku" je investice do&nbsp;levého sloupce</summary>
+      <div class="tip-body">
+        <p>Kdo se snaží držet krok s&nbsp;AI čtením novinek, tráví skoro všechen čas v&nbsp;prvním sloupci — nové modely, nové funkce, nová srovnání. Ten obsah je nejhlasitější, protože ho někdo potřebuje prodat, a&nbsp;zároveň nejrychleji zastarává.</p>
+        <p>Přitom platí nepříjemná věc: <strong>znalost prvního sloupce nezlepší práci s&nbsp;nástrojem téměř vůbec.</strong> Kdo ví, jaký model vyšel minulý týden, ale nemá rutinu ověřování, pracuje hůř než ten, kdo o&nbsp;novém modelu neslyšel a&nbsp;rutinu má.</p>
+        <p>Dnešní setkání je toho mimochodem doklad. Materiál k&nbsp;AI&nbsp;Actu byl při&nbsp;přípravě věcně správný a&nbsp;přesto v&nbsp;jednom bodě zastaral — nařízení, které přepsalo časovou osu, vstoupilo v&nbsp;platnost <strong>právě dnes</strong>. Kdyby se seminář konal minulý týden, byl by ten slide formálně nepřesný. To není chyba přípravy; to je vlastnost prvního sloupce.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Kdo co potřebuje umět</h2>
+    <p class="section-lead">
+      Rozšířená představa, že „AI gramotnost" znamená u&nbsp;všech totéž, vede k&nbsp;plošným školením, která polovinu lidí nudí a&nbsp;druhé polovině nestačí. Realističtější je rozlišit čtyři role — <strong>většina úřadu potřebuje jen první z&nbsp;nich</strong>. Klikněte na&nbsp;roli.
+    </p>
+
+    <div class="rl-wrap">
+      <div class="rl-tabs" id="rl-tabs">
+        <button class="rl-tab active" data-rl="uzivatel">Uživatel<span>většina úřadu</span></button>
+        <button class="rl-tab" data-rl="posuzovatel">Posuzovatel<span>komu chodí dokumentace</span></button>
+        <button class="rl-tab" data-rl="spravce">Správce<span>nástroj a&nbsp;pravidlo</span></button>
+        <button class="rl-tab" data-rl="stavitel">Stavitel<span>skripty a&nbsp;automatizace</span></button>
+      </div>
+
+      <div class="rl-panel">
+        <p class="panel-label">Kompetenční minimum</p>
+        <div class="rl-name" id="rl-name"></div>
+        <div class="rl-who" id="rl-who"></div>
+        <div class="rl-cols">
+          <div class="rl-col">
+            <h5>Co potřebuje umět</h5>
+            <ul id="rl-need"></ul>
+          </div>
+          <div class="rl-col">
+            <h5>Co nepotřebuje</h5>
+            <ul id="rl-skip"></ul>
+          </div>
+        </div>
+        <div class="rl-enough" id="rl-enough"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Sledování změn bez plného úvazku</h2>
+    <p class="section-lead">
+      Sledovat je potřeba jen to, co má pro&nbsp;úřad důsledek. Následující tabulka je návrh minimálního režimu — dohromady vyjde na&nbsp;jednotky hodin ročně, pokud je rozdělený mezi lidi, kteří dané téma stejně sledují z&nbsp;jiného důvodu.
+    </p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Co sledovat</th><th>Kde</th><th>Jak často</th><th>Co s&nbsp;tím, když se změní</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Termíny AI&nbsp;Actu</strong></td>
+          <td>Úřední věstník EU a&nbsp;stránky Komise k&nbsp;AI&nbsp;Actu; ne agregátory a&nbsp;shrnutí</td>
+          <td class="freq">2× ročně</td>
+          <td>Aktualizovat časovou osu v&nbsp;interních materiálech a&nbsp;zkontrolovat, zda se posun týká něčeho, co úřad používá</td>
+        </tr>
+        <tr>
+          <td><strong>Český adaptační zákon</strong></td>
+          <td>Sbírka zákonů, sněmovní tisky; stránky dozorových orgánů až&nbsp;jako druhý zdroj</td>
+          <td class="freq">4× ročně, dokud nevyjde</td>
+          <td>Po&nbsp;vyhlášení projít, kdo je dozorovým orgánem a&nbsp;jaké povinnosti dopadají na&nbsp;úřad jako provozovatele</td>
+        </tr>
+        <tr>
+          <td><strong>Podmínky poskytovatele nástroje</strong></td>
+          <td>Přímo u&nbsp;dodavatele; u&nbsp;institucionální licence i&nbsp;smluvní oznámení o&nbsp;změnách</td>
+          <td class="freq">při&nbsp;každém oznámení</td>
+          <td>Zkontrolovat, zda se nezměnilo něco ze&nbsp;šesti otázek ze&nbsp;<a href="7.2-nastroje-a-licence.html">strany 7.2</a>, zvlášť trénink a&nbsp;lokalita zpracování</td>
+        </tr>
+        <tr>
+          <td><strong>Regulatorní vodítka k&nbsp;AI v&nbsp;dokumentacích</strong></td>
+          <td>EMA — reflection paper a&nbsp;navazující dokumenty; výstupy CVMP</td>
+          <td class="freq">2× ročně</td>
+          <td>Promítnout do&nbsp;toho, na&nbsp;co se ptát žadatele, když AI figuruje v&nbsp;předložené dokumentaci</td>
+        </tr>
+        <tr>
+          <td><strong>Vlastní zkušenost z&nbsp;úřadu</strong></td>
+          <td>Krátká interní sdílená poznámka: co komu fungovalo, kde to selhalo</td>
+          <td class="freq">průběžně</td>
+          <td>Nejcennější zdroj z&nbsp;celé tabulky a&nbsp;jediný, který nikdo jiný nemá. Zároveň ten, na&nbsp;který se nejsnáz zapomene.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">
+      Uvedená periodicita je návrh, ne požadavek vyplývající z&nbsp;předpisu. Zdroje jsou úmyslně primární — jak ukázala <a href="7.1-ai-act.html">strana 7.1</a>, i&nbsp;oficiální informační stránka dozorového úřadu může být o&nbsp;tři čtvrtě roku pozadu. Ověřeno 27.&nbsp;7.&nbsp;2026.
+    </p>
+
+    <details class="tip-toggle">
+      <summary><span class="tip-label">Tip to know</span> Zeptat se AI je nejrychlejší způsob, jak dostat zastaralou odpověď</summary>
+      <div class="tip-body">
+        <p>U&nbsp;právě těch témat, která patří do&nbsp;prvního sloupce ze&nbsp;sekce&nbsp;01, je model nejméně spolehlivý — a&nbsp;přitom zní úplně stejně jistě jako jindy. Důvod je strukturální: model se učil na&nbsp;textech, které vznikaly v&nbsp;době, kdy stará informace ještě platila, a&nbsp;té je v&nbsp;datech nesrovnatelně víc než té nové.</p>
+        <p><strong>Vyzkoušejte si to teď.</strong> Zeptejte se svého nástroje, odkdy platí povinnosti pro&nbsp;vysoce rizikové systémy podle AI&nbsp;Actu. Pak odpověď porovnejte s&nbsp;tabulkou na&nbsp;<a href="7.1-ai-act.html">straně 7.1</a> a&nbsp;všimněte si dvou věcí: jak přesvědčivě odpověď zněla, a&nbsp;že to nebyla halucinace v&nbsp;pravém smyslu — byla to <em>zastaralá pravda</em>.</p>
+        <p>Prakticky z&nbsp;toho plyne dělba práce, která se vyplatí: <strong>na&nbsp;principy a&nbsp;vysvětlení se ptejte modelu, na&nbsp;data a&nbsp;čísla jděte ke&nbsp;zdroji.</strong> Model dobře vysvětlí, co je pyramida rizik a&nbsp;proč existuje; datum, odkdy co platí, si ověřte v&nbsp;Úředním věstníku.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2 class="section-title">Prvních devadesát dní</h2>
+    <p class="section-lead">
+      Konkrétní kroky seřazené tak, aby každý dával smysl i&nbsp;samostatně — kdyby se další nekonaly. Žádný z&nbsp;nich nevyžaduje rozpočet kromě čtvrtého, a&nbsp;první tři se dají udělat do&nbsp;měsíce.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="when">Do měsíce · nulové náklady</div>
+        <h4>Zaevidovat, co se stalo</h4>
+        <p>Zapsat tuhle sérii jako opatření podle čl.&nbsp;4 AI&nbsp;Actu: termíny, rozsah, okruh účastníků, obsah. Pět minut práce teď, nedohledatelné za&nbsp;dva roky.</p>
+        <p>Zároveň je to jediný doklad, který úřad o&nbsp;podpoře AI&nbsp;gramotnosti aktuálně má.</p>
+      </div>
+      <div class="step">
+        <div class="when">Do měsíce · nulové náklady</div>
+        <h4>Určit lidi k&nbsp;rolím</h4>
+        <p>Projít pět rolí ze&nbsp;<a href="7.3-interni-pravidla.html">strany 7.3</a> a&nbsp;ke&nbsp;každé napsat jméno. Ne úvazek, ne popis práce — jméno.</p>
+        <p>Nejdůležitější je ta prostřední: <strong>koho se lze zeptat u&nbsp;hraničního případu.</strong> Dokud ji nikdo nemá, každé další opatření visí ve&nbsp;vzduchu.</p>
+      </div>
+      <div class="step">
+        <div class="when">Do dvou měsíců · nulové náklady</div>
+        <h4>Napsat jednu stranu pravidla</h4>
+        <p>Šest rozhodnutí, jedna strana, datum revize. Nepouštět se do&nbsp;směrnice — ta může přijít později, až&nbsp;bude z&nbsp;praxe zřejmé, co v&nbsp;ní má být.</p>
+        <p>Součástí je i&nbsp;výslovný restart: pojmenovat období bez&nbsp;pravidla a&nbsp;vyzvat k&nbsp;nahlášení bez&nbsp;následku. Bez&nbsp;toho úřad nezjistí, co má vlastně ošetřit.</p>
+      </div>
+      <div class="step">
+        <div class="when">Do tří měsíců · vyžaduje rozhodnutí a&nbsp;rozpočet</div>
+        <h4>Rozhodnout o&nbsp;nástroji</h4>
+        <p>Ne nutně pořídit — rozhodnout. Použít šest otázek ze&nbsp;<a href="7.2-nastroje-a-licence.html">strany 7.2</a> jako podklad poptávky a&nbsp;odpovědi si vyžádat písemně.</p>
+        <p>I&nbsp;odpověď „letos ne" je rozhodnutí, které se dá naplánovat. Nerozhodnuto znamená, že se dál pracuje přes osobní účty, jen o&nbsp;něco déle.</p>
+      </div>
+      <div class="step">
+        <div class="when">Průběžně · minimální náklady</div>
+        <h4>Sbírat vlastní zkušenost</h4>
+        <p>Jedno sdílené místo, kam si lidé zapisují, co jim fungovalo a&nbsp;kde to selhalo. Nemusí to být systém; stačí dokument, o&nbsp;kterém se ví.</p>
+        <p>Po&nbsp;roce je to nejcennější materiál, který úřad k&nbsp;tématu má — protože jako jediný popisuje <em>tuhle</em> agendu, ne obecné AI.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Co si odnést</h2>
+    <p class="section-lead">
+      Poslední čtyři věty celé série. Kdyby se ztratilo všechno ostatní, tyhle stačí.
+    </p>
+    <div class="takeaways">
+      <div class="takeaway-card">
+        <strong>Investujte do&nbsp;pravého sloupce.</strong> Principy a&nbsp;návyky ověřování vydrží generace nástrojů. Znalost toho, co který nástroj právě umí, zastará dřív, než ji stihnete použít.
+      </div>
+      <div class="takeaway-card">
+        <strong>Gramotnost není u&nbsp;všech stejná.</strong> Většině úřadu stačí umět rozpoznat, co do&nbsp;nástroje smí a&nbsp;jak ověřit výstup. Hlubší znalost potřebuje málokdo — a&nbsp;plošné školení pro&nbsp;všechny je proto plýtvání.
+      </div>
+      <div class="takeaway-card">
+        <strong>Na&nbsp;principy se ptejte modelu, na&nbsp;čísla jděte ke&nbsp;zdroji.</strong> Model dobře vysvětlí, jak něco funguje. U&nbsp;dat, termínů a&nbsp;ustanovení podá zastaralou pravdu se&nbsp;stejnou jistotou jako správnou odpověď.
+      </div>
+      <div class="takeaway-card">
+        <strong>Rozhodnutí je levnější než odklad.</strong> První tři kroky nestojí nic a&nbsp;dají se udělat do&nbsp;dvou měsíců. Nerozhodnuto není neutrální stav — znamená, že platí to, co se děje teď.
+      </div>
+    </div>
+
+    <div class="closing">
+      <div class="lbl">Závěr série</div>
+      <h3>Odbornost se nezlevnila. Zdražila.</h3>
+      <p>Sedm setkání se dá shrnout jednou větou: <strong>AI umí vyrobit text, který vypadá jako odborný výstup, a&nbsp;nikdo kromě odborníka nepozná rozdíl.</strong> To odbornost neznehodnocuje — dělá ji vzácnější, protože poptávka po&nbsp;někom, kdo pozná rozdíl, právě prudce vzrostla.</p>
+      <p>Pro&nbsp;regulatorní úřad je to dobrá zpráva v&nbsp;nepříjemném obalu. Práce, kterou děláte, se automatizovat nedá — ne proto, že by AI byla slabá, ale proto, že jejím obsahem je <em>posoudit, jestli tvrzení odpovídá důkazu</em>. Přesně to je jediná věc, kterou model neumí ani v&nbsp;principu.</p>
+      <p>Co se změnilo, je objem materiálu, který takové posouzení potřebuje, a&nbsp;jak přesvědčivě umí vypadat. Nástroje z&nbsp;téhle série vám mají uvolnit ruce na&nbsp;tu část práce, kterou nikdo jiný neudělá — a&nbsp;ne vás v&nbsp;ní nahradit.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    AI pro ÚSKVBL · Setkání 7 · Hands-on · poslední strana série
+    <br>
+    Vojtěch Velísek · <a href="mailto:velisek@sci.muni.cz">velisek@sci.muni.cz</a>
+    <br>
+    <em>Tento materiál vznikal ve spolupráci s Claude Code, model Opus 5 (kód, design, drafty textů). Ověřeno k 27. 7. 2026.</em>
+  </footer>
+
+</main>
+
+<script>
+const roles = {
+  uzivatel: {
+    name: 'Uživatel',
+    who: 'většina úřadu · používá nástroj pro vlastní práci',
+    need: [
+      'Poznat, co do nástroje smí a co ne — jeden zapamatovatelný test',
+      'Vědět, že plynulý a sebejistý text může být nepravdivý',
+      'Mít rutinu ověření u výstupu, který jde dál',
+      'Vědět, koho se zeptat, když si není jistý',
+      'Vědět, co dělat, když se něco pokazí — a že se to hlásí'
+    ],
+    skip: [
+      'Jak fungují neuronové sítě a co je trénink',
+      'Rozdíly mezi modely a jejich verzemi',
+      'Znění AI Actu a termíny jeho nabíhání',
+      'Psaní promptů jako disciplína',
+      'Cokoli o licencích a smluvních podmínkách'
+    ],
+    enough: { l: 'Tohle je 80 % úřadu a stačí to', t: 'Pět bodů vlevo se dá předat za hodinu a půl a zopakovat jednou ročně. Kdo je má, pracuje bezpečně — bez ohledu na to, jak dobře rozumí tomu, co se děje uvnitř modelu.' }
+  },
+  posuzovatel: {
+    name: 'Posuzovatel',
+    who: 'komu chodí na stůl dokumentace, v níž AI použil někdo jiný',
+    need: [
+      'Vše z role uživatele',
+      'Rozpoznat, kde AI mohla vstoupit do předložené dokumentace — od hledání kandidátů po zpracování dat ze studií',
+      'Rozlišit AI jako nástroj psaní od AI jako zdroje tvrzení o bezpečnosti či účinnosti',
+      'Vědět, co lze od žadatele požadovat doložit: co bylo použito, na jakých datech, jak validováno',
+      'Znát existenci regulatorního rámce EMA k AI v životním cyklu přípravku'
+    ],
+    skip: [
+      'Technické detaily architektur modelů',
+      'Právní výklad AI Actu — ten se posuzované dokumentace přímo netýká',
+      'Vlastní schopnost nástroje ovládat na pokročilé úrovni'
+    ],
+    enough: { l: 'Nejspecifičtější role z celé čtveřice', t: 'Tady je odborná znalost agendy důležitější než znalost AI. Podstatné je vědět, že se ptát dá — a na co. Nepřesná parafráze zdroje nebo vymyšlená citace v odborném přehledu je typ chyby, který jde odhalit běžnou odbornou kontrolou, jakmile člověk ví, že po něm má pátrat.' }
+  },
+  spravce: {
+    name: 'Správce',
+    who: 'vlastník pravidla, správce nástroje, kdo sleduje regulaci',
+    need: [
+      'Vše z role uživatele',
+      'Šest otázek na dodavatele a schopnost poznat vyhýbavou odpověď',
+      'Rozdíl mezi provozovatelem a poskytovatelem podle AI Actu a kdy se role přeskočí',
+      'Vědět, co se v regulaci sleduje, kde a jak často',
+      'Umět rozhodnout hraniční případ a rozhodnutí zaznamenat'
+    ],
+    skip: [
+      'Právní expertiza na AI Act — od určité hloubky je to práce pro právníka, ne pro správce',
+      'Technické detaily provozu modelů',
+      'Sledování novinek o modelech a jejich schopnostech'
+    ],
+    enough: { l: 'Jedna až dvě osoby na celý úřad', t: 'Časově nejnáročnější je rozhodování o hraničních případech, a to hlavně v prvních měsících. Sledování regulace vyjde na jednotky hodin ročně, pokud se drží tabulky v sekci 03 a nečte se všechno, co k tématu vyjde.' }
+  },
+  stavitel: {
+    name: 'Stavitel',
+    who: 'kdo si nechává od AI psát skripty a pomocné nástroje',
+    need: [
+      'Vše z role uživatele',
+      'Vědět, že skript se píše proti popisu struktury, ne proti datům — proto ven nejde nic',
+      'Umět skript ověřit na vzorku se známým výsledkem, včetně případů, kde má selhat',
+      'Zadat, aby skript při neočekávaném údaji skončil chybou, ne odhadem',
+      'Zaznamenat, co bylo ověřeno a kdy'
+    ],
+    skip: [
+      'Umět programovat v pravém smyslu',
+      'Rozumět kódu řádek po řádku',
+      'Formální školení v informatice'
+    ],
+    enough: { l: 'Největší nevyužitý potenciál na úřadě', t: 'Tuhle roli lidé sami od sebe neobjeví, protože „programování" zní jako věc pro IT. Přitom stačí popsat strukturu dat česky a dostanete hotový nástroj — a validuje se stejně jako analytická metoda, tedy dovedností, kterou úřad má.' }
+  }
+};
+
+const rlTabs = document.querySelectorAll('.rl-tab');
+const rlEls = {
+  name: document.getElementById('rl-name'),
+  who: document.getElementById('rl-who'),
+  need: document.getElementById('rl-need'),
+  skip: document.getElementById('rl-skip'),
+  enough: document.getElementById('rl-enough')
+};
+
+function renderRole(key) {
+  const r = roles[key];
+  rlEls.name.textContent = r.name;
+  rlEls.who.textContent = r.who;
+  rlEls.need.innerHTML = r.need.map(i => '<li>' + i + '</li>').join('');
+  rlEls.skip.innerHTML = r.skip.map(i => '<li>' + i + '</li>').join('');
+  rlEls.enough.innerHTML = '<strong>' + r.enough.l + '</strong>' + r.enough.t;
+  rlTabs.forEach(b => b.classList.toggle('active', b.dataset.rl === key));
+}
+rlTabs.forEach(btn => btn.addEventListener('click', () => renderRole(btn.dataset.rl)));
+renderRole('uzivatel');
+
+(function () {
+  const bar = document.querySelector('.read-progress');
+  if (bar) {
+    const update = () => {
+      const scroll = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (height > 0 ? (scroll / height) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in-view'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.wrap > section:not(.hero)').forEach(el => observer.observe(el));
+})();
+</script>
+
+</body>
+</html>
